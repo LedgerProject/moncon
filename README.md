@@ -102,11 +102,16 @@
 
 ### What is the content creators problem?
 
-Since the Internet was born, media, newspapers and other content creators haven't transformed their business model from off to on-line. They just change the physical paper to the digital. Newspapers were selling their pages to print advertising on them. 
-Today they are still doing the same thing but in another format, counting pageviews. Their goal is to increase that number day by day. No other thing matters. The result is poor content, no matter quality, just “clics” to get more pageviews. In addition, the metric for measuring benefits of it is the CPM (cost per 1000 pageviews). At the beginning of the internet it was a good CPM, but today, with tons of tons of content increasing and the money invested increased but not at this rhythm , the CPM gets down and down. So then, the current business model is destined to die.
+Media and digital content creators are in the midst of a transformation. On the one hand, traditional media, which used to live from paper printing, have had to transition to the digital model. Due to the pandemic situation, their off-line revenues have decreased drastically; so, they are looking for new revenue models and have not found a fair and sustainable business model.
 
-On the other side, users annoy ads. Actually, the human user eye is used to “see” ads but doesn’t remember them, users erase them when they are consuming content. 
-And finally, in terms of business value, there is no reason that the media have this business model. It’s time to rethink and implement it.
+Newspapers were selling their pages to print advertising on them. Since the Internet was born, media, publishers and other content creators have not found a fair and sustainable business model. Today they are still doing the same thing but, in digital format, counting page views. On the other side, users annoy ads, cannot privately pay on the Internet, and there are no validations to buy restricted content (i.e. age-restricted content ).
+
+Currently, users who consume content have to navigate through annoying websites full of advertisements, or if they want to access paid content, they have to sign up for subscriptions when they really only want to read one or two articles. This is an increasing problem and content creators need alternative revenue streams. That is why we are introducing moncon, a pay-for-content method that allows users to pay a few cents for what they want to consume, without subscriptions. This will also allow content creators to continue working on creating quality content.
+
+With micropayments, users can pay a few cents to read an article, which helps the content creator to focus on creating quality content. The payment is private and validates user data like age, gender, city or any other verifiable credential using Zero-Knowledge Proof.
+
+To solve that problem, there is no other technology available but Blockchain: visa micropayments are expensive and always you do an online payment you have to share your personal data. Our solution, moncon, helps us to make micropayments using Interledger protocol (based on Ripple) while keeping the user privacy using Zero-Knowledge Proof with verifiable credentials, following the W3C standard of Web Monetization and SSI model being GDPR compliance by default, using Zenroom, in that case. 
+
 
 
 
