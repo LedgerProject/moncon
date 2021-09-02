@@ -16,10 +16,8 @@
 *** https://www.markdownguide.org/basic-syntax/#reference-style-links
 -->
 ![License](https://img.shields.io/badge/dynamic/json.svg?label=License&url=https://gitlab.com/api/v4/projects/24010546?license=true&query=license.name&colorB=yellow)
-![Created at](https://img.shields.io/badge/dynamic/json.svg?label=Created%20at&url=https://gitlab.com/api/v4/projects/24010546&query=created_at&colorB=informational)
-![Last activity](https://img.shields.io/badge/dynamic/json.svg?label=Last%20activity&url=https://gitlab.com/api/v4/projects/24010546&query=last_activity_at&colorB=informational)
-[![Starrers](https://badgen.net/gitlab/stars/infinite-labs/moncon-framework)](https://gitlab.com/infinite-labs/moncon-framework/-/starrers/)
-[![Forks](https://badgen.net/gitlab/forks/infinite-labs/moncon-framework)](https://gitlab.com/infinite-labs/moncon-framework/-/forks/)
+[![Starters](https://badgen.net/github/stars/LedgerProject/moncon)](https://github.com/LedgerProject/moncon)
+[![Forks](https://badgen.net/github/forks/LedgerProject/moncon)](https://github.com/LedgerProject/moncon/network/members)
 [![LinkedIn](https://img.shields.io/badge/-LinkedIn-black.svg?logo=linkedin&colorB=555)](https://www.linkedin.com/company/moncon)
 [![Twitter](https://img.shields.io/badge/-Twitter-black.svg?logo=twitter&colorB=555)](https://www.twitter.com/moncon_co)
 [![Web](https://img.shields.io/badge/-Web-black.svg?logo=firefox&colorB=555)](https://moncon.co/)
@@ -27,9 +25,9 @@
 
 <!-- PROJECT LOGO -->
 <br />
-<p align="center">
+<table align="center"><tr><td align="center" width="9999">
   <a href="https://gitlab.com/infinite-labs/moncon-framework">
-    <img src="images/logo.png" alt="Logo" height="80">
+    <img src="images/logo.png" alt="Logo" height="80" align="center">
   </a>
 
   <h1 align="center">The world's simplest paywall</h1>
@@ -39,17 +37,17 @@
     <br />
     <strong>Want to know more? Explore our documents »</strong>
     <br />
+    </td></tr></table>
 <ol>
-<li><a href="https://docs.google.com/presentation/d/e/2PACX-1vTL5sCJXyqN2nkiQUZDjmxGghVNfVenFCxL-tDJRi_dtsZww1HJK22iS5TH4wCWVVN3Wmt01cX-flCy/pub?start=false&loop=false&delayms=3000">moncon presentation</a></li>
-<li><a href="https://www.figma.com/proto/53lKmWMWRVi7LJe4qeDG0W/Moncon?node-id=123%3A0&viewport=384%2C368%2C0.3576352298259735&scaling=min-zoom&hide-ui=1">View Dashboard mockup</a></li>
-<li><a href="https://www.figma.com/proto/53lKmWMWRVi7LJe4qeDG0W/Moncon?node-id=131%3A6&viewport=389%2C492%2C0.7078970074653625&scaling=scale-down&hide-ui=1">View Mobile mockup</a></li>
+<li><a href="https://box.pdata.org/cloud/index.php/s/4D3HEH4wRCn6CEZ">moncon presentation</a></li>
+<li><a href="https://app.dashboard.moncon.co">View Dashboard</a></li>
+<li><a href="https://app.wallet.moncon.co">View Mobile PWA</a></li>
 <li><a href="https://demo.moncon.co">Demo Web Content</a></li>
 <li><a href="https://gitlab.com/infinite-labs/moncon-framework/issues">Report Bug</a></li>
 <li><a href="https://gitlab.com/infinite-labs/moncon-framework/issues">Request Feature</a></li>
 </ol>    
     
   </p>
-</p>
 
 
 
@@ -66,16 +64,25 @@
       </ul>
     </li>
     <li>
+    <a href="#projects">Projects</a>
+    <ul>
+    <li><a href="#dashboard">Dashboard</a></li>
+    <li><a href="#api">API</a></li>
+    <li><a href="#publisherjs">Publisher JS</a></li>
+    <li><a href="#progressive-web-app">Progressive web app</a></li>
+    </ul>
+    </li>
+    <li>
       <a href="#getting-started">Getting Started</a>
       <ul>
         <li><a href="#prerequisites">Prerequisites</a></li>
-        <li><a href="#installation">Installation</a></li>
+        <li><a href="#setup">Setup</a></li>
       </ul>
     </li>
-    <li><a href="#usage">Usage</a></li>
     <li><a href="#roadmap">Roadmap</a></li>
     <li><a href="#contributing">Contributing</a></li>
-    <li><a href="#license">License</a></li>
+    <li><a href="#terms-and-license">Terms and License</a></li>
+    <li><a href="#about-us">About Us</a></li>
     <li><a href="#contact">Contact</a></li>
     <li><a href="#acknowledgements">Acknowledgements</a></li>
   </ol>
@@ -86,12 +93,12 @@
 <!-- ABOUT THE PROJECT -->
 
 ## About The Project
-
-<p align="center">
+<div align="center" width="9999">
   <a href="https://moncon.co">
-    <img src="images/web.png" alt="Logo" height="400px">
+    <img src="images/web.png" alt="Logo" height="400px" align="center">
   </a>
-</p>
+
+</div>
 
 ### What is the content creators problem?
 
@@ -105,88 +112,119 @@ And finally, in terms of business value, there is no reason that the media have 
 
 ### Built With
 
-This section should list any major frameworks that you built your project using. Leave any add-ons/plugins for the acknowledgements section. Here are a few examples.
-* [Bootstrap](https://getbootstrap.com)
-* [JQuery](https://jquery.com)
-* [Laravel](https://laravel.com)
+This section should list any major frameworks that you built your project using. Leave any add-ons/plugins for the acknowledgements section. Here are a the most importants.
+* [NodeJS](https://nodejs.org/en/)
+* [React](https://reactjs.org/)
+* [Zenroom](https://zenroom.org/)
+* [Cordova](https://cordova.apache.org/)
+* [MongoDB](https://www.mongodb.com/)
+* [Material UI](https://material-ui.com/)
+
+<!-- PROJECTS -->
+## Projects
+
+### Dashboard
+
+moncon Dashboard is encoded in React is designed to provide a content log to block and monetize, as well as metrics for your blocked content.
+
+[See more...](./packages/dashboard)
+
+### Progressive web app
+
+monco Wallet is a Progressive Web App fully encoded in React. monco Wallet is designed to provide credential registration and QR code scanner and more.
+
+[See more...](./packages/smartwallet-pwa)
+
+### API
+
+moncon API is encoded in NodeJS and is designed to run microservices required by the Dashboard and the progressive web app.
+
+[See more...](./packages/api)
+
+### Publisher JS
+
+Publisher JS is encoded in JavaScript and is designed to execute the framework of the QR code to be able to block the content to be monetized.
+
+[See more...](./packages/publisherjs)
 
 
 
 <!-- GETTING STARTED -->
 ## Getting Started
 
-This is an example of how you may give instructions on setting up your project locally.
-To get a local copy up and running follow these simple example steps.
-
 ### Prerequisites
 
-This is an example of how to list things you need to use the software and how to install them.
-* npm
-  ```sh
-  npm install npm@latest -g
-  ```
+- [git](https://git-scm.com/) v2.13 or greater
+- [NodeJS](https://nodejs.org/en/) `12 || 14 || 15 || 16`
+- [npm](https://www.npmjs.com/) v6 or greater
 
-### Installation
+All of these must be available in your `PATH`. To verify things are set up
+properly, you can run this:
 
-1. Get a free API Key at [https://example.com](https://example.com)
-2. Clone the repo
-   ```sh
-   git clone https://github.com/your_username_/Project-Name.git
-   ```
-3. Install NPM packages
-   ```sh
-   npm install
-   ```
-4. Enter your API in `config.js`
-   ```JS
-   const API_KEY = 'ENTER YOUR API';
-   ```
+```shell
+git --version
+node --version
+npm --version
+```
 
+If you have trouble with any of these, learn more about the PATH environment
+variable and how to fix it here for [windows](https://www.howtogeek.com/118594/how-to-edit-your-system-path-for-easy-command-line-access/) or [mac/linux](https://stackoverflow.com/questions/24306398/how-to-add-mongo-commands-to-path-on-mac-osx/24322978#24322978).
 
+### Setup
 
-<!-- USAGE EXAMPLES -->
-## Usage
+> If you want to commit and push your work as you go, you'll want to
+> [fork](https://docs.github.com/en/free-pro-team@latest/github/getting-started-with-github/fork-a-repo)
+> first and then clone your fork rather than this repo directly.
 
-Use this space to show useful examples of how a project can be used. Additional screenshots, code examples and demos work well in this space. You may also link to more resources.
+After you've made sure to have the correct things (and versions) installed, you
+should be able to just run a few commands to get set up:
 
-_For more examples, please refer to the [Documentation](https://example.com)_
+```
+git clone https://github.com/LedgerProject/moncon.git
 
+```
+If you want to run moncon, you should wake up the API, then run the Dashboard, install Publisher JS in the site you want to sell content and finally use the PWA to generate credentials and payments.
+
+Consult the different project documentation to use:
+
+- [Dashboard](./packages/dashboard/README.md)
+- [Progressive web app](./packages/smartwallet-pwa/README.md)
+- [API](./packages/api/README.md)
+- [Publisher JS](./packages/publisherjs/README.md)
 
 
 <!-- ROADMAP -->
 ## Roadmap
 
-See the [open issues](https://gitlab.com/infinite-labs/moncon-framework/issues) for a list of proposed features (and known issues).
-
-
+If you get any errors, please read through them and see if you can find out what
+the problem is. If you can't work it out on your own then please [file an issue](https://github.com/LedgerProject/moncon/issues) and provide _all_ the output from the commands you ran (even if it's a lot).
 
 <!-- CONTRIBUTING -->
 ## Contributing
 
-Contributions are what make the open source community such an amazing place to be learn, inspire, and create. Any contributions you make are **greatly appreciated**.
+**Working on your first Pull Request?** You can learn how from this _free_
+guide [How to Contribute to an Open Source Project on GitHub](https://github.com/freeCodeCamp/how-to-contribute-to-open-source) 
 
-1. Fork the Project
-2. Create your Feature Branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your Changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the Branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
-
-
+If you have made a Pull Request, see our guide to [contributing](./CONTRIBUTING.md)
 
 <!-- LICENSE -->
-## License
+## Terms and License
 
-Distributed under the MIT License. See `LICENSE` for more information.
+- Released under the [MIT](./LICENSE).
+- Copyright 2021 [Infinite Labs](https://infinitelabs.co/).
+- Use it for personal and commercial projects, but please don’t republish, redistribute, or resell the application.
 
+<!-- ABOUT US -->
+## About Us
 
+We focus on building a more secure, private and social internet using Open-Source and decentralized technologies.
+
+As a team, we have developing digital products since 2012. In the last 5 years, we have focused on decentralized technologies. We aim to create products that can make a social impact. Because of that, we only use Open Source technologies, and create secure solutions taking good care of the user data and privacy.
 
 <!-- CONTACT -->
 ## Contact
 
-Your Name - [@your_twitter](https://twitter.com/your_username) - email@example.com
-
-Project Link: [https://github.com/your_username/repo_name](https://github.com/your_username/repo_name)
-
+Infinite Labs - [@LabsInfinite](https://twitter.com/LabsInfinite) - hello@infinitelabs.co
 
 
 <!-- ACKNOWLEDGEMENTS -->

@@ -7,6 +7,7 @@ import { ROLES_DEFAULT_ROUTES } from '../../Constants'
 const useStyles = makeStyles(() => ({
     pointer: {
         cursor: 'pointer',
+      marginTop: '5px',
     },
 }));
 
@@ -38,8 +39,7 @@ const AvatarMenu = (props) => {
             aria-haspopup="true" alt='user image' className={classes.pointer} />
             <Menu anchorEl={anchorEl} 
             keepMounted open={Boolean(anchorEl)}
-            getContentAnchorEl={null} anchorOrigin={{vertical:'bottom', horizontal:'rigth'}}
-            transformOrigin={{vertical:'top', horizontal:'rigth'}}
+                  
             onClose={handleClose}>
                 <MenuItem>
                     <Typography variant='body2' onClick={handleSettings}>Settings</Typography>

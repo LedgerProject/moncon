@@ -8,7 +8,7 @@ const router = express.Router();
 router.post('/setCustomClaims', async (req, res) => {
   const { token, claim } = req.body;
 
-  if (claim !== 'publisher' && claim !== 'user') {
+  if (claim !== 'publisher') {
     return res.status(400).send({ error: 'Invaid claim'});
   }
 
@@ -29,11 +29,6 @@ router.post('/setCustomClaims', async (req, res) => {
           id: user.uid,
           premiumContent: [],
         });
-      } else if (claim === 'user') {
-        if (await UserModel.exists({ id: user.uid })) {
-          return res.status(400).send({ error: 'User already exists' });
-        }
-        await UserModel.create({ id: user.uid });
       }
       await admin.auth().setCustomUserClaims(user.uid, {[claim]: true});
     }

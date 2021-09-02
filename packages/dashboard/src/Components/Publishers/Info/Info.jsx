@@ -5,7 +5,20 @@ import apiService from '../../../Services/apiService';
 const useStyles = makeStyles(() => ({
         infoBox: {
             padding: 50,
-        }
+        },
+  infoNumber:{
+    fontWeight: 700,
+    lineHeight:'2'
+  },
+  currency:{
+    fontWeight: 400,
+    lineHeight: '21,79px',
+    fontSize: '1.4rem',
+  },
+  infoText:{
+    fontWeight: 400,
+    lineHeight: '24,52px'
+  }
     }
 ));
 
@@ -25,9 +38,9 @@ const Info = () => {
         conversion: 'Conversion',
     };
 
-    const suffixes = {
-        incomes: '€',
-        conversion: '%',
+  const suffixes = {
+    incomes: <span className={classes.currency}>€</span>,
+        conversion: <span className={classes.currency}>%</span>,
     };
 
     useEffect(() => {
@@ -43,11 +56,11 @@ const Info = () => {
     return(
         <>
             {Object.keys(info).map((infoKey) => (
-                <Grid item xs={6} md={3} className={classes.root}>
-                    <Card>
-                        <Paper className={classes.infoBox}>
-                            <Typography variant="h3" align="center">{info[infoKey] === '' ? 0 : `${Number(info[infoKey]).toLocaleString()}${suffixes[infoKey] || ''}`}</Typography>
-                            <Typography variant="h6" align="center">{labels[infoKey]}</Typography>
+                <Grid item xs={6} md={3} className={classes.root} key={infoKey}>
+                    <Card >
+                        <Paper className={classes.infoBox} >
+                            <Typography className={classes.infoNumber} variant="h3" align="center" >{info[infoKey] === '' ? 0 : `${Number(info[infoKey]).toLocaleString()}`}{suffixes[infoKey] || ''}</Typography>
+                            <Typography  className={classes.infoText} variant="h6" align="center">{labels[infoKey]}</Typography>
                         </Paper>
                     </Card>
                 </Grid>

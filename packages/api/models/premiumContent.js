@@ -4,6 +4,8 @@ const { Schema } = mongoose
 
 export const PREMIUMCONTENT_STATUS_ACTIVE = 'ACTIVE';
 export const PREMIUMCONTENT_STATUS_DELETED = 'DELETED';
+export const LEGAL_AGE = 'LEGAL_AGE';
+export const MINOR = 'MINOR';
 
 const PremiumContentSchema = new Schema({
     publisherId: {
@@ -32,6 +34,26 @@ const PremiumContentSchema = new Schema({
     domain: {
         type: String,
     },
+    age:{
+        type: String,
+        enum: [LEGAL_AGE, MINOR],
+        default: MINOR,
+    },
+    /*
+    To Do 
+    see if exist a better way to add conditions dinamically 
+
+    conditions:[
+        {
+            conditionType:{
+                type: String
+            },
+            condition:{
+                type:String,
+            }
+        }
+    ],
+    */
     status: {
         type: String,
         required: true,

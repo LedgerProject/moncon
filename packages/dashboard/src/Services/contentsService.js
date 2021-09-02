@@ -1,4 +1,5 @@
 import apiService from './apiService.js';
+import { AMOUNT_TO_STORE } from '../Constants'; 
 
 export const isValidURL = (str) => {
   const pattern = new RegExp('^(https?:\\/\\/)'+ // protocol
@@ -11,7 +12,7 @@ export const isValidURL = (str) => {
 }
 
 export const addNewContent = (urlData) => {
-  const {url,title,image,amount, domain} = urlData
+  const {url,title,image,amount, domain, age} = urlData
   if (!url) throw new Error('You need to enter a URL');
   if (!isValidURL(url)) throw new Error('Invalid URL');
 
@@ -19,8 +20,9 @@ export const addNewContent = (urlData) => {
     url,
     title,
     image,
-    amount,
+    amount: AMOUNT_TO_STORE(amount),
     domain,
+    age,
   })
 }
 

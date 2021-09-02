@@ -3,6 +3,12 @@ import { makeStyles, Typography } from "@material-ui/core";
 const useStyles = makeStyles(() => ({
   title: {
       marginBottom: 20,
+    fontWeight: 700,
+    lineHeight: '43,58px',
+  "@media screen and (max-width: 800px)": {
+      marginTop: "10px",
+    textAlign: 'center',
+    },
   }
 }));
 

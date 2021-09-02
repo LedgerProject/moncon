@@ -29,7 +29,7 @@ const BestContents = ()=> {
 
     return (
         <Grid container spacing={4}>
-            {bestContent.map((content)=> <Content content={content} changeContentStatus={changeContentStatus} showMetrics />)}
+            {bestContent.map((content)=> <Content key={content.url} content={content} changeContentStatus={changeContentStatus} showMetrics />)}
         </Grid>
     );
 }

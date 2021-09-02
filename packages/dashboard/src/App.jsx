@@ -7,16 +7,13 @@ import PremiumContent from './Components/PremiumContent';
 import Settings from './Components/Settings'
 import Header from './Components/Header';
 import Admin from './Components/Admin';
-import Users from './Components/Users';
-import UserSettings from './Components/UserSettings'
-import Login from './Components/NewLogin';
+import Login from './Components/Login';
 import Spinner from './Components/Spinner/Spinner';
 import AppContext from './AppContext';
 import { getRoleFromUserClaims } from './Services/utilsService';
 import { ROLES_DEFAULT_ROUTES, ROLE_ADMIN, ROLE_PUBLISHER, ROLE_USER, LS_KEY_TOKEN } from './Constants';
 import { Container, makeStyles } from '@material-ui/core';
-import TokenizedContent from './Components/Publishers/TokenizedContent';
-import NFTMarketplace from './Components/NFTMarketplace';
+
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -73,18 +70,14 @@ function App() {
       <Spinner open={true} />
     ) : (
     <AppContext.Provider value={{isUserAuthed, userRole, userId, userPhoto, setUserRole, setIsLoading, logout}}>
-      { location.pathname !== '/auth' && location.pathname !== '/newlogin' && location.pathname !== '/marketplace' && <Header/> }
+      { location.pathname !== '/auth' && location.pathname !== '/newlogin'  && <Header/> }
       <div className={classes.root}>
         <Container>
           <Switch>
             <Route exact path="/auth" component={Login} />
-            <Route exact path="/marketplace" component={NFTMarketplace} />
             <PrivateRoute exact path="/publishers" component={Publishers} allowedRoles={[ROLE_PUBLISHER]} />
             <PrivateRoute exact path="/mycontent" component={PremiumContent} allowedRoles={[ROLE_PUBLISHER]} />
-            <PrivateRoute exact path="/nfts" component={TokenizedContent} allowedRoles={[ROLE_PUBLISHER]} />
             <PrivateRoute exact path="/publishers/settings" component={Settings} allowedRoles={[ROLE_PUBLISHER]} />
-            <PrivateRoute exact path="/users/settings" component={UserSettings} allowedRoles={[ROLE_USER]} />
-            <PrivateRoute exact path="/users" component={Users} allowedRoles={[ROLE_USER]} />
             <PrivateRoute exact path="/admin" component={Admin} allowedRoles={[ROLE_ADMIN]} />
             <Redirect to={redirectPath} />
           </Switch>

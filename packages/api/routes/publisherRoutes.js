@@ -1,13 +1,19 @@
 import express from 'express';
+import Stripe from 'stripe';
 import moment from 'moment';
 import validUrl from 'valid-url';
 import mongoose from 'mongoose';
 import PublisherModel from '../models/publisher.js';
 import MetricsModel, { PAGEVIEW_ANONYMOUS, PAGEVIEW_JUST_PURCHASED, PAGEVIEW_NOT_PURCHASED } from '../models/metrics.js';
-import PurchasesModel from '../models/purchases.js';
+import PurchasesModel, {PURCHASES_STATUS_PAID,PURCHASES_STATUS_UNPAID} from '../models/purchases.js';
 import { getUrlData } from '../services/utilsService.js';
 import NotOwnerError from '../errors/NotOwnerError.js';
-import PremiumContentModel, { PREMIUMCONTENT_STATUS_DELETED, PREMIUMCONTENT_STATUS_ACTIVE } from '../models/premiumContent.js';
+import PremiumContentModel, { PREMIUMCONTENT_STATUS_DELETED, PREMIUMCONTENT_STATUS_ACTIVE, MINOR } from '../models/premiumContent.js';
+import { AMOUNT_TO_DISPLAY } from '../Const.js';
+
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
+const feePercent = 5
+const calculateFee = (purcharseAmount) => ((feePercent * purcharseAmount)/  100)
 
 const router = express.Router();
 
@@ -48,8 +54,9 @@ router.get('/premiumContent', async (req, res) => {
 });
 
 router.put('/premiumContent', async (req, res) => {
-  const { url, domain, image, title, amount } = req.body;
+  const { url, domain, image, title, amount, age } = req.body;
   const publisherId = res.locals.userId;
+
   const exists = await PremiumContentModel.findOne({
     publisherId: publisherId,
     url,
@@ -70,6 +77,7 @@ router.put('/premiumContent', async (req, res) => {
         title,
         image,
         domain,
+        age: age || MINOR,
         status: PREMIUMCONTENT_STATUS_ACTIVE,
       },
       { upsert: true, new: true },
@@ -137,7 +145,7 @@ router.get('/info', async (req, res) => {
   ]);
   
   const visits = visitsRows.length;
-  const incomes = purchases.length ? purchases[0].totalAmount : 0;
+  const incomes = purchases.length ? AMOUNT_TO_DISPLAY(purchases[0].totalAmount) : 0;
   const contents = purchases.length ? purchases[0].numPurchases : 0;
   const conversion = (contents / visits) * 100;
 
@@ -269,27 +277,135 @@ router.get('/chart', async (req, res) => {
   res.json(response);
 });
 
-router.get('/paymentPointer', async (req,res) => {
+router.get('/unpaid-balance', async (req, res) => {
   const publisherId = res.locals.userId;
-  const publisher = await PublisherModel.findOne({ id: publisherId });
-  res.json(publisher?.paymentPointer || '');
+  console.table({publisherId})
+   
+  try{
+    const purchases = await PurchasesModel.find({publisherId,status: PURCHASES_STATUS_UNPAID});
+    const unpaidBalance = purchases.reduce((total,purchase) => (total || 0)+ purchase.amount,0)
+    const fee = calculateFee(unpaidBalance)
+    return res.status(200).json({ unpaidBalance: unpaidBalance - fee  })
+  }catch(err){
+    console.error('Error returning unpaid balance : ', err);
+    return res.status(500).json({ error: 'Error returning unpaid balance'});
+  }
 });
 
-router.post('/paymentPointer', async (req, res) => {
+router.post('/pay-to-stripe', async (req, res) => {
   const publisherId = res.locals.userId;
-  const { paymentPointer } = req.body;
-  try {
-    const publisher = await PublisherModel.findOneAndUpdate(
-      { id: publisherId },
-      { $set : { 'paymentPointer':  paymentPointer } },
-      { upsert: true, new: true },
-    );
-    
-    res.json(publisher.paymentPointer);
-  } catch (err) {
-    console.log(err.message);
-    res.status(500).send({ error: err.message });
+  console.table({publisherId})
+  let unpaidBalance = 0;
+  let purchases = [];
+
+  try{
+    purchases = await PurchasesModel.find({publisherId,status: PURCHASES_STATUS_UNPAID});
+    unpaidBalance = purchases.reduce((total,purchase) => (total || 0)+ purchase.amount,0)
+  }catch(err){
+    console.error('Error returning calculating balance : ', err);
+    return res.status(500).json({ error: 'Error returning calculating balance'});
   }
-})
+
+  const publisher = await PublisherModel.findOne({ id: publisherId });
+
+  const stripeAccountId = publisher?.stripeAccountId;
+  if(!stripeAccountId){
+    console.error('Error User does not have a stripe account ');
+    console.log(`publisherId: ${publisherId}`)
+    return res.status(400).json({ error: 'Error User does not have a stripe account'}); 
+  }
+  const fee = calculateFee(unpaidBalance)
+  try{
+    const transfer = await stripe.transfers.create({
+      amount: unpaidBalance-fee,
+      currency: 'eur',
+      destination: stripeAccountId,
+      description: 'pay to publisher stripe account',
+      metadata: {publisherId}
+    });
+  }catch(err){
+    console.error('Error in transference : ', err);
+    return res.status(500).json({ error: 'Error in transference'});
+  }
+
+  try{
+    purchases.forEach(async(purchase)=> {
+      await PurchasesModel.findOneAndUpdate(
+      { _id: purchase._id },
+      { $set : { 'status': PURCHASES_STATUS_PAID } },
+      { upsert: true, new: true },
+    )
+    });
+    
+  }catch(err){
+    console.error('Error changing status of purchases content from unpaid to paid : ', err);
+    console.log(purchases)
+    return res.status(500).json({ error: 'Error changing status of purchases content'});
+  }
+
+  return res.status(200).json({paidBalance: unpaidBalance-fee})
+
+});
+
+
+router.get('/account', async (req, res) => {
+  const publisherId = res.locals.userId;
+  
+  try{
+
+    const publisher = await PublisherModel.findOne({ id: publisherId });
+
+    return res.status(200).json(publisher)
+  }catch(err){
+    console.error('Error returning connected account : ', err);
+    return res.status(500).json({ error: 'Error returning connected account'});
+  }
+});
+
+router.post('/account', async (req, res) => {
+  const publisherId = res.locals.userId;
+  
+  try{
+    const account = await stripe.accounts.create({
+      type: 'standard',
+    });
+
+    const publisher = await PublisherModel.findOne({ id: publisherId });
+    if(publisher.stripeAcountId){
+      throw new Error('Error publisher already have an account')
+    }
+    publisher.stripeAccountId = account.id
+
+    await publisher.save()
+
+    return res.status(200).json({ stripeAccountId: account.id})
+  }catch(err){
+    console.error('Error creating connected account : ', err);
+    return res.status(500).json({ error: 'Error creating connected account'});
+  }
+});
+
+router.post('/account-link', async (req, res) => {
+  const { stripeAccountId } = req.body;
+
+  try{
+    const accountLink = await stripe.accountLinks.create({
+      account: stripeAccountId,
+      refresh_url: `${req.headers.referer}publishers/settings`,
+      return_url: `${req.headers.referer}publishers`,
+      type: 'account_onboarding',
+    });
+
+    return res.status(200).json(
+      {
+        url: accountLink.url,
+        expires_at: accountLink.expires_at
+      }
+    )
+  }catch(err){
+    console.error('Error creating account link: ', err);
+    return res.status(500).json({ error: 'Error creating account link'});
+  }
+});
 
 export default router;

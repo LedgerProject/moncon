@@ -19,12 +19,16 @@
   display:none;
   font-family: 'Conv_TTCommons-Regular', Sans-Serif;
   position: absolute;
-  top: 20%;
+  top: 1%;
   z-index: 1000;
   margin: 0 auto;
   width: 100%;
   background: rgba(255,255,255,0.5);
-  backdrop-filter: blur(5px);
+    filter: blur(0);
+  -webkit-filter: blur(0);
+  -moz-filter: blur(0);
+  -o-filter: blur(0);
+  -ms-filter: blur(0);
 }
 
 #moncon-block button {
@@ -49,9 +53,13 @@
   left: -50%;
   width: 500px;
   padding: 30px 15px;
-  
+   z-index: 999999999999999999999999999;
   background: white;
-  
+  filter: blur(0);
+  -webkit-filter: blur(0);
+  -moz-filter: blur(0);
+  -o-filter: blur(0);
+  -ms-filter: blur(0);
   -moz-box-shadow: 3px 3px 5px #535353;
   -webkit-box-shadow: 3px 3px 5px #535353;       
   box-shadow: 3px 3px 5px #535353;
@@ -70,6 +78,7 @@
 /* To align img vertically: https://stackoverflow.com/a/7310398/2803190 */
 #moncon-step1-logo {
   height: 40px;
+  margin-bottom: 40px;
 }
 
 #moncon-step1-logo span {
@@ -96,165 +105,23 @@
   padding: 20px;
 }
 
-#moncon-step2 {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-/* To align img vertically: https://stackoverflow.com/a/7310398/2803190 */
-#moncon-step2-logo {
-  height: 40px;
-  margin-bottom: 20px;
-}
-
-#moncon-step2-logo span {
-  display: inline-block;
-  height: 100%;
-  vertical-align: middle;
-}
-
-#moncon-step2-logo img {
-  vertical-align: middle;
-  max-height: 40px;
-}
-
-/* To align img vertically: https://stackoverflow.com/a/7310398/2803190 */
-#moncon-step2-image {
-  height: 80px;
-}
-
-#moncon-step2-image span {
-  display: inline-block;
-  height: 100%;
-  vertical-align: middle;
-}
-
-#moncon-step2-image img {
-  vertical-align: middle;
-  max-height: 80px;
-}
-
-#moncon-step2-title {
-  font-size: 1.5em;
+#moncon-link {
+  text-decoration: underline;
+  text-align: center;
   font-weight: bold;
-  text-align: center;
-  padding: 20px;
+  text-decoration-color: #000;
 }
 
-#moncon-step2-description {
-  font-size: 1.2em;
-  text-align: center;
-  padding: 20px;
+.stop-scrolling >*{
+ filter: blur(10px);
+  -webkit-filter: blur(10px);
+  -moz-filter: blur(10px);
+  -o-filter: blur(10px);
+  -ms-filter: blur(10px);
+
 }
 
-#moncon-step-login-buttons {
-  width: 70%;
-}
-
-#moncon-step-login-button-facebook {
-  display: block;
-  width: 100%;
-  margin-bottom: 10px;
-  background: #295b94 !important;
-  border-color: #295b94 !important;
-}
-
-#moncon-step-login-button-google {
-  display: block;
-  width: 100%;
-  background: #008ceb !important;
-  border-color: #008ceb !important;
-}
-
-#moncon-step-payment {
-  text-align: center;
-}
-
-#moncon-step-payment-logo {
-  height: 40px;
-  text-align: center;
-}
-
-#moncon-step-payment-logo span {
-  display: inline-block;
+/*.stop-scrolling{
   height: 100%;
-  vertical-align: middle;
-}
-
-#moncon-step-payment-logo img {
-  vertical-align: middle;
-  max-height: 40px;
-}
-
-#moncon-step-payment-title {
-  font-size: 1.5em;
-  font-weight: bold;
-  text-align: center;
-  padding: 20px;
-}
-
-#moncon-step-payment-card {
-  padding: 20px;
-}
-
-#moncon-button-payment {
-  margin-top: 20px;
-  min-width: 200px;
-}
-
-#moncon-step3 {
-  display: flex;
-  flex-direction: column;
-}
-
-#moncon-step3-header {
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-}
-
-#moncon-step3-header-premium {
-  font-weight: bold;
-}
-
-#moncon-step3-header-premium img {
-  height: 20px;
-  margin-right: 10px;
-}
-
-#moncon-step3-header-user {
-  font-size: 0.7em;
-}
-
-#moncon-step3-header-user img {
-  max-height: 25px;
-  border-radius: 50%;
-  margin-left: 10px;
-}
-
-/* To align img vertically: https://stackoverflow.com/a/7310398/2803190 */
-#moncon-step3-logo {
-  height: 80px;
-  margin: 0 auto;
-}
-
-#moncon-step3-logo span {
-  display: inline-block;
-  height: 100%;
-  vertical-align: middle;
-}
-
-#moncon-step3-logo img {
-  vertical-align: middle;
-  max-height: 40px;
-}
-
-#moncon-step3-text {
-  font-size: 0.8em;
-  margin: 0 auto 30px;
-}
-
-#moncon-step3-button {
-  margin: 0 auto 30px;
-}
+  overflow: hidden;
+}*/

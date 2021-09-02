@@ -4,35 +4,40 @@ import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 import { BrowserRouter } from 'react-router-dom';
-import { createMuiTheme, ThemeProvider } from '@material-ui/core/styles';
+import { createMuiTheme, ThemeProvider , responsiveFontSizes } from '@material-ui/core/styles';
 import { CssBaseline } from '@material-ui/core';
+import { ToastProvider } from 'react-toast-notifications';
 
-const theme = createMuiTheme({
-    palette: {
-      primary: {
-        main:"#1c1c1c"
+const theme = responsiveFontSizes(
+  createMuiTheme({
+      palette: {
+        primary: {
+          main:"#1c1c1c"
+        },
+        secondary:{
+          main:"#fff"
+        },
+        background: {
+          default: '#f8f8f8'
+        }
       },
-      secondary:{
-        main:"#fff"
-      },
-      background: {
-        default: '#f8f8f8'
+      typography:{
+        fontFamily: [
+          'Poppins',
+          'Roboto'
+        ].join(',')
       }
-    },
-    typography:{
-      fontFamily: [
-        'Poppins',
-        'Roboto'
-      ].join(',')
-    }
-})
+  })
+)
 
 ReactDOM.render(
   <React.StrictMode>
     <ThemeProvider theme={theme} >
       <CssBaseline/> 
       <BrowserRouter>
+      <ToastProvider autoDismissTimeout={2000} placement="bottom-center">
         <App />
+      </ToastProvider>
       </BrowserRouter>
     </ThemeProvider>
   </React.StrictMode>,

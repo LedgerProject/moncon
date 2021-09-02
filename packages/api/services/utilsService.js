@@ -31,6 +31,7 @@ const getTitle = async (page) => {
     if (docTitle != null && docTitle.length > 0) {
       return docTitle;
     }
+
     const h1 = document.querySelector('h1').innerHTML;
     if (h1 != null && h1.length > 0) {
       return h1;
@@ -39,6 +40,7 @@ const getTitle = async (page) => {
     if (h2 != null && h2.length > 0) {
       return h2;
     }
+
     return null;
   });
   return title;
@@ -135,15 +137,27 @@ export const getUrlData = async (url, publisherId) => {
   if (!await isWebOwner(page, publisherId)) {
     throw new NotOwnerError();
   }
-
-  const data = await Promise.all([
-    getTitle(page),
-    getDomainName(page, url),
-    getImage(page, url),
-  ]);
-  return {
-    title: data[0],
-    domain: data[1],
-    image: data[2],
-  };
+  const pageTitle = await page.title();
+  if(pageTitle != null && pageTitle.length > 0){
+    const data = await Promise.all([
+      getDomainName(page, url),
+      getImage(page, url),
+    ]);
+    return {
+      title: pageTitle,
+      domain: data[0],
+      image: data[1],
+    };
+  }else{
+    const data = await Promise.all([
+      getTitle(page),
+      getDomainName(page, url),
+      getImage(page, url),
+    ]);
+    return {
+      title: data[0],
+      domain: data[1],
+      image: data[2],
+    };
+  }
 }

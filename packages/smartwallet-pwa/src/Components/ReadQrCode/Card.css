@@ -1,0 +1,49 @@
+.stripe-elements {
+  border-radius: 30px;
+  padding: 20px;
+  border-style: solid;
+  border-color: rgba(0, 0, 0, 0.23);
+  border-width: 1px;
+}
+
+.stripe-card {
+  width: 514px;
+}
+
+.stripe-expiry {
+  width: 240px;
+}
+
+div .MuiDialogContent-root{
+padding: 18px 30px;
+}
+
+div .MuiDialog-paperFullWidth {
+    width: calc(100% - 424px);
+}
+
+
+
+
+
+@media screen and (max-width: 768px) {
+ div .MuiDialogContent-root{
+padding: 18px 12px;
+
+
+}
+
+
+div .MuiDialog-paperFullWidth {
+    width: calc(100% - 64px);
+}
+
+.stripe-card {
+  width: 284px;
+}
+
+.stripe-expiry {
+  width: 140px;
+}
+
+}

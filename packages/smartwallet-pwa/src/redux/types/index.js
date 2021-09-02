@@ -1,0 +1,2 @@
+export const ADD_CONTACT = 'ADD_CONTACT';
+export const TOGGLE_CONTACT = 'TOGGLE_CONTACT';

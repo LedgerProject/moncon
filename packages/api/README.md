@@ -1,10 +1,9 @@
-<p align="center">
-  <a href="" rel="noopener">
- <img width=200px height=200px src="https://i.imgur.com/6wj0hh6.jpg" alt="Project logo"></a>
-</p>
+<table align="center"><tr><td align="center" width="9999">
+<img src="https://imgur.com/5O5TvDu.png" align="center" width="150" alt="Project icon">
 
-<h3 align="center">moncon-api</h3>
+# moncon API
 
+</td></tr></table>
 <div align="center">
 
 [![Status](https://img.shields.io/badge/status-active-success.svg)]()
@@ -15,10 +14,6 @@
 </div>
 
 ---
-
-<p align="center"> Few lines describing your project.
-    <br> 
-</p>
 
 ## 📝 Table of Contents
 

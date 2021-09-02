@@ -8,7 +8,7 @@ const PublisherSchema = new Schema({
     type: String,
     required: true,
   },
-  paymentPointer: {
+  stripeAccountId: {
     type: String,
   },
   premiumContent: [{
