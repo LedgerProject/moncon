@@ -129,29 +129,20 @@ This section should list any major frameworks that you built your project using.
 ## Projects
 
 ### Dashboard
+- **[See more...](https://github.com/LedgerProject/moncon/tree/main/packages/dashboard)**
+- moncon Dashboard is coded in React is designed to provide a content log to block and monetize, as well as metrics for your blocked content. 
 
-moncon Dashboard is encoded in React is designed to provide a content log to block and monetize, as well as metrics for your blocked content.
-
-[See more...](./packages/dashboard)
-
-### Progressive web app
-
-monco Wallet is a Progressive Web App fully encoded in React. monco Wallet is designed to provide credential registration and QR code scanner and more.
-
-[See more...](./packages/smartwallet-pwa)
+### Progressive Web App (moncon Wallet)
+-- **[PWA](https://github.com/LedgerProject/moncon/tree/main/packages/moncon-wallet)**
+-- moncon wallet is a Progressive Web App fully encoded in React. moncon Wallet is designed to provide verifiable credential issuing and sharing and QR code scanner and micropayments. 
 
 ### API
-
-moncon API is encoded in NodeJS and is designed to run microservices required by the Dashboard and the progressive web app.
-
-[See more...](./packages/api)
+-- **[API](https://github.com/LedgerProject/moncon/tree/main/packages/api)**
+-- moncon API is coded in NodeJS and Zenroom, designed to run microservices required by the Dashboard and the progressive web app. 
 
 ### Publisher JS
-
-Publisher JS is encoded in JavaScript and is designed to execute the framework of the QR code to be able to block the content to be monetized.
-
-[See more...](./packages/publisherjs)
-
+-- **[Publisher JS](https://github.com/LedgerProject/moncon/tree/main/packages/publisherjs)**
+-- Publisher JS is a JavaScript libreary with the goal to execute the paywall framework, using a QR code to be able to block the content for specific credentials and sell it at a fix priced. 
 
 
 <!-- GETTING STARTED -->
