@@ -79,8 +79,8 @@
         <li><a href="#setup">Setup</a></li>
       </ul>
     </li>
-    <li><a href="#theteam">The Team</a></li>
-    <li><a href="#usecasedemo">Use Case Demo</a></li>
+    <li><a href="#the-team">The Team</a></li>
+    <li><a href="#use-case-demo">Use Case Demo</a></li>
     <li><a href="#roadmap">Roadmap</a></li>
     <li><a href="#contributing">Contributing</a></li>
     <li><a href="#terms-and-license">Terms and License</a></li>
