@@ -1,9 +1,9 @@
-import React from 'react'
-import Icon from './useicon.svg'
+import React from "react";
+import Icon from "./useicon.svg";
 
-const IconUse = (  ) => (
-  <>   
-    <img src={Icon} alt="icon"/>
+const IconUse = () => (
+  <>
+    <img src={Icon} alt="icon" />
   </>
-)
-export default IconUse
+);
+export default IconUse;

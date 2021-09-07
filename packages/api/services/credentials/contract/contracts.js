@@ -1,4 +1,4 @@
-export const singVC=`
+export const singVC = `
 # We'll need bowth the 'ecdh' and the 'w3c' scenarios loaded
 Scenario 'w3c' : sign
 Scenario 'ecdh' : keypair
@@ -23,7 +23,7 @@ When I set the verification method in 'my-vc' to 'PublicKeyUrl'
 
 # this prints out the signed vc
 Then print 'my-vc' as 'string'
-	`
+	`;
 
 export const verifyVC = `
 Scenario 'w3c' : verify w3c vc signature
@@ -32,4 +32,4 @@ Given I have a 'public key' from 'Issuer'
 Given I have a 'verifiable credential' named 'my-vc'    
 When I verify the verifiable credential named 'my-vc'
 Then print the string 'YES, the signature matches the public key'
-`
+`;

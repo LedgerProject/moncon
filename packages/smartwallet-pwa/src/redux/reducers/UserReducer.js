@@ -3,9 +3,9 @@ import {
   LS_USER_KEY,
   credential_mobil,
   credential_email,
-  credential_address, 
+  credential_address,
   credential_birthday,
-  initialState
+  initialState,
 } from "../../Const";
 export const update = createAction("update");
 const addDynamicField = createAction("add-dynamic-field");
@@ -61,13 +61,13 @@ const UserReducer = createSlice({
       return newState;
     },
 
-    [addArticles]: (state, action) =>{
+    [addArticles]: (state, action) => {
       let newState = {
-        ...state, articles: [...state.articles, action.payload]
-      }
+        ...state,
+        articles: [...state.articles, action.payload],
+      };
       localStorage.setItem(LS_USER_KEY, JSON.stringify(newState));
       return newState;
-
     },
 
     [loadStoreData]: (state, action) => {
@@ -77,4 +77,3 @@ const UserReducer = createSlice({
 });
 
 export default UserReducer.reducer;
-

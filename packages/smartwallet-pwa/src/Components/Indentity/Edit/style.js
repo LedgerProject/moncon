@@ -7,77 +7,76 @@ export const useStyles = makeStyles((theme) => ({
     boxSizing: "border-box",
     margin: "0",
     padding: 0,
-    background: '#272727',
-    position: 'relative',
-  
+    background: "#272727",
+    position: "relative",
+
     "& label.Mui-focused": {
-      color: focusedColor
+      color: focusedColor,
     },
-  
+
     "& .MuiInput-underline:after": {
-      borderBottomColor: focusedColor
+      borderBottomColor: focusedColor,
     },
-     "& .MuiInput-underline:before": {
-      borderBottomColor: focusedColor
+    "& .MuiInput-underline:before": {
+      borderBottomColor: focusedColor,
     },
     "& .MuiFilledInput-underline:after": {
-      borderBottomColor: focusedColor
+      borderBottomColor: focusedColor,
     },
-   
+
     "& .MuiOutlinedInput-root": {
       "&.Mui-focused fieldset": {
-        borderColor: focusedColor
-      }
+        borderColor: focusedColor,
+      },
     },
     "&.Mui-focused": {
-      color: "rgba(255, 255, 255, 0.74)"
+      color: "rgba(255, 255, 255, 0.74)",
     },
     "& .MuiFormLabel-root": {
       color: "rgba(255, 255, 255, 0.74)",
-      fontSize: '1.6rem',
+      fontSize: "1.6rem",
     },
   },
-field: {
-    "& .MuiInputBase-input":{
-      color: '#ffff !important',
-fontSize: '1.8rem !important',
+  field: {
+    "& .MuiInputBase-input": {
+      color: "#ffff !important",
+      fontSize: "1.8rem !important",
     },
-     "& label.Mui-focused": {
-      color: focusedColor
+    "& label.Mui-focused": {
+      color: focusedColor,
     },
-  
+
     "& .MuiInput-underline:after": {
-      borderBottomColor: focusedColor
+      borderBottomColor: focusedColor,
     },
-     "& .MuiInput-underline:before": {
-      borderBottomColor: focusedColor
+    "& .MuiInput-underline:before": {
+      borderBottomColor: focusedColor,
     },
     "& .MuiFilledInput-underline:after": {
-      borderBottomColor: focusedColor
+      borderBottomColor: focusedColor,
     },
-   
+
     "& .MuiOutlinedInput-root": {
       "&.Mui-focused fieldset": {
-        borderColor: focusedColor
-      }
+        borderColor: focusedColor,
+      },
     },
     "&.Mui-focused": {
-      color: "rgba(255, 255, 255, 0.74)"
+      color: "rgba(255, 255, 255, 0.74)",
     },
     "& .MuiFormLabel-root": {
       color: "rgba(255, 255, 255, 0.74)",
-      fontSize: '1.6rem',
+      fontSize: "1.6rem",
     },
-
   },
 
-  return:{
-    color: '#ffff', 
-    display: 'flex', 
-    textAlign: 'left', 
-    marginTop: '15px',
-    cursor: 'pointer',
-    marginLeft: '15px',
+  return: {
+    color: "#ffff",
+    display: "flex",
+    textAlign: "left",
+    marginTop: "15px",
+    cursor: "pointer",
+    marginLeft: "15px",
     fontSize: "1.6rem",
   },
   buttonBlue: {
@@ -99,51 +98,47 @@ fontSize: '1.8rem !important',
       color: "#fff",
       cursor: "pointer",
     },
-     '&:hover': {
-            backgroundColor: '#03C1AE',
-            boxShadow: 'none',
-          },
-
+    "&:hover": {
+      backgroundColor: "#03C1AE",
+      boxShadow: "none",
+    },
   },
 
-  link:{
-    fontSize: '14px',
-    lineHeight: '20px',
-    color: '#00C4B4 !important'
+  link: {
+    fontSize: "14px",
+    lineHeight: "20px",
+    color: "#00C4B4 !important",
   },
 
-  proofSubtitle:{
+  proofSubtitle: {
     fontWeight: 500,
-    fontSize: '14px',
-    lineHeight: '24px',
-    color: 'rgba(255, 255, 255, 0.84)',
-    paddingTop:'10px',
+    fontSize: "14px",
+    lineHeight: "24px",
+    color: "rgba(255, 255, 255, 0.84)",
+    paddingTop: "10px",
   },
 
-  title:{
-    marginLeft: '15px',
-    fontWeight: 'bold',
-    fontSize: '2rem',
-    marginTop: '40px',
-    lineHeight: '24px',
-    color: '#ffff',
+  title: {
+    marginLeft: "15px",
+    fontWeight: "bold",
+    fontSize: "2rem",
+    marginTop: "40px",
+    lineHeight: "24px",
+    color: "#ffff",
   },
   input: {
-    fontSize: '1.8rem !important',
-    lineHeight: '24px !important',
-    width: '100% !important',
+    fontSize: "1.8rem !important",
+    lineHeight: "24px !important",
+    width: "100% !important",
     color: "#ffff !important",
     "&.Mui-focused": {
-      color: "#ffff !important"
+      color: "#ffff !important",
     },
     "& .MuiFormLabel-root": {
-      color: "#ffff !important" // or black
+      color: "#ffff !important", // or black
     },
     "& .MuiSvgIcon-root": {
-      color: '#ffff !important'
+      color: "#ffff !important",
     },
- 
-  }
-
+  },
 }));
-

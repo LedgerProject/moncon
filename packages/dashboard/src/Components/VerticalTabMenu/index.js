@@ -1,1 +1,1 @@
-export { default } from './VerticalTabMenu'
+export { default } from "./VerticalTabMenu";

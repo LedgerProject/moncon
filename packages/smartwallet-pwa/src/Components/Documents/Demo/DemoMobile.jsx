@@ -1,6 +1,6 @@
 import React from "react";
 import { useStyles } from "../styled";
-import { useSelector } from 'react-redux';
+import { useSelector } from "react-redux";
 import MonconImg from "../../../Assets/img/MonconImg";
 import Link from "../../Link";
 import IconLeft from "../../../Assets/svg/IconLeft";
@@ -18,7 +18,7 @@ const DemoMobile = () => {
     }
   };
 
-  const mobile = useSelector((state) => state.UserReducer[credential_mobil])
+  const mobile = useSelector((state) => state.UserReducer[credential_mobil]);
 
   return (
     <>
@@ -33,25 +33,20 @@ const DemoMobile = () => {
         <h1 style={{ color: "#ffff" }}>Proof Of ID Credential Demo</h1>
       </div>
 
- 
       <h1 className={classes.titleH1}>Issued by</h1>
-      <div style={{ marginTop: "15px" }} >
+      <div style={{ marginTop: "15px" }}>
         <div className={classes.proofContainerWhite}>
           <div className={classes.fabWhite}>
             <MonconImg />
           </div>
           <div>
-            <div  className={classes.issuedSubtitle}>
-              Mobile Phone
-            </div>
+            <div className={classes.issuedSubtitle}>Mobile Phone</div>
             <Link to="https://moncon.co/" className={classes.link}>
               https://moncon.co/
             </Link>
           </div>
         </div>
       </div>
-
-
 
       <h1 className={classes.titleH1}>Document details/claims</h1>
       <div
@@ -60,16 +55,11 @@ const DemoMobile = () => {
       >
         <div>
           <div style={{ marginLeft: "20px" }}>
-            <div  className={classes.documentsSubtitle}>
-              Message
-            </div>
-            <p className={classes.documentsMessage}>
-              {mobile.value}
-            </p>
+            <div className={classes.documentsSubtitle}>Message</div>
+            <p className={classes.documentsMessage}>{mobile.value}</p>
           </div>
         </div>
       </div>
-
     </>
   );
 };

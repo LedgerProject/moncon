@@ -1,1 +1,1 @@
-export { default } from './ReadQrCode';
+export { default } from "./ReadQrCode";

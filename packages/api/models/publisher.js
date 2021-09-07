@@ -1,7 +1,6 @@
-import mongoose from 'mongoose';
+import mongoose from "mongoose";
 
 const { Schema } = mongoose;
-
 
 const PublisherSchema = new Schema({
   id: {
@@ -11,9 +10,12 @@ const PublisherSchema = new Schema({
   stripeAccountId: {
     type: String,
   },
-  premiumContent: [{
-    type: Schema.Types.ObjectId, ref:'PremiumContent'
-  }],
+  premiumContent: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: "PremiumContent",
+    },
+  ],
 });
 
-export default mongoose.model('Publisher', PublisherSchema);
+export default mongoose.model("Publisher", PublisherSchema);

@@ -1,21 +1,21 @@
-import puppeteer from 'puppeteer';
-import NotOwnerError from '../errors/NotOwnerError.js';
+import puppeteer from "puppeteer";
+import NotOwnerError from "../errors/NotOwnerError.js";
 
 const isWebOwner = async (page, publisherId) => {
   const scriptSrc = await page.evaluate(() => {
-    const scriptTags = document.querySelectorAll('script');
+    const scriptTags = document.querySelectorAll("script");
     var scriptTagsArray = Array.prototype.slice.call(scriptTags);
-    let monconScriptSrc = '';
+    let monconScriptSrc = "";
     scriptTagsArray.forEach((script) => {
-      if (script.src.indexOf('/moncon.js?id=') > 0) {
+      if (script.src.indexOf("/moncon.js?id=") > 0) {
         monconScriptSrc = script.src;
       }
     });
     return monconScriptSrc;
   });
 
-  return (scriptSrc.endsWith(`/moncon.js?id=${publisherId}`));
-}
+  return scriptSrc.endsWith(`/moncon.js?id=${publisherId}`);
+};
 
 const getTitle = async (page) => {
   const title = await page.evaluate(() => {
@@ -32,11 +32,11 @@ const getTitle = async (page) => {
       return docTitle;
     }
 
-    const h1 = document.querySelector('h1').innerHTML;
+    const h1 = document.querySelector("h1").innerHTML;
     if (h1 != null && h1.length > 0) {
       return h1;
     }
-    const h2 = document.querySelector('h1').innerHTML;
+    const h2 = document.querySelector("h1").innerHTML;
     if (h2 != null && h2.length > 0) {
       return h2;
     }
@@ -59,49 +59,37 @@ const getDomainName = async (page, url) => {
     return null;
   });
   return domainName != null
-    ? new URL(domainName).hostname.replace('www.', '')
-    : new URL(url).hostname.replace('www.', '');
+    ? new URL(domainName).hostname.replace("www.", "")
+    : new URL(url).hostname.replace("www.", "");
 };
 
 const urlImageIsAccessible = async (url) => {
   const correctedUrls = getUrls(url);
   if (correctedUrls.size !== 0) {
     const urlResponse = await request(correctedUrls.values().next().value);
-    const contentType = urlResponse.headers['content-type'];
-    return new RegExp('image/*').test(contentType);
+    const contentType = urlResponse.headers["content-type"];
+    return new RegExp("image/*").test(contentType);
   }
 };
 
 const getImage = async (page, url) => {
   const img = await page.evaluate(async () => {
     const ogImg = document.querySelector('meta[property="og:image"]');
-    if (
-      ogImg != null &&
-      ogImg.content.length > 0 &&
-      (await urlImageIsAccessible(ogImg.content))
-    ) {
+    if (ogImg != null && ogImg.content.length > 0) {
       return ogImg.content;
     }
     const imgRelLink = document.querySelector('link[rel="image_src"]');
-    if (
-      imgRelLink != null &&
-      imgRelLink.href.length > 0 &&
-      (await urlImageIsAccessible(imgRelLink.href))
-    ) {
+    if (imgRelLink != null && imgRelLink.href.length > 0) {
       return imgRelLink.href;
     }
     const twitterImg = document.querySelector('meta[name="twitter:image"]');
-    if (
-      twitterImg != null &&
-      twitterImg.content.length > 0 &&
-      (await urlImageIsAccessible(twitterImg.content))
-    ) {
+    if (twitterImg != null && twitterImg.content.length > 0) {
       return twitterImg.content;
     }
 
     let imgs = Array.from(document.getElementsByTagName("img"));
     if (imgs.length > 0) {
-      imgs = imgs.filter(img => {
+      imgs = imgs.filter((img) => {
         let addImg = true;
         if (img.naturalWidth > img.naturalHeight) {
           if (img.naturalWidth / img.naturalHeight > 3) {
@@ -117,7 +105,7 @@ const getImage = async (page, url) => {
         }
         return addImg;
       });
-      imgs.forEach(img =>
+      imgs.forEach((img) =>
         img.src.indexOf("//") === -1
           ? (img.src = `${new URL(url).origin}/${src}`)
           : img.src
@@ -130,34 +118,43 @@ const getImage = async (page, url) => {
 };
 
 export const getUrlData = async (url, publisherId) => {
-  const browser = await puppeteer.launch();
+  const browser = await puppeteer.launch({
+    headless: true,
+    args: ["--no-sandbox", "--disable-setuid-sandbox"],
+  });
   const page = await browser.newPage();
   await page.goto(url);
 
-  if (!await isWebOwner(page, publisherId)) {
+  if (!(await isWebOwner(page, publisherId))) {
     throw new NotOwnerError();
   }
+
   const pageTitle = await page.title();
-  if(pageTitle != null && pageTitle.length > 0){
+  console.log("page.title", pageTitle);
+  if (pageTitle != null && pageTitle.length > 0) {
     const data = await Promise.all([
       getDomainName(page, url),
       getImage(page, url),
     ]);
+    console.log("puppeteer response", data);
+    await browser.close();
     return {
       title: pageTitle,
       domain: data[0],
       image: data[1],
     };
-  }else{
+  } else {
     const data = await Promise.all([
       getTitle(page),
       getDomainName(page, url),
       getImage(page, url),
     ]);
+    console.log("puppeteer response", data);
+    await browser.close();
     return {
       title: data[0],
       domain: data[1],
       image: data[2],
     };
   }
-}
+};

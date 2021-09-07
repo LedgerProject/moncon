@@ -7,7 +7,7 @@
     "start": "cp .env.development .env && webpack serve --mode development",
     "build:staging": "cp .env.staging .env && webpack --mode production",
     "deploy:staging": "scp -r build infinitelabs:/home/ubuntu/site/cdn",
-    "build:deploy": "yarn  build:staging && yarn deploy:staging",    
+    "build:deploy": "yarn  build:staging && yarn deploy:staging",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Jose Juan",
@@ -32,6 +32,7 @@
     "copy-webpack-plugin": "^8.0.0",
     "css-loader": "^5.1.2",
     "dotenv-webpack": "^7.0.1",
+    "prettier": "2.3.2",
     "serve": "^11.3.2",
     "style-loader": "^2.0.0",
     "webpack": "^5.24.2",

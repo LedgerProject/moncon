@@ -1,11 +1,11 @@
-import mongoose from 'mongoose';
+import mongoose from "mongoose";
 
 const { Schema } = mongoose;
 
-export const PAGEVIEW_ANONYMOUS = 'ANONYMOUS';
-export const PAGEVIEW_NOT_PURCHASED = 'NOT_PURCHASED';
-export const PAGEVIEW_JUST_PURCHASED = 'JUST_PURCHASED';
-export const PAGEVIEW_PREVIOUSLY_PURCHASED = 'PREVIOUSLY_PURCHASED';
+export const PAGEVIEW_ANONYMOUS = "ANONYMOUS";
+export const PAGEVIEW_NOT_PURCHASED = "NOT_PURCHASED";
+export const PAGEVIEW_JUST_PURCHASED = "JUST_PURCHASED";
+export const PAGEVIEW_PREVIOUSLY_PURCHASED = "PREVIOUSLY_PURCHASED";
 
 const MetricsSchema = new Schema({
   publisherId: {
@@ -19,16 +19,21 @@ const MetricsSchema = new Schema({
     type: String,
     required: true,
   },
-  premiumContentId:{
+  premiumContentId: {
     type: Schema.Types.ObjectId,
-    ref: 'PremiumContent',
+    ref: "PremiumContent",
     required: true,
   },
   type: {
     type: String,
-    enum: [PAGEVIEW_ANONYMOUS, PAGEVIEW_NOT_PURCHASED, PAGEVIEW_JUST_PURCHASED, PAGEVIEW_PREVIOUSLY_PURCHASED],
+    enum: [
+      PAGEVIEW_ANONYMOUS,
+      PAGEVIEW_NOT_PURCHASED,
+      PAGEVIEW_JUST_PURCHASED,
+      PAGEVIEW_PREVIOUSLY_PURCHASED,
+    ],
     default: PAGEVIEW_ANONYMOUS,
-    required: true,    
+    required: true,
   },
   createdAt: {
     type: Date,
@@ -36,4 +41,4 @@ const MetricsSchema = new Schema({
   },
 });
 
-export default mongoose.model('Metrics', MetricsSchema);
+export default mongoose.model("Metrics", MetricsSchema);

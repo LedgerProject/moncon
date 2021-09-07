@@ -1,1 +1,1 @@
-export { default } from './TapsPanel';
+export { default } from "./TapsPanel";

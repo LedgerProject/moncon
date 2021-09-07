@@ -1,56 +1,59 @@
 import { useState, useEffect } from "react";
-import { useDispatch,useSelector  } from 'react-redux'
+import { useDispatch, useSelector } from "react-redux";
 import { useHistory } from "react-router-dom";
-import { Container, TextField,Button } from "@material-ui/core";
+import { Container, TextField, Button } from "@material-ui/core";
 import { useStyles } from "./style";
 import ArrowLeft from "../../../Assets/svg/ArrowLeft";
-import { useParams } from 'react-router-dom';
+import { useParams } from "react-router-dom";
 
-import { useToasts } from 'react-toast-notifications'
-
+import { useToasts } from "react-toast-notifications";
 
 const EditField = () => {
-
-  const dynamycFields = useSelector((state)=> state.UserReducer.dynamicFields);
+  const dynamycFields = useSelector((state) => state.UserReducer.dynamicFields);
   const { addToast } = useToasts();
   const classes = useStyles();
   const history = useHistory();
   const [title, setTitle] = useState("");
   const [value, setValue] = useState("");
-  const dispatchUserData = useDispatch()
+  const dispatchUserData = useDispatch();
   const { fieldId } = useParams();
 
+  const field = dynamycFields.find((field) => field.id === fieldId);
+  console.log(field);
 
-  const field = dynamycFields.find(field => field.id === fieldId) 
- console.log(field);
-
-  const handleClick = event => {
- event.preventDefault();
+  const handleClick = (event) => {
+    event.preventDefault();
     console.log(title);
-    if(field.value === value){
-    addToast('No changes have been made', { appearance: 'warning',autoDismiss: true, autoDismissTimeout: 2000 });
+    if (field.value === value) {
+      addToast("No changes have been made", {
+        appearance: "warning",
+        autoDismiss: true,
+        autoDismissTimeout: 2000,
+      });
     } else {
-    dispatchUserData({
-      type: 'update-dynamic-field',
-      payload: { 
-      value,
-      id: title.toString(),
-      status: 'false'
-      }
-    });
-     setTimeout(()=>{
- return history.push('/identity')
+      dispatchUserData({
+        type: "update-dynamic-field",
+        payload: {
+          value,
+          id: title.toString(),
+          status: "false",
+        },
+      });
+      setTimeout(() => {
+        return history.push("/identity");
+      }, 500);
+      addToast("Has been added successfully", {
+        appearance: "success",
+        autoDismiss: true,
+        autoDismissTimeout: 2000,
+      });
+    }
+  };
+  useEffect(() => {
+    setTitle(field.id);
+    setValue(field.value);
+  }, [field.id, field.value]);
 
-      },500)
-    addToast('Has been added successfully', { appearance: 'success',autoDismiss: true, autoDismissTimeout: 2000 });
-  }
-  }
-    ;
-
-useEffect(() => {
-   setTitle(field.id)
-   setValue(field.value)
-}, [field.id,field.value])
   const handleReturn = () => {
     if (history.length <= 2) {
       history.push("/identity");
@@ -58,6 +61,7 @@ useEffect(() => {
       history.goBack();
     }
   };
+
   return (
     <>
       <div
@@ -73,7 +77,7 @@ useEffect(() => {
           color: "rgba(0, 0, 0, 0.6)",
           fontSize: "20px",
           background: "#272727",
-          fontWeight: 500
+          fontWeight: 500,
         }}
       >
         <Container className={classes.root}>
@@ -85,7 +89,7 @@ useEffect(() => {
             <TextField
               style={{ marginTop: "20px" }}
               InputProps={{
-                className: classes.input
+                className: classes.input,
               }}
               id="standard-secondary"
               label="Data Name"
@@ -96,7 +100,7 @@ useEffect(() => {
             <TextField
               style={{ marginTop: "20px" }}
               InputProps={{
-                className: classes.input
+                className: classes.input,
               }}
               id="standard-secondary"
               label="Value"
@@ -105,12 +109,12 @@ useEffect(() => {
             />
             <br />
           </form>
-          <Button 
+          <Button
             onClick={handleClick}
             className={classes.buttonBlue}
             variant="contained"
             color="primary"
-            type="submit"      
+            type="submit"
           >
             SAVE
           </Button>

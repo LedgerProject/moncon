@@ -30,6 +30,7 @@
     "zenroom": "2.2.0-da286ed0"
   },
   "devDependencies": {
-    "nodemon": "^2.0.7"
+    "nodemon": "^2.0.7",
+    "prettier": "2.3.2"
   }
 }

@@ -1,7 +1,4 @@
-import React from 'react'
+import React from "react";
 
-const IconDiploma = (  ) => (
-  <>
-  </>
-)
-export default IconDiploma
+const IconDiploma = () => <></>;
+export default IconDiploma;

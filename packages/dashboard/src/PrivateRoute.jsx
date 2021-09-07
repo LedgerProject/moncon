@@ -3,9 +3,9 @@
 
 // If they are: they proceed to the page
 // If not: they are redirected to the login page.
-import React, { useContext } from 'react';
-import { Redirect, Route } from 'react-router-dom';
-import AppContext from './AppContext';
+import React, { useContext } from "react";
+import { Redirect, Route } from "react-router-dom";
+import AppContext from "./AppContext";
 
 const PrivateRoute = ({
   component: Component,
@@ -17,15 +17,15 @@ const PrivateRoute = ({
   return (
     <Route
       {...rest}
-      render={props => (isUserAuthed && allowedRoles.includes(userRole) ? (
-        <Component {...props} {...rest} />
-      ) : (
-        <Redirect to="/auth" />
-      ))
+      render={(props) =>
+        isUserAuthed && allowedRoles.includes(userRole) ? (
+          <Component {...props} {...rest} />
+        ) : (
+          <Redirect to="/auth" />
+        )
       }
     />
   );
-}
-
+};
 
 export default PrivateRoute;

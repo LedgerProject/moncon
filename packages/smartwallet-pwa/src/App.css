@@ -14,25 +14,25 @@
 }
 
 a:-webkit-any-link {
-    color: inherit;
-    cursor: pointer;
-    text-decoration: none;
+  color: inherit;
+  cursor: pointer;
+  text-decoration: none;
 }
 
 .MuiInputBase-root {
-line-height: 2.1876em !important;
+  line-height: 2.1876em !important;
 }
 .MuiFormHelperText-root.Mui-error {
-    font-size: 1.4rem !important;
+  font-size: 1.4rem !important;
 }
-.MuiSelect-selectMenu{
+.MuiSelect-selectMenu {
   color: #ffff !important;
- font-size: 1.6rem !important;
-    min-height: 0.1876em !important;
+  font-size: 1.6rem !important;
+  min-height: 0.1876em !important;
 }
 
-.MuiSelect-icon{
-color: #fff !important;
+.MuiSelect-icon {
+  color: #fff !important;
 }
 
 .App-header {
@@ -58,5 +58,3 @@ color: #fff !important;
     transform: rotate(360deg);
   }
 }
-
-

@@ -1,47 +1,47 @@
-
-version: "3"  
+version: "3"
 services:
-    mongo:
-        image: mongo:4.4
-        restart: always
-        expose:
-          - "27017"
-          - "27018"
-        volumes:
-          - ./data/db:/data/db
-        environment:
-          - MONGO_INITDB_ROOT_USERNAME=root
-          - MONGO_INITDB_ROOT_PASSWORD=example    
-        networks:
-          - beta    
-    api:
-        image: node:14-buster
-        restart: always
-        user: "node"
-        working_dir: /home/node/app
-        volumes:
-            - ./:/home/node/app
-        depends_on:
-            - "mongo"
-#        ports:
-#            - 8080:8080
-        expose:
-            - "8080"
-        command: "npm start"
-        environment:        
-           #- MONGO_CONNECTION=mongodb://mongo:27017
-            - MONGO_CONNECTION=mongodb://root:example@mongo:27017/moncon?authSource=admin
-            - VIRTUAL_HOST=app.api.moncon.co
-            - VIRTUAL_PORT=8080                    
-            - LETSENCRYPT_HOST=app.api.moncon.co
-            - LETSENCRYPT_EMAIL=Hello@infinitelabs.co
-        networks:        
-            - nginx_proxy
-            - beta
-   
-networks:
-    nginx_proxy:
-        external: true
-    beta:
-        external: false
+  mongo:
+    image: mongo:4.4
+    #        build: ./
+    restart: always
+    expose:
+      - "27017"
+      - "27018"
+    volumes:
+      - ./data/db:/data/db
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=root
+      - MONGO_INITDB_ROOT_PASSWORD=example
+    networks:
+      - beta
+  api:
+    #       image: node:14-buster
+    build: ./
+    restart: always
+    user: "node"
+    working_dir: /home/node/app
+    volumes:
+      - ./:/home/node/app
+    depends_on:
+      - "mongo"
+    #        ports:
+    #            - 8080:8080
+    expose:
+      - "8080"
+    command: "npm start"
+    environment:
+      #- MONGO_CONNECTION=mongodb://mongo:27017
+      - MONGO_CONNECTION=mongodb://root:example@mongo:27017/moncon?authSource=admin
+      - VIRTUAL_HOST=app.api.moncon.co
+      - VIRTUAL_PORT=8080
+      - LETSENCRYPT_HOST=app.api.moncon.co
+      - LETSENCRYPT_EMAIL=Hello@infinitelabs.co
+    networks:
+      - nginx_proxy
+      - beta
 
+networks:
+  nginx_proxy:
+    external: true
+  beta:
+    external: false

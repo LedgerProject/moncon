@@ -1,33 +1,40 @@
 import { useState } from "react";
-import { useDispatch } from 'react-redux'
+import { useDispatch } from "react-redux";
 import { useHistory } from "react-router-dom";
-import { Container, TextField,Button } from "@material-ui/core";
+import { Container, TextField, Button } from "@material-ui/core";
 import { useStyles } from "./style";
 import ArrowLeft from "../../../Assets/svg/ArrowLeft";
-import { useToasts } from 'react-toast-notifications'
+import { useToasts } from "react-toast-notifications";
 const EditAdd = () => {
- const { addToast } = useToasts();
+  const { addToast } = useToasts();
   const classes = useStyles();
   const history = useHistory();
   const [title, setTitle] = useState("");
   const [value, setValue] = useState("");
-  const dispatchUserData = useDispatch()
+  const dispatchUserData = useDispatch();
 
-  const handleClick = event => {
+  const handleClick = (event) => {
     dispatchUserData({
       type: "add-dynamic-field",
-      payload: { 
-      value,
-      id: title.toString().toLowerCase().trim().replace(/\s+/g,"").replace(" ","-"),
-      status: 'false',
-      }
+      payload: {
+        value,
+        id: title
+          .toString()
+          .toLowerCase()
+          .trim()
+          .replace(/\s+/g, "")
+          .replace(" ", "-"),
+        status: "false",
+      },
     });
-    setTimeout(()=>{
- return history.push('/identity')
-
-      },2500)
-    addToast('Has been added successfully', { appearance: 'success',autoDismiss: true, autoDismissTimeout: 2000 });
-
+    setTimeout(() => {
+      return history.push("/identity");
+    }, 2500);
+    addToast("Has been added successfully", {
+      appearance: "success",
+      autoDismiss: true,
+      autoDismissTimeout: 2000,
+    });
   };
 
   const handleReturn = () => {
@@ -52,7 +59,7 @@ const EditAdd = () => {
           color: "rgba(0, 0, 0, 0.6)",
           fontSize: "20px",
           background: "#272727",
-          fontWeight: 500
+          fontWeight: 500,
         }}
       >
         <Container className={classes.root}>
@@ -64,7 +71,7 @@ const EditAdd = () => {
             <TextField
               style={{ marginTop: "20px" }}
               InputProps={{
-                className: classes.input
+                className: classes.input,
               }}
               id="standard-secondary"
               label="Data Name"
@@ -75,7 +82,7 @@ const EditAdd = () => {
             <TextField
               style={{ marginTop: "20px" }}
               InputProps={{
-                className: classes.input
+                className: classes.input,
               }}
               id="standard-secondary"
               label="Value"
@@ -84,16 +91,15 @@ const EditAdd = () => {
             />
             <br />
           </form>
-<Button onClick={handleClick}
-className={classes.buttonBlue}
-                      variant="contained"
-                      color="primary"
-                      type="submit"
-                
-                    >
-                        SAVE
-                    </Button>
-  
+          <Button
+            onClick={handleClick}
+            className={classes.buttonBlue}
+            variant="contained"
+            color="primary"
+            type="submit"
+          >
+            SAVE
+          </Button>
         </Container>
       </div>
     </>

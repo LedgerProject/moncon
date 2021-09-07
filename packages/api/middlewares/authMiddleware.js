@@ -1,19 +1,22 @@
-import admin from '../services/firebaseService.js';
+import admin from "../services/firebaseService.js";
 
 const getTokenFromRequest = (req) => {
   let token = null;
-  if (req.headers.authorization && req.headers.authorization.split(' ')[0] === 'Bearer') {
-    token = req.headers.authorization.split(' ')[1];
+  if (
+    req.headers.authorization &&
+    req.headers.authorization.split(" ")[0] === "Bearer"
+  ) {
+    token = req.headers.authorization.split(" ")[1];
   }
   if (!token) {
-    throw new Error('Request has no token')
+    throw new Error("Request has no token");
   }
   return token;
-}
+};
 
 const getUserFromToken = async (token) => {
   return await admin.auth().verifyIdToken(token);
-}
+};
 
 export const checkIfAuthenticated = async (req, res, next) => {
   try {
@@ -21,9 +24,11 @@ export const checkIfAuthenticated = async (req, res, next) => {
     await getUserFromToken(token);
     return next();
   } catch (err) {
-    return res.status(401).send({ error: 'You are not authorized to make this request' });
+    return res
+      .status(401)
+      .send({ error: "You are not authorized to make this request" });
   }
-}
+};
 
 export const checkIfPublisher = async (req, res, next) => {
   let user;
@@ -37,9 +42,11 @@ export const checkIfPublisher = async (req, res, next) => {
     return next();
   } catch (err) {
     console.error(err.message);
-    return res.status(401).send({ error: 'You are not authorized to make this request' });
+    return res
+      .status(401)
+      .send({ error: "You are not authorized to make this request" });
   }
-}
+};
 
 export const checkIfUser = async (req, res, next) => {
   let user;
@@ -53,9 +60,11 @@ export const checkIfUser = async (req, res, next) => {
     return next();
   } catch (err) {
     console.error(err.message);
-    return res.status(401).send({ error: 'You are not authorized to make this request' });
+    return res
+      .status(401)
+      .send({ error: "You are not authorized to make this request" });
   }
-}
+};
 
 export const checkIfAdmin = async (req, res, next) => {
   let user;
@@ -69,6 +78,8 @@ export const checkIfAdmin = async (req, res, next) => {
     return next();
   } catch (err) {
     console.error(err.message);
-    return res.status(401).send({ error: 'You are not authorized to make this request' });
+    return res
+      .status(401)
+      .send({ error: "You are not authorized to make this request" });
   }
-}
+};

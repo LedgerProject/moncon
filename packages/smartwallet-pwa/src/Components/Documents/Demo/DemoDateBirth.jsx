@@ -1,7 +1,7 @@
 import React from "react";
 import { useStyles } from "../styled";
-import { useSelector } from 'react-redux';
-import  Link  from "../../Link";
+import { useSelector } from "react-redux";
+import Link from "../../Link";
 import IconLeft from "../../../Assets/svg/IconLeft";
 import { credential_birthday } from "../../../Const";
 
@@ -18,7 +18,9 @@ const DemoDateBirth = () => {
     }
   };
 
-  const datebirth = useSelector((state) => state.UserReducer[credential_birthday])
+  const datebirth = useSelector(
+    (state) => state.UserReducer[credential_birthday]
+  );
 
   return (
     <>
@@ -33,25 +35,24 @@ const DemoDateBirth = () => {
         <h1 style={{ color: "#ffff" }}>Proof Of ID Credential Demo</h1>
       </div>
 
- 
       <h1 className={classes.titleH1}>Issued by</h1>
-      <div style={{ marginTop: "15px" }} >
+      <div style={{ marginTop: "15px" }}>
         <div className={classes.proofContainerWhite}>
-          <div  className={classes.fabWhite}>
+          <div className={classes.fabWhite}>
             <MonconImg />
           </div>
           <div>
-            <div  className={classes.issuedSubtitle}>
-              Date Birth
-            </div>
-            <Link to="https://moncon.co/" target={"_blank"} className={classes.link}>
+            <div className={classes.issuedSubtitle}>Date Birth</div>
+            <Link
+              to="https://moncon.co/"
+              target={"_blank"}
+              className={classes.link}
+            >
               https://moncon.co/
             </Link>
           </div>
         </div>
       </div>
-
-
 
       <h1 className={classes.titleH1}>Document details/claims</h1>
       <div
@@ -60,16 +61,11 @@ const DemoDateBirth = () => {
       >
         <div>
           <div style={{ marginLeft: "20px" }}>
-            <div  className={classes.documentsSubtitle}>
-              Message
-            </div>
-            <p className={classes.documentsMessage}>
-              {datebirth.value}
-            </p>
+            <div className={classes.documentsSubtitle}>Message</div>
+            <p className={classes.documentsMessage}>{datebirth.value}</p>
           </div>
         </div>
       </div>
-
     </>
   );
 };
