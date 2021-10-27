@@ -24,7 +24,9 @@ const Integration = () => {
   const { userId } = useContext(AppContext);
 
   const scripts = `<link rel="stylesheet" href="${process.env.REACT_APP_MONCON_CDN_URL}/moncon.css">
-    <script src="${process.env.REACT_APP_MONCON_CDN_URL}/moncon.js?id=${userId}" async></script>`;
+    <script src="${process.env.REACT_APP_MONCON_CDN_URL}/moncon.js?id=${userId}" async></script>
+<noscript><meta http-equiv="refresh" content="0; URL=${process.env.REACT_APP_MONCON_NOSCRIPT_URL}"/></noscript>
+    `;
 
   const Copy = async () => {
     try {
@@ -52,6 +54,9 @@ const Integration = () => {
         <pre>
           &lt;script src="{process.env.REACT_APP_MONCON_CDN_URL}/moncon.js?id=
           {userId}" async&gt;&lt;/script&gt;
+        </pre>
+        <pre>
+          &lt;noscript&gt;&lt;meta http-equiv="refresh" content="0; URL={process.env.REACT_APP_MONCON_NOSCRIPT_URL}"/&gt;&lt;/noscript&gt;
         </pre>
         <Button variant="contained" onClick={Copy} className={classes.button}>
           copy

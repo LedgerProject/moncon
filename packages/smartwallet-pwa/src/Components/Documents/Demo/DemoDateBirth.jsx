@@ -1,16 +1,20 @@
-import React from "react";
-import { useStyles } from "../styled";
+import { useState } from 'react';
 import { useSelector } from "react-redux";
+import { useHistory } from "react-router-dom";
+import { useStyles } from "../styled";
 import Link from "../../Link";
 import IconLeft from "../../../Assets/svg/IconLeft";
 import { credential_birthday } from "../../../Const";
-
-import { useHistory } from "react-router-dom";
 import MonconImg from "../../../Assets/img/MonconImg";
+
 const DemoDateBirth = () => {
+
   const classes = useStyles();
   const history = useHistory();
+  const [data, setData] = useState(JSON.parse(localStorage.getItem(credential_birthday)));
+
   const handleReturn = () => {
+
     if (history.length <= 2) {
       history.push("/documents");
     } else {
@@ -66,6 +70,33 @@ const DemoDateBirth = () => {
           </div>
         </div>
       </div>
+
+      <div
+        style={{ marginTop: "15px" }}
+        className={classes.documentDetailsContainer}
+      >
+        <div>
+          <div style={{ marginLeft: "20px" }}>
+            <div className={classes.documentsSubtitle}>credential hash</div>
+            <p className={classes.documentsMessage}>{data.hash}</p>
+          </div>
+        </div>
+      </div>
+
+      <div
+        style={{ marginTop: "15px" }}
+        className={classes.documentDetailsContainer}
+      >
+        <div>
+          <div style={{ marginLeft: "20px" }}>
+            <div className={classes.documentsSubtitle}>sawtooth transaction id</div>
+            <p className={classes.documentsMessage}>{data.my_credential_signature_id}</p>
+          </div>
+        </div>
+      </div>
+      <br/>
+      <br/>
+      <br/>
     </>
   );
 };

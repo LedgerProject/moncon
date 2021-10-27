@@ -118,7 +118,7 @@ const PremiumContent = () => {
     try {
       if (content.status === "ACTIVE") {
         response = await changeStatusContent(content);
-      } else if (content.status === "DELETED") {
+      } else if (content.status === "INACTIVE") {
         let newContent = {
           ...content,
           amount: AMOUNT_TO_DISPLAY(content.amount),

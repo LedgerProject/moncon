@@ -1,2 +1,0 @@
-(this["webpackJsonpsmartwallet-pwa"]=this["webpackJsonpsmartwallet-pwa"]||[]).push([[22],{367:function(t,e,n){"use strict";n.r(e),n.d(e,"default",(function(){return i}));n(0);var r=n(1),i=function(){return Object(r.jsx)(r.Fragment,{children:Object(r.jsx)("div",{style:{alignItems:"center",display:"flex",justifyContent:"center",textAlign:"center",position:"absolute",left:0,top:0,right:0,bottom:0,color:"rgba(0, 0, 0, 0.6)",fontSize:"20px",fontWeight:500},children:"Here we present the history of your interactions"})})}}}]);
-//# sourceMappingURL=22.c8b2cbf2.chunk.js.map

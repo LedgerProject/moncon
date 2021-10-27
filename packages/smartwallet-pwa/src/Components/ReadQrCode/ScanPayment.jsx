@@ -7,7 +7,6 @@ import {
   Paper,
   Typography,
   Grid,
-  Avatar,
   Container,
 } from "@material-ui/core";
 import {
@@ -22,12 +21,12 @@ import { useToasts } from "react-toast-notifications";
 import apiService from "../../services/apiService";
 import { useStyles } from "./style";
 import {
-  AMOUNT_TO_DISPLAY,
   LS_PAYMENT_METHOD_KEY,
   LS_DID_KEY,
   LS_CUSTOMER_KEY,
 } from "../../Const";
 import { SpinnerPayment } from "../Loaded/Spinner";
+import IconDocuments from "../../Assets/svg/IconDocuments";
 
 const ScanPayment = ({ QrResponse, socket }) => {
   const stripe = useStripe();
@@ -39,7 +38,6 @@ const ScanPayment = ({ QrResponse, socket }) => {
   const [userPaymentMethod, setUserPaymentMethod] = useState(
     localStorage.getItem(LS_PAYMENT_METHOD_KEY)
   );
-  const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
   const [content, setContent] = useState({});
   const { addToast } = useToasts();
@@ -200,7 +198,6 @@ const ScanPayment = ({ QrResponse, socket }) => {
         subscriptionId: subscription.data.subscriptionId,
         contentId: content.id,
         userId,
-        room: QrResponse.room,
       };
       if (process.env.NODE_ENV == "development") {
         console.log("ScanPayment handleClick line 156");
@@ -315,6 +312,13 @@ const ScanPayment = ({ QrResponse, socket }) => {
     return Promise.resolve(result);
   };
 
+ const formatterEuro = new Intl.NumberFormat('de-DE', {
+        style: 'currency',
+        currency: 'EUR'
+     })
+
+
+
   return (
     <>
       <Container style={{ marginTop: "50px", marginBottom: "10rem" }}>
@@ -332,14 +336,13 @@ const ScanPayment = ({ QrResponse, socket }) => {
                 justify="center"
                 alignItems="center"
                 component="span"
+                className={classes.imageFallback}
               >
-                <Avatar
-                  alt="Remy Sharp"
-                  variant="square"
-                  component="span"
-                  className={classes.paymentImage}
-                  src={content.image}
-                />
+               <IconDocuments
+                    height={"4em"}
+                    width={"3.5em"}
+                    color={"#1c1c1c"}
+                  />
               </Grid>
               <Grid container item xs={6} lg={4} component="span">
                 <Typography
@@ -373,7 +376,7 @@ const ScanPayment = ({ QrResponse, socket }) => {
                   color="primary"
                   className={classes.paymentPrice}
                 >
-                  {content?.amount || 0}€
+                  {formatterEuro.format(content?.amount || 0)}
                 </Typography>
               </Grid>
             </Grid>

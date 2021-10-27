@@ -3,11 +3,10 @@ import { Grid, Typography } from "@material-ui/core";
 import { useStyles } from "./style";
 import QrReader from "react-qr-reader";
 import { useHistory } from "react-router-dom";
-//import ScanReceive from "./ScanReceive";
 import IconLeft from "../../Assets/svg/IconLeft";
 import { useToasts } from "react-toast-notifications";
 
-const ReadQRCode = ({ socket, QrResponse, setQrResponse, QrScan }) => {
+const ReadQRCode = ({ setQrResponse, QrScan }) => {
   const classes = useStyles();
   const { addToast } = useToasts();
   const history = useHistory();
@@ -42,11 +41,6 @@ const ReadQRCode = ({ socket, QrResponse, setQrResponse, QrScan }) => {
         }
 
         return setQrResponse(dataParse);
-        addToast("Correct QR code", {
-          appearance: "success",
-          autoDismiss: true,
-          autoDismissTimeout: 3000,
-        });
       }
     } catch (error) {
       console.log(error.message);
@@ -104,7 +98,7 @@ const ReadQRCode = ({ socket, QrResponse, setQrResponse, QrScan }) => {
                 style={{
                   position: "relative",
                   width: "100%",
-                  paddingTop: "180%",
+                  paddingTop: "70em",
                   background: "#272727 !important",
                 }}
               >

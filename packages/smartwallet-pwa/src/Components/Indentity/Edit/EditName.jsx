@@ -37,12 +37,12 @@ const EditName = () => {
     } else {
       dispatchUserData({
         type: "update",
-        payload: { id: "name", value: name },
+        payload: { id: "name", value: name, status: false, pending:false },
       });
 
       dispatchUserData({
         type: "update",
-        payload: { id: "lastName", value: lastName },
+        payload: { id: "lastName", value: lastName, status: false, pending:false },
       });
 
       setTimeout(() => {

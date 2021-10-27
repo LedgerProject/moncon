@@ -3,10 +3,13 @@ import mongoose from "mongoose";
 const { Schema } = mongoose;
 
 export const PREMIUMCONTENT_STATUS_ACTIVE = "ACTIVE";
+export const PREMIUMCONTENT_STATUS_INACTIVE = "INACTIVE";
 export const PREMIUMCONTENT_STATUS_DELETED = "DELETED";
 export const LEGAL_AGE = "LEGAL_AGE";
 export const UNDERAGE = "UNDERAGE";
 export const NO_CREDENTIAL = "NO_CREDENTIAL";
+export const VERIFICATION_METHOD_W3C = 'w3c';
+export const VERIFICATION_METHOD_ZKP = 'zkp';
 
 const PremiumContentSchema = new Schema({
   publisherId: {
@@ -40,25 +43,19 @@ const PremiumContentSchema = new Schema({
     enum: [LEGAL_AGE, UNDERAGE, NO_CREDENTIAL],
     default: NO_CREDENTIAL,
   },
+  verification_type: {
+    type: String,
+    enum: [VERIFICATION_METHOD_W3C, VERIFICATION_METHOD_ZKP, NO_CREDENTIAL],
+    default: NO_CREDENTIAL,
+  },
   /*
     To Do 
-    see if exist a better way to add conditions dinamically 
-
-    conditions:[
-        {
-            conditionType:{
-                type: String
-            },
-            condition:{
-                type:String,
-            }
-        }
-    ],
-    */
+    see if exist a better way to add conditions dinamically
+  */
   status: {
     type: String,
     required: true,
-    enum: [PREMIUMCONTENT_STATUS_ACTIVE, PREMIUMCONTENT_STATUS_DELETED],
+    enum: [PREMIUMCONTENT_STATUS_ACTIVE, PREMIUMCONTENT_STATUS_INACTIVE, PREMIUMCONTENT_STATUS_DELETED],
   },
 });
 

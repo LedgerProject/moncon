@@ -118,7 +118,9 @@ for most functionalities is necessary to have a server that serves as static con
   &lt;script src="cdn_url/moncon.js?id={userId}" async&gt;&lt;/script&gt;
 </pre>
 
-where the userid is the uid created by firebase
+where the userid is the uid created by firebase.
+
+also, the only way to create a publisher account is doing it in the admin dashboard, to create an admin account you will need to change the env ADMIN_USERS variable in [api project](../api) and set it to a list of comma separated emails, then you can register a new account as a publisher using one of the admins email and the account will be not a publisher but an admin, once in the admin dashboard in the bottom of the page you can create as many issuer account as you need
 
 ## ⛏️ Built Using <a name = "built_using"></a>
 

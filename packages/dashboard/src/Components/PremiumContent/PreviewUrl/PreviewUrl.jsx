@@ -195,9 +195,13 @@ const PreviewUrl = ({ previewUrl, addUrl, loading, stripeAccountId }) => {
   const [amount, setAmount] = useState(0);
   const [age, setAge] = useState("");
   const [open, setOpen] = useState(false);
+  const [openVerification, setOpenVerification] = useState(false);
+  const [verification_type,setVerificationType] = useState('');
   const LEGAL_AGE = "LEGAL_AGE";
   const UNDERAGE = "UNDERAGE";
   const NO_CREDENTIAL = "NO_CREDENTIAL";
+  const ZKP = 'zkp';
+  const W3C = 'w3c';
   const history = useHistory();
   const { addToast } = useToasts();
 
@@ -239,6 +243,7 @@ const PreviewUrl = ({ previewUrl, addUrl, loading, stripeAccountId }) => {
 
     info.amount = parseFloat(localAmount);
     info.age = age;
+    info.verification_type = verification_type;
     addUrl(info);
     setAmount(0);
   };
@@ -247,6 +252,10 @@ const PreviewUrl = ({ previewUrl, addUrl, loading, stripeAccountId }) => {
     setAge(event.target.value);
   };
 
+  const handleVerificationType = (event) => {
+    setVerificationType(event.target.value);
+  }
+
   const handleClose = () => {
     setOpen(false);
   };
@@ -254,6 +263,15 @@ const PreviewUrl = ({ previewUrl, addUrl, loading, stripeAccountId }) => {
   const handleOpen = () => {
     setOpen(true);
   };
+
+  const handleCloseVerification = () => {
+    setOpenVerification(false);
+  };
+
+  const handleOpenVerification = () => {
+    setOpenVerification(true);
+  };
+
   return (
     <>
       {loading ? (
@@ -264,25 +282,7 @@ const PreviewUrl = ({ previewUrl, addUrl, loading, stripeAccountId }) => {
             <div className={classes.cardContainer}>
               <div className={classes.cardImage}>
                 <div style={{ textAlign: "center" }}>
-                  {!!previewUrl?.image ? (
-                    <Grid
-                      style={{
-                        height: "100%",
-                        display: "flex",
-                        alignItems: "center",
-                      }}
-                    >
-                      <Container
-                        style={{
-                          display: "flex",
-                          alignItems: "center",
-                          flexDirection: "column",
-                        }}
-                      >
-                        <Avatar variant="square" src={previewUrl.image} />
-                      </Container>
-                    </Grid>
-                  ) : (
+                
                     <Grid className={classes.imageFallback}>
                       <IconDocuments
                         height={"4em"}
@@ -290,7 +290,7 @@ const PreviewUrl = ({ previewUrl, addUrl, loading, stripeAccountId }) => {
                         color={"#1c1c1c"}
                       />
                     </Grid>
-                  )}
+                
                 </div>
               </div>
               <Grid className={classes.cardContent}>
@@ -395,6 +395,54 @@ const PreviewUrl = ({ previewUrl, addUrl, loading, stripeAccountId }) => {
                 </Select>
               </FormControl>
             </Box>
+            </Box>
+            <Box
+              className={classes.container}
+              display="flex"
+              justifyContent="center"
+              alignItems="center"
+            >
+              <Box
+                className={classes.boxSelect}
+                style={{
+                  display: "flex",
+                  alignSelf: "center",
+                  marginLeft: "5em",
+                  marginRight: "7.90em",
+                  justifySelf: "end",
+                }}
+              >
+                <Typography variant="h6">credential verification method</Typography>
+              </Box>
+              <Box
+                style={{
+                  display: "flex",
+                  alignSelf: "center",
+                  justifySelf: "center",
+                }}
+              >
+                <FormControl className={classes.formControl}>
+                  <InputLabel id="demo-controlled-open-select-label"></InputLabel>
+                  <Select
+                    labelId="demo-controlled-open-select-label"
+                    id="demo-controlled-open-select"
+                    open={openVerification}
+                    onClose={handleCloseVerification}
+                    onOpen={handleOpenVerification}
+                    value={verification_type}
+                    onChange={handleVerificationType}
+                  >
+                    <MenuItem value="">
+                      <em>Select</em>
+                    </MenuItem>
+                    <MenuItem value={ZKP}>zkp</MenuItem>
+                    <MenuItem value={W3C}>w3c</MenuItem>
+                    <MenuItem value={NO_CREDENTIAL}>
+                      default
+                    </MenuItem>
+                  </Select>
+                </FormControl>
+              </Box>
           </Box>
 
           <Grid

@@ -129,6 +129,7 @@ export const useStyles = makeStyles((theme) => ({
     fontSize: "1.6rem",
     lineHeight: "24px",
     fontWeight: 400,
+    overflowX: 'auto',
   },
   warningH1: {
     marginLeft: "15px",

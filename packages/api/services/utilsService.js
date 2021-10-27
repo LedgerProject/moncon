@@ -128,7 +128,7 @@ export const getUrlData = async (url, publisherId) => {
   if (!(await isWebOwner(page, publisherId))) {
     throw new NotOwnerError();
   }
-
+  
   const pageTitle = await page.title();
   console.log("page.title", pageTitle);
   if (pageTitle != null && pageTitle.length > 0) {

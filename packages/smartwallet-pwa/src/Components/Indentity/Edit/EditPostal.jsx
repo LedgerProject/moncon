@@ -30,7 +30,7 @@ const EditPostal = () => {
 
   const handleClick = (event) => {
     event.preventDefault();
-    let payload = { value: {}, id: credential_address, status: "false" };
+    let payload = { value: {}, id: credential_address, status: false, pending:false };
     if (addressLine1.trim()) {
       payload.value.addressLine1 = addressLine1.trim();
     }

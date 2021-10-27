@@ -8,7 +8,7 @@ import {
 import { useContext, useState } from "react";
 import AppContext from "../../AppContext";
 import { useHistory } from "react-router-dom";
-import { ROLES_DEFAULT_ROUTES } from "../../Constants";
+import { ROLES_DEFAULT_ROUTES, ROLE_PUBLISHER } from "../../Constants";
 
 const useStyles = makeStyles(() => ({
   pointer: {
@@ -54,11 +54,13 @@ const AvatarMenu = (props) => {
         open={Boolean(anchorEl)}
         onClose={handleClose}
       >
-        <MenuItem>
-          <Typography variant="body2" onClick={handleSettings}>
-            Settings
-          </Typography>
-        </MenuItem>
+        { userRole == ROLE_PUBLISHER &&
+          <MenuItem>
+            <Typography variant="body2" onClick={handleSettings}>
+              Settings
+            </Typography>
+          </MenuItem>
+        }
         <MenuItem>
           <Typography variant="body2" onClick={handleLogout}>
             Logout

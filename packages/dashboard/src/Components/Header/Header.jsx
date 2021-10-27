@@ -134,7 +134,7 @@ export default function Header() {
           </Tabs>
 
           <div className={classes.contentNav}>
-            {!isMobile && (
+            {!isMobile && userRole == ROLE_PUBLISHER && (
               <Button
                 variant="contained"
                 color="primary"

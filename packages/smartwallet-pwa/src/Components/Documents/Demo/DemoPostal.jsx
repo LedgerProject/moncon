@@ -1,15 +1,18 @@
-import React from "react";
-import { useStyles } from "../styled";
+import { useState } from "react";
 import { useSelector } from "react-redux";
+import { useHistory } from "react-router-dom";
+import { useStyles } from "../styled";
 import Link from "../../Link";
 import IconLeft from "../../../Assets/svg/IconLeft";
-import { useHistory } from "react-router-dom";
 import { credential_address } from "../../../Const";
 import MonconImg from "../../../Assets/img/MonconImg";
 
 const DemoPostal = () => {
   const classes = useStyles();
   const history = useHistory();
+  const [data, setData] = useState(JSON.parse(localStorage.getItem(credential_address)));
+  const address = useSelector((state) => state.UserReducer[credential_address]);
+
   const handleReturn = () => {
     if (history.length <= 2) {
       history.push("/documents");
@@ -17,8 +20,6 @@ const DemoPostal = () => {
       history.goBack();
     }
   };
-
-  const address = useSelector((state) => state.UserReducer[credential_address]);
   return (
     <>
       <div className={classes.contentMenu}>
@@ -60,6 +61,28 @@ const DemoPostal = () => {
           <div style={{ marginLeft: "20px" }}>
             <div className={classes.documentsSubtitle}>Message</div>
             <p className={classes.documentsMessage}>{address.value.address}</p>
+          </div>
+        </div>
+      </div>
+      <div
+        style={{ marginTop: "15px" }}
+        className={classes.documentDetailsContainer}
+      >
+        <div>
+          <div style={{ marginLeft: "20px" }}>
+            <div className={classes.documentsSubtitle}>credential hash</div>
+            <p className={classes.documentsMessage}>{data.hash}</p>
+          </div>
+        </div>
+      </div>
+      <div
+        style={{ marginTop: "15px" }}
+        className={classes.documentDetailsContainer}
+      >
+        <div>
+          <div style={{ marginLeft: "20px" }}>
+            <div className={classes.documentsSubtitle}>sawtooth transaction id</div>
+            <p className={classes.documentsMessage}>{data.my_credential_signature_id}</p>
           </div>
         </div>
       </div>

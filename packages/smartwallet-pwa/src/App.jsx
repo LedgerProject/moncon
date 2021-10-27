@@ -1,4 +1,4 @@
-import { useEffect, lazy, Suspense, useState } from "react";
+import { useEffect, lazy, Suspense, useState, useRef } from "react";
 import {
   Route,
   Switch,
@@ -6,27 +6,29 @@ import {
   useHistory,
   Redirect,
 } from "react-router-dom";
-import { makeStyles } from "@material-ui/core/styles";
 import { useDispatch } from "react-redux";
+import io from "socket.io-client";
+import didMethod from 'did-method-generic';
+import { makeStyles } from "@material-ui/core/styles";
+import PWAPrompt from 'react-ios-pwa-prompt'
+import { useToasts } from "react-toast-notifications";
+import Badge from "@material-ui/core/Badge";
 import Header from "./Components/Header";
+import BackupQuestions from './Components/BackupQuestions';
+import ScanShare from "./Components/ReadQrCode/ScanShare";
+import SwUpdater from "./SwUpdater";
+import Spinner from "./Components/Loaded/Spinner";
+import Article from "./Components/Article";
 import {
   NOT_DISPAY_HEADER_IN,
   LS_USER_KEY,
   LS_DID_KEY,
   initialState,
+  LS_KEY_PAIR,
 } from "./Const";
+import { updateCredential, getPendingResponses } from './services/SocketUtils';
 import { ContextProvider } from "./AppContext";
 import "./App.css";
-import ScanReceive from "./Components/ReadQrCode/ScanReceive";
-import ScanAuth from "./Components/ReadQrCode/ScanAuth";
-import ScanShare from "./Components/ReadQrCode/ScanShare";
-
-import SwUpdater from "./SwUpdater";
-import Spinner from "./Components/Loaded/Spinner";
-import Article from "./Components/Article";
-import { v4 as uuidv4 } from "uuid";
-import { useToasts } from "react-toast-notifications";
-import Badge from "@material-ui/core/Badge";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -92,6 +94,9 @@ const Documents = ReactLazyPreload(() => import("./Components/Documents"));
 const Settings = ReactLazyPreload(() =>
   import("./Components/Settings/Settings")
 );
+const ImportBackup = ReactLazyPreload(() =>
+  import("./Components/Settings/ImportBackup")
+);
 const Scan = ReactLazyPreload(() => import("./Components/Scan"));
 const DemoMobile = ReactLazyPreload(() =>
   import("./Components/Documents/Demo/DemoMobile")
@@ -143,6 +148,21 @@ function App() {
   const history = useHistory();
   const { addToast } = useToasts();
   const classes = useStyles();
+  const credentialSocketRef = useRef();
+  const svc = [
+    {
+      "id": "#linkedin",
+      "type": "linkedin",
+      "serviceEndpoint": "https://www.linkedin.com/company/infinitelabs-co"
+    },
+    {
+      "id": "#gitlab",
+      "type": "gitlab",
+      "serviceEndpoint": "https://gitlab.com/infinite-labs"
+    }
+  ]
+  const didHandler  = didMethod.driver({method:'moncon',service:svc})
+
 
   useEffect(() => {
     history.listen((location, action) => {
@@ -177,6 +197,22 @@ function App() {
   }, [addToast, online]);
 
   useEffect(() => {
+    const userId = localStorage.getItem(LS_DID_KEY);
+    if (!userId) {
+      const setUserId = async () => {
+        let id = (await didHandler.generate()).id;
+        localStorage.setItem(LS_DID_KEY, id);
+      }
+      setUserId()
+    }
+    const lsData = localStorage.getItem(LS_USER_KEY);
+    if (!lsData) {
+      const parsedState = JSON.stringify(initialState);
+      localStorage.setItem(LS_USER_KEY, parsedState);
+    }
+  }, []);
+
+  useEffect(() => {
     const lsData = JSON.parse(localStorage.getItem(LS_USER_KEY));
     if (lsData) {
       dispatch({
@@ -186,17 +222,39 @@ function App() {
     }
   }, [dispatch]);
 
+
   useEffect(() => {
-    const userId = localStorage.getItem(LS_DID_KEY);
+    credentialSocketRef.current = io(process.env.REACT_APP_MONCON_URL_SOCKET);
+    credentialSocketRef.current.on("connect", () => {
+      console.log(credentialSocketRef.current.id);
+      let userId = localStorage.getItem(LS_DID_KEY);
+      if (!userId) {
+        return
+      }
+      credentialSocketRef.current.emit('subscribeToCredentialRequestStatus',{userId});
+      credentialSocketRef.current.on("updateCredentialStatus", (data) => {
+        updateCredential(data,credentialSocketRef,dispatch,addToast)
+      });
+    });
+    console.log('updateCredential useEffect')
+    return () => {
+      credentialSocketRef.current.on("disconnect", () => {
+        console.log("disconnect");
+        credentialSocketRef.current.off("updateCredentialStatus", (data) => {
+          updateCredential(data,credentialSocketRef,dispatch,addToast)
+        });
+      });
+    };
+  }, []);
+
+  useEffect(() => {
+    let userId = localStorage.getItem(LS_DID_KEY);
     if (!userId) {
-      let id = `did:moncon:${uuidv4()}`;
-      localStorage.setItem(LS_DID_KEY, id);
+      return
     }
-    const lsData = JSON.parse(localStorage.getItem(LS_USER_KEY));
-    if (!lsData) {
-      const parsedState = JSON.stringify(initialState);
-      localStorage.setItem(LS_USER_KEY, parsedState);
-    }
+    console.log('getPendingResponses useEffect')
+    getPendingResponses(userId,credentialSocketRef,dispatch,addToast)
+
   }, []);
 
   return (
@@ -291,6 +349,12 @@ function App() {
             </Suspense>
           </Route>
 
+          <Route exact path="/settings/import-backup">
+            <Suspense fallback={<Spinner />}>
+              <ImportBackup />
+            </Suspense>
+          </Route>
+
           <Route path="/identity/edit/field/:fieldId">
             <Suspense fallback={<Spinner />}>
               <EditField />
@@ -328,8 +392,9 @@ function App() {
           </Route>
         </ContextProvider>
       </Switch>
-
+      <PWAPrompt />
       {!NOT_DISPAY_HEADER_IN.includes(location.pathname) && <Header />}
+      <BackupQuestions/>
     </div>
   );
 }

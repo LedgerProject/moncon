@@ -36,7 +36,7 @@ const EditEmail = () => {
       }
       dispatchUserData({
         type: "update",
-        payload: { id: credential_email, value: email, status: "false" },
+        payload: { id: credential_email, value: email, status: false, pending:false },
       });
       setTimeout(() => {
         return history.push("/identity");

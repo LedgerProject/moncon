@@ -24,7 +24,7 @@ const BestContents = () => {
   const changeContentStatus = async (content) => {
     if (content.status === "ACTIVE") {
       await changeStatusContent(content);
-    } else if (content.status === "DELETED") {
+    } else if (content.status === "INACTIVE") {
       let newContent = {
         ...content,
         amount: AMOUNT_TO_DISPLAY(content.amount),

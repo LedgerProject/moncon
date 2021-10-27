@@ -1,16 +1,17 @@
-import { useState, useEffect } from "react";
-import { useSelector, useDispatch } from "react-redux";
-import { useStyles } from "./styled";
-import { v4 as uuidv4 } from "uuid";
-import { post } from "../../services/apiHandler.js";
-import { Fab, Button, Grid } from "@material-ui/core";
+import { useState } from "react";
 import { Link } from "react-router-dom";
-import IconEdit from "../../Assets/svg/IconEdit";
-import Check from "../../Assets/svg/Check";
+import { Fab, Button, Grid } from "@material-ui/core";
+import { useSelector, useDispatch } from "react-redux";
 import { useToasts } from "react-toast-notifications";
 import Field from "./Field";
 import DinamycField from "./DinamycField";
 import LoadingButton from "../Utils/LoadingButton";
+import { createRequestToIssuer } from "../../services/apiHandler.js";
+import apiService from '../../services/apiService.js';
+import { useStyles } from "./styled";
+import IconEdit from "../../Assets/svg/IconEdit";
+import Check from "../../Assets/svg/Check";
+import PendingDocument from "../../Assets/svg/PendingDocument";
 import {
   credential_mobil,
   credential_email,
@@ -20,10 +21,11 @@ import {
 } from "../../Const";
 
 const Identity = () => {
+  
   const { addToast } = useToasts();
   const classes = useStyles();
   const dispatchUserData = useDispatch();
-  const [data, setData] = useState(null);
+  const [file,setFile] = useState(null);
   const name = useSelector((state) => state.UserReducer.name.value);
   const lastName = useSelector((state) => state.UserReducer.lastName.value);
   const dinamycFields = useSelector((state) => state.UserReducer.dynamicFields);
@@ -31,27 +33,11 @@ const Identity = () => {
     (state) => state.UserReducer[credential_address].value.address
   );
   const id = useSelector((state) => state.UserReducer[credential_address].id);
+  const status = useSelector((state) => state.UserReducer[credential_address].status);
+  const pending = useSelector((state) => state.UserReducer[credential_address].pending);
   const userId = localStorage.getItem(LS_DID_KEY);
 
-  const credential = async () => {
-    let credentialSubject;
-    if (!userId) {
-      let id = `did:moncon:${uuidv4()}`;
-      localStorage.setItem(LS_DID_KEY, id);
-      credentialSubject = {
-        id: id,
-        credential: {
-          id: `did:moncon:${uuidv4()}`,
-        },
-      };
-    } else {
-      credentialSubject = {
-        id: userId,
-        credential: {
-          id: `did:moncon:${uuidv4()}`,
-        },
-      };
-    }
+  const credential = async (file) => {
     if (!address) {
       return addToast("Add a value to the identity", {
         appearance: "error",
@@ -59,29 +45,45 @@ const Identity = () => {
         autoDismissTimeout: 4000,
       });
     }
-    credentialSubject.credential[address] = address;
-    const res = await post(credentialSubject);
-    let data = res.data;
-    setData(data);
-    console.log(res);
 
-    console.log(res.data);
-    const payload = { id: `${id}` };
-    if (hasCredentials !== "true") {
-      payload.status = "true";
-    }
-    if (data !== undefined) {
-      dispatchUserData({
-        type: "update",
-        payload,
+    const formData = new FormData();
+      
+    try{
+      formData.append("image", file);
+      console.log('formData',formData.getAll("image"));
+
+      const url = `/user/upload-image?userId=${userId}&credential_type=${credential_address}`
+      const image = await apiService.post(url , formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
       });
-    } else {
-      addToast("An error has occurred, check the data!", {
+
+      console.log('image',image)
+
+      await createRequestToIssuer(credential_address, userId, image.data.image, address);
+
+    }catch(err){
+      console.log(err)
+      return addToast("Some error has occurred, please check your internet connection", {
         appearance: "error",
         autoDismiss: true,
         autoDismissTimeout: 4000,
-      });
+      })
     }
+
+    const payload = { id: `${id}`, value:address, pending: true };
+
+    dispatchUserData({
+      type: "update",
+      payload,
+    });
+
+    return addToast("Request created, please wait until the data is validated", {
+      appearance: "success",
+      autoDismiss: true,
+      autoDismissTimeout: 4000,
+    })
   };
 
   const [stateIn, setState] = useState({
@@ -100,19 +102,23 @@ const Identity = () => {
     }, 1800);
   };
 
-  useEffect(() => {
-    if (data) {
-      localStorage.setItem(credential_address, JSON.stringify(data));
-      addToast("Verified credential", {
-        appearance: "success",
+  const handleFile = (event) => {
+    event.preventDefault()
+    console.log('handleFile')
+    const _file = event.target.files[0];
+    console.log(event.target.files)
+    console.log(_file)
+    if(!_file){
+      return addToast("You need to upload a document to verify the information!", {
+        appearance: "error",
         autoDismiss: true,
-        autoDismissTimeout: 2000,
+        autoDismissTimeout: 4000,
       });
     }
-  }, [data, addToast]);
-
-  const hasCredentials =
-    localStorage.hasOwnProperty(`credential_address`) || Boolean(data);
+    setFile(_file);
+    onClick();
+    credential(_file);
+  }
 
   return (
     <>
@@ -150,7 +156,7 @@ const Identity = () => {
             to="/identity/edit/mobile"
             path={credential_mobil}
             title="Mobile Phone"
-            field="mobil"
+            field="mobile"
           />
           <Field
             to="/identity/edit/datebirth"
@@ -190,8 +196,16 @@ const Identity = () => {
               </div>
 
               <div style={{ display: "flex", justifyContent: "flex-end" }}>
-                {hasCredentials !== true ? (
-                  <div>
+                {
+                  pending ? (
+                    <div className={classes.check}>
+                      <PendingDocument />
+                    </div>
+                  ) : status ? (
+                    <div className={classes.check}>
+                      <Check />
+                    </div>
+                  ): (
                     <LoadingButton
                       loading={loading}
                       done={finished}
@@ -199,25 +213,19 @@ const Identity = () => {
                       variant="contained"
                       color="primary"
                       type="submit"
-                      onClick={() => {
-                        onClick();
-                        credential();
-                      }}
+                      handleFile={handleFile}
+                      inputId={credential_address}
                     >
-                      Ask Credential
+                      Ask for credential
                     </LoadingButton>
-                  </div>
-                ) : (
-                  <div className={classes.check}>
-                    <Check />
-                  </div>
-                )}
+                  )
+                }
               </div>
             </div>
           </div>
 
           {dinamycFields.map((values, index) => {
-            return <DinamycField values={values} key={index} />;
+            return <DinamycField values={values} index={index} key={index} />;
           })}
         </div>
         <Grid container item xs justifyContent="center">

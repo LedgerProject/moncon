@@ -1,76 +1,69 @@
-import React, { useEffect, useState } from "react";
-import { v4 as uuidv4 } from "uuid";
-import { useStyles } from "./styled";
-import { post } from "../../services/apiHandler.js";
+import { useState } from "react";
 import { Fab } from "@material-ui/core";
 import { Link } from "react-router-dom";
-import IconEdit from "../../Assets/svg/IconEdit";
-import Check from "../../Assets/svg/Check";
 import { useSelector, useDispatch } from "react-redux";
 import { useToasts } from "react-toast-notifications";
+import { useStyles } from "./styled";
+import apiService from '../../services/apiService.js';
+import { createRequestToIssuer } from "../../services/apiHandler.js";
+import IconEdit from "../../Assets/svg/IconEdit";
+import Check from "../../Assets/svg/Check";
+import PendingDocument from "../../Assets/svg/PendingDocument";
 import LoadingButton from "../Utils/LoadingButton";
 import { LS_DID_KEY } from "../../Const";
 
 export default function Field({ to, path, title, field }) {
   const { addToast } = useToasts();
-  const [data, setData] = useState(null);
+  const [file, setFile] = useState(null);
   const state = useSelector((state) => state.UserReducer[path].value);
   const id = useSelector((state) => state.UserReducer[path].id);
-  const [hasCredentials, sethasCredentials] = useState(
-    localStorage.hasOwnProperty(`credential_${field}`)
-  );
+  const status = useSelector((state) => state.UserReducer[path].status);
+  const pending = useSelector((state) => state.UserReducer[path].pending);
   const userId = localStorage.getItem(LS_DID_KEY);
   const dispatchUserData = useDispatch();
   const classes = useStyles();
 
-  const credential = async () => {
+  const credential = async (file) => {
     if (state !== "") {
-      let credentialSubject;
-      if (!userId) {
-        let id = `did:moncon:${uuidv4()}`;
-        localStorage.setItem(LS_DID_KEY, id);
-        credentialSubject = {
-          id: id,
-          credential: {
-            id: `did:moncon:${uuidv4()}`,
-          },
-        };
-      } else {
-        credentialSubject = {
-          id: userId,
-          credential: {
-            id: `did:moncon:${uuidv4()}`,
-          },
-        };
-      }
-      credentialSubject.credential[field] = state;
-      const res = await post(credentialSubject);
-      let data = res.data;
-      setData(data);
-      console.log(res.data);
-      const payload = { id: `${id}`, value: `${state}` };
 
-      if (data !== undefined) {
-        localStorage.setItem(`credential_${field}`, JSON.stringify(data));
-        sethasCredentials(true);
-      }
+      const payload = { id: `${id}`, value: `${state}`, pending:true };
 
-      if (hasCredentials !== true) {
-        payload.status = "true";
-      }
+      const credential_type = `${id}`
 
-      if (data !== undefined) {
-        dispatchUserData({
-          type: "update",
-          payload,
+      try{
+        const formData = new FormData();
+        
+        formData.append("image", file);
+        const url = `/user/upload-image?userId=${userId}&credential_type=${credential_type}`
+        console.log('formData',formData.getAll("image"));
+        const image = await apiService.post(url , formData, {
+          headers: {
+            'Content-Type': 'multipart/form-data'
+          }
         });
-      } else {
-        return addToast("An error has occurred, check the data!", {
+
+        console.log('image',image)
+        await createRequestToIssuer(credential_type, userId, image.data.image, state);
+      }catch(err){
+        console.log(err)
+        return addToast("Some error has occurred, please check your internet connection", {
           appearance: "error",
           autoDismiss: true,
           autoDismissTimeout: 4000,
-        });
+        })
       }
+
+      dispatchUserData({
+        type: "update",
+        payload,
+      });
+    
+      return addToast("Request created, please wait until the data is validated", {
+        appearance: "success",
+        autoDismiss: true,
+        autoDismissTimeout: 4000,
+      })
+    
     } else {
       addToast("Add a value to the identity", {
         appearance: "error",
@@ -78,19 +71,7 @@ export default function Field({ to, path, title, field }) {
         autoDismissTimeout: 4000,
       });
     }
-    //storage res data
   };
-
-  useEffect(() => {
-    if (data) {
-      localStorage.setItem(`credential_${field}`, JSON.stringify(data));
-      addToast("Verified credential", {
-        appearance: "success",
-        autoDismiss: true,
-        autoDismissTimeout: 2000,
-      });
-    }
-  }, [data, addToast, field]);
 
   const [stateIn, setState] = useState({
     loading: false,
@@ -107,6 +88,24 @@ export default function Field({ to, path, title, field }) {
       setState({ ...stateIn, loading: false });
     }, 1800);
   };
+
+  const handleFile = (event) => {
+    event.preventDefault()
+    console.log('handleFile')
+    const _file = event.target.files[0];
+    console.log(event.target.files)
+    console.log(_file)
+    if(!_file){
+      return addToast("You need to upload a document to verify the information!", {
+        appearance: "error",
+        autoDismiss: true,
+        autoDismissTimeout: 4000,
+      });
+    }
+    setFile(_file);
+    onClick();
+    credential(_file);
+  }
 
   return (
     <>
@@ -141,26 +140,30 @@ export default function Field({ to, path, title, field }) {
             </Link>
           </div>
           <div style={{ display: "flex", justifyContent: "flex-end" }}>
-            {hasCredentials !== true ? (
-              <LoadingButton
-                loading={loading}
-                done={finished}
-                className={classes.button}
-                variant="contained"
-                color="primary"
-                type="submit"
-                onClick={() => {
-                  onClick();
-                  credential();
-                }}
-              >
-                Ask Credential
-              </LoadingButton>
-            ) : (
-              <div className={classes.check}>
-                <Check />
-              </div>
-            )}
+            {
+              pending ? (
+                <div className={classes.check}>
+                  <PendingDocument />
+                </div>
+              ) : status ? (
+                <div className={classes.check}>
+                  <Check />
+                </div>
+              ): (
+                <LoadingButton
+                  loading={loading}
+                  done={finished}
+                  className={classes.button}
+                  variant="contained"
+                  color="primary"
+                  type="submit"
+                  handleFile={handleFile}
+                  inputId={id}
+                >
+                  Ask for credential
+                </LoadingButton>
+              )
+            }
           </div>
         </div>
       </div>

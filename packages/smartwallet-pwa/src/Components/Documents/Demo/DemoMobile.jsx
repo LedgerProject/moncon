@@ -1,15 +1,18 @@
-import React from "react";
-import { useStyles } from "../styled";
+import { useState } from "react";
 import { useSelector } from "react-redux";
+import { useHistory } from "react-router-dom";
+import { useStyles } from "../styled";
 import MonconImg from "../../../Assets/img/MonconImg";
 import Link from "../../Link";
 import IconLeft from "../../../Assets/svg/IconLeft";
 import { credential_mobil } from "../../../Const";
 
-import { useHistory } from "react-router-dom";
 const DemoMobile = () => {
   const classes = useStyles();
   const history = useHistory();
+  const [data, setData] = useState(JSON.parse(localStorage.getItem(credential_mobil)));
+  const mobile = useSelector((state) => state.UserReducer[credential_mobil]);
+
   const handleReturn = () => {
     if (history.length <= 2) {
       history.push("/documents");
@@ -17,8 +20,6 @@ const DemoMobile = () => {
       history.goBack();
     }
   };
-
-  const mobile = useSelector((state) => state.UserReducer[credential_mobil]);
 
   return (
     <>
@@ -57,6 +58,29 @@ const DemoMobile = () => {
           <div style={{ marginLeft: "20px" }}>
             <div className={classes.documentsSubtitle}>Message</div>
             <p className={classes.documentsMessage}>{mobile.value}</p>
+          </div>
+        </div>
+      </div>
+      <div
+        style={{ marginTop: "15px" }}
+        className={classes.documentDetailsContainer}
+      >
+        <div>
+          <div style={{ marginLeft: "20px" }}>
+            <div className={classes.documentsSubtitle}>credential hash</div>
+            <p className={classes.documentsMessage}>{data.hash}</p>
+          </div>
+        </div>
+      </div>
+
+      <div
+        style={{ marginTop: "15px" }}
+        className={classes.documentDetailsContainer}
+      >
+        <div>
+          <div style={{ marginLeft: "20px" }}>
+            <div className={classes.documentsSubtitle}>sawtooth transaction id</div>
+            <p className={classes.documentsMessage}>{data.my_credential_signature_id}</p>
           </div>
         </div>
       </div>

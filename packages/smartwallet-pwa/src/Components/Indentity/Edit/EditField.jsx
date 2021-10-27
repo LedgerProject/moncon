@@ -36,7 +36,8 @@ const EditField = () => {
         payload: {
           value,
           id: title.toString(),
-          status: "false",
+          status: false, 
+          pending:false
         },
       });
       setTimeout(() => {

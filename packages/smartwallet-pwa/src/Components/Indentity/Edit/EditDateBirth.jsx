@@ -1,25 +1,26 @@
 import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Container, TextField, Button } from "@material-ui/core";
-import { useStyles } from "./style";
 import { useHistory } from "react-router";
-import ArrowLeft from "../../../Assets/svg/ArrowLeft";
+import { Container, Button } from "@material-ui/core";
 import { useToasts } from "react-toast-notifications";
-import { credential_birthday } from "../../../Const";
 import {
-  MuiPickersUtilsProvider,
-  KeyboardTimePicker,
   KeyboardDatePicker,
 } from "@material-ui/pickers";
 import moment from "moment";
+import { useStyles } from "./style";
+import ArrowLeft from "../../../Assets/svg/ArrowLeft";
+import { credential_birthday } from "../../../Const";
+
 const EditDateBirth = () => {
   const classes = useStyles();
   const { addToast } = useToasts();
   const history = useHistory();
   const dispatchUserData = useDispatch();
+
   const datebirthValue = useSelector(
     (state) => state.UserReducer[credential_birthday].value
   );
+
   const [dateBirth, setDateBirth] = useState(moment().format("DD-MM-yyyy"));
   const [inputValue, setInputValue] = useState(moment().format("DD-MM-yyyy"));
 
@@ -32,7 +33,7 @@ const EditDateBirth = () => {
         autoDismissTimeout: 2000,
       });
     } else {
-      let payload = { id: credential_birthday, status: "false" };
+      let payload = { id: credential_birthday, status: false, pending:false };
       if (dateBirth) {
         payload.value = dateBirth;
       }

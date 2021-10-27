@@ -1,12 +1,18 @@
 import express from "express";
 import Stripe from "stripe";
-import { AMOUNT_TO_STORE } from "../Const.js";
-import moment from "moment";
+import multer from 'multer';
+import multerS3 from 'multer-s3';
 import jwt from "jsonwebtoken";
-import PurchasesModel from "../models/purchases.js";
-import PremiumContentModel from "../models/premiumContent.js";
-import PublisherModel from "../models/publisher.js";
-import UserModel from "../models/user.js";
+import moment from "moment";
+import { s3 } from "../services/s3Client.js"; // Helper function that creates Amazon S3 service client module.
+import { 
+  getSafetyQuestions,
+  createPBKDF,
+  sanitizeAnswers,
+  recoveryKeypair
+} from "keypair-lib";
+import { setFileName } from '../middlewares/multerMiddleware.js';
+import { AMOUNT_TO_STORE } from "../Const.js";
 
 const router = express.Router();
 
@@ -18,9 +24,20 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
 const PRICE_ID = process.env.PRICE_ID;
 
-///
-// IMPORTANT see line 184
-//
+
+const upload = multer({
+  storage: multerS3({
+    s3: s3,
+    bucket: process.env.BUCKET_NAME,
+    acl: "public-read",
+    metadata: function (req, file, cb) {
+      cb(null, {fieldName: file.fieldname});
+    },
+    key: function (req, file, cb) {
+      cb(null, `${req.locals.newFileName}.${file.mimetype.replace('image/','')}`)
+    }
+  })
+})
 
 router.post("/customer", async (req, res) => {
   const { userId, paymentId, metadata } = req.body;
@@ -213,88 +230,49 @@ router.post("/token", async (req, res) => {
   }
 });
 
-if (process.env.NODE_ENV === "development") {
-  //IMPORTANT
-  //this endpoint has to be deleted
-  router.get("/reset", async (req, res) => {
-    const { userId } = req.query;
-    console.log("/reset in userRoutes");
-    console.table({ userId });
-
-    try {
-      const result = await PurchasesModel.deleteMany({ userId });
-
-      res.json({ result });
-    } catch (err) {
-      console.log("Error deleting purchases : ", err);
-      return res.status(500).json({ error: "Error deleting purchases" });
+router.post('/upload-image', setFileName, upload.single('image'), async (req, res) => {
+  try {
+    return res.status(200).json({image: req.file.location});
+  } catch (err) {
+    if(!(err === '[ERR_HTTP_HEADERS_SENT]')){
+      console.log('Error uploading image: ', err);
+      return res.status(500).json({ error: `Error uploading image: ${err.message}`});
     }
-  });
+  }
+});
 
-  //IMPORTANT
-  //this endpoint has to be deleted
+router.get('/backup-questions', async (req, res) => {
+  try {
+    const questions =  getSafetyQuestions('en_GB');
+    return res.status(200).json(questions);
+  } catch (err){
+    console.log("Error returning backup questions", err);
+    return res.status(500).json({error:"Error returning backup questions"});
+  }
+});
 
-  router.get("/reset-all", async (req, res) => {
-    console.log("/reset-all in userRoutes");
+router.post('/pbkdf', async (req, res) => {
+  const { userData } = req.body;
+  try {
+    const pbkdf = await createPBKDF(userData)
+    return res.status(200).json({pbkdf});
+  } catch (err){
+    console.log("Error creating pbkdf", err);
+    return res.status(500).json({error:"Error creating pbkdf"});
+  }
+});
 
-    try {
-      const purchases = await PurchasesModel.deleteMany();
-      const users = await UserModel.deleteMany();
-
-      res.json({ purchases, users });
-    } catch (err) {
-      console.log("Error deleting purchases : ", err);
-      return res.status(500).json({ error: "Error deleting purchases" });
-    }
-  });
-
-  //IMPORTANT
-  //this endpoint has to be deleted
-  router.get("/publisher-info", async (req, res) => {
-    const { publisherId } = req.query;
-    console.log("/publisher-info in userRoutes");
-    console.table({ publisherId });
-
-    try {
-      const result = await PublisherModel.findOne({ id: publisherId }).populate(
-        "premiumContent"
-      );
-
-      res.json({ result });
-    } catch (err) {
-      console.log("Error deleting purchases : ", err);
-      return res.status(500).json({ error: "Error deleting purchases" });
-    }
-  });
-
-  //IMPORTANT
-  //this endpoint has to be deleted
-  router.get("/purchases-info", async (req, res) => {
-    const { userId, premiumContentId } = req.query;
-    console.log("/purchases-info in userRoutes");
-    console.table({ userId, premiumContentId });
-    try {
-      if (!premiumContentId && userId) {
-        const result = await PurchasesModel.find({ userId });
-        return res.json({ result });
-      }
-
-      if (premiumContentId && !userId) {
-        const result = await PurchasesModel.find({ premiumContentId });
-        return res.json({ result });
-      }
-
-      if (premiumContentId && userId) {
-        const result = await PurchasesModel.find({ userId, premiumContentId });
-        return res.json({ result });
-      }
-
-      return res.status(400).json({ error: "no parameters" });
-    } catch (err) {
-      console.log("Error deleting purchases : ", err);
-      return res.status(500).json({ error: "Error deleting purchases" });
-    }
-  });
-}
+router.post('/keypair', async (req, res) => {
+  const { pbkdf, answers } = req.body;
+  console.log(req.body)
+  try {
+    const sanitizedAnswers = sanitizeAnswers(answers);
+    const keypair = await recoveryKeypair(sanitizedAnswers,pbkdf,"user");
+    return res.status(200).json(keypair["user"]);
+  } catch (err){
+    console.log("Error creating keypair", err);
+    return res.status(500).json({error:"Error creating keypair"});
+  }
+});
 
 export default router;

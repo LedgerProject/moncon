@@ -18,13 +18,14 @@ const EditAdd = () => {
       type: "add-dynamic-field",
       payload: {
         value,
-        id: title
+        id: 'credential_' + title
           .toString()
           .toLowerCase()
           .trim()
           .replace(/\s+/g, "")
           .replace(" ", "-"),
-        status: "false",
+        status: false,
+        pending:false,
       },
     });
     setTimeout(() => {

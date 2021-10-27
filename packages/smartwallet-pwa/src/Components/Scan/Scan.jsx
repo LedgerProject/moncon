@@ -2,9 +2,8 @@ import { useState, useEffect, useRef } from "react";
 import { Grid, Button, makeStyles, useMediaQuery } from "@material-ui/core";
 import { useHistory } from "react-router-dom";
 import io from "socket.io-client";
-import ReadQrCode from "../ReadQrCode";
-import ScanHandler from "./ScanHandler";
 import { useToasts } from "react-toast-notifications";
+import ScanHandler from "./ScanHandler";
 import IconLeft from "../../Assets/svg/IconLeft";
 
 const useStyles = makeStyles((theme) => ({

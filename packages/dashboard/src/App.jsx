@@ -1,8 +1,12 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { Redirect, Route, Switch, useLocation } from "react-router-dom";
+import { Container, makeStyles } from "@material-ui/core";
+import io from "socket.io-client";
 import firebaseService from "./Services/firebaseService";
 import PrivateRoute from "./PrivateRoute";
 import Publishers from "./Components/Publishers";
+import Issuer from "./Components/Issuer";
+import Request from "./Components/Issuer/UserRequest/Request"
 import PremiumContent from "./Components/PremiumContent";
 import Settings from "./Components/Settings";
 import Header from "./Components/Header";
@@ -15,10 +19,9 @@ import {
   ROLES_DEFAULT_ROUTES,
   ROLE_ADMIN,
   ROLE_PUBLISHER,
-  ROLE_USER,
+  ROLE_ISSUER,
   LS_KEY_TOKEN,
 } from "./Constants";
-import { Container, makeStyles } from "@material-ui/core";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -38,6 +41,8 @@ function App() {
   const [userRole, setUserRole] = useState("");
   const [userId, setUserId] = useState("");
   const [userPhoto, setUserPhoto] = useState("");
+  const socket = useRef();
+
 
   useEffect(() => {
     const removeListener = firebaseService.auth().onAuthStateChanged((user) => {
@@ -45,6 +50,7 @@ function App() {
       if (user) {
         setIsUserAuthed(true);
         user.getIdTokenResult().then((tokenData) => {
+          console.log('getting role');
           setUserRole(getRoleFromUserClaims(tokenData.claims));
           localStorage.setItem(LS_KEY_TOKEN, tokenData.token);
           setUserId(tokenData.claims.user_id);
@@ -70,6 +76,19 @@ function App() {
 
   const redirectPath = ROLES_DEFAULT_ROUTES[userRole] || "/auth";
 
+  useEffect(() => {
+    socket.current = io(process.env.REACT_APP_MONCON_URL_SOCKET);
+    socket.current.on("connect", () => {
+      console.log(socket.current.id);
+    });
+
+    return () => {
+      socket.current.on("disconnect", () => {
+        console.log("disconnect");
+      });
+    };
+  }, []);
+
   return isLoading ? (
     <Spinner open={true} />
   ) : (
@@ -82,6 +101,7 @@ function App() {
         setUserRole,
         setIsLoading,
         logout,
+        socket
       }}
     >
       {location.pathname !== "/auth" && location.pathname !== "/newlogin" && (
@@ -114,6 +134,18 @@ function App() {
               path="/admin"
               component={Admin}
               allowedRoles={[ROLE_ADMIN]}
+            />
+            <PrivateRoute
+              exact
+              path="/issuer"
+              component={Issuer}
+              allowedRoles={[ROLE_ISSUER]}
+            />
+            <PrivateRoute
+              exact
+              path="/issuer/request/:id"
+              component={Request}
+              allowedRoles={[ROLE_ISSUER]}
             />
             <Redirect to={redirectPath} />
           </Switch>

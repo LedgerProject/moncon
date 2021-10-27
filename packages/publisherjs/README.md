@@ -4,6 +4,8 @@
 
 - [About](#about)
 - [Getting Started](#getting_started)
+- [Prerequisites](#prerequisites)
+- [Installing](#installing)
 
 ## About <a name = "about"></a>
 
@@ -13,7 +15,7 @@ This is the javascript code to add moncon functionality to publisher's webs.
 
 These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. See [deployment](#deployment) for notes on how to deploy the project on a live system.
 
-### Prerequisites
+### Prerequisites <a name = "prerequisites"></a>
 
 You need NodeJS installed, at least version 14.
 
@@ -34,7 +36,7 @@ If you have trouble with any of these, learn more about the PATH environment
 variable and how to fix it here for [windows](https://www.howtogeek.com/118594/how-to-edit-your-system-path-for-easy-command-line-access/) or
 [mac/linux](https://stackoverflow.com/questions/24306398/how-to-add-mongo-commands-to-path-on-mac-osx/24322978#24322978).
 
-### Installing
+### Installing <a name = "installing"></a>
 
 > If you want to commit and push your work as you go, you'll want to
 >[fork](https://docs.github.com/en/free-pro-team@latest/github/getting-started-with-github/fork-a-repo)

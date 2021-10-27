@@ -10,6 +10,14 @@ const PublisherSchema = new Schema({
   stripeAccountId: {
     type: String,
   },
+  contentIdType:{
+    type: String,
+    enum:['id','class','tag','default'],
+    default: 'default',
+  },
+  contentIdValue:{
+    type: String,
+  },
   premiumContent: [
     {
       type: Schema.Types.ObjectId,

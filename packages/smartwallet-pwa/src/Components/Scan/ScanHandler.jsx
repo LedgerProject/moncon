@@ -6,6 +6,7 @@ import ReadQrCode from "../ReadQrCode";
 import ShareCredentialAndPay from "../ReadQrCode/ShareCredentialAndPay";
 import ScanPayment from "../ReadQrCode/ScanPayment";
 import ScanShare from "../ReadQrCode/ScanShare";
+import Spinner from '../Loaded/Spinner';
 
 const ScanHandler = ({ socket, display }) => {
   const [QrScan, setQrScan] = useState(false);
@@ -13,6 +14,7 @@ const ScanHandler = ({ socket, display }) => {
   const [hideQrReader, setHideQrReader] = useState(false);
   const [isPurchased, setIsPurchased] = useState(false);
   const [QrType, setQrType] = useState("");
+  const [loader, setLoader] = useState(false);
   const { addToast } = useToasts();
   const history = useHistory();
 
@@ -26,14 +28,38 @@ const ScanHandler = ({ socket, display }) => {
   }, [QrResponse]);
 
   useEffect(() => {
-    if (Object.keys(QrResponse).length > 0) {
+    if (QrScan) {
       //set the type of action
       setQrType(QrResponse.type);
     }
   }, [QrResponse]);
 
+
   useEffect(() => {
-    if (Object.keys(QrResponse).length > 0) {
+    const contentInfoResponse = (data) => {
+      console.log("contentInfoResponse");
+      console.table({...QrResponse, ...data});
+      setQrResponse({...QrResponse, ...data});
+      setLoader(false);
+    };
+
+    if(!!socket.current){ 
+      socket.current.on(
+        "contentInfoResponse",
+        contentInfoResponse
+      );
+    }
+
+    return () => {
+      socket.current.off(
+        "contentInfoResponse",
+        contentInfoResponse
+      );
+    };
+  }, [socket, loader]);
+
+  useEffect(() => {
+    if (QrScan && !!QrResponse.content) {
       //check if the content is already purcharsed
       const userInfo = JSON.parse(localStorage.getItem(LS_USER_KEY));
       const articles = userInfo.articles;
@@ -46,9 +72,8 @@ const ScanHandler = ({ socket, display }) => {
       const userId = localStorage.getItem(LS_DID_KEY);
       const data = {
         idProvider: QrResponse.idProvider,
-        id: socket.current.id,
+        idUser: socket.current.id,
         userId,
-        room: QrResponse.room,
       };
 
       if (process.env.NODE_ENV == "development") {
@@ -72,7 +97,10 @@ const ScanHandler = ({ socket, display }) => {
   }, [QrResponse]);
 
   useEffect(() => {
-    if (Object.keys(QrResponse).length > 0) {
+    if (QrScan) {
+      if(!QrResponse.request){
+        return;
+      }
       if (QrResponse.type == "payment") {
         return;
       }
@@ -92,29 +120,46 @@ const ScanHandler = ({ socket, display }) => {
         return history.push("/identity");
       }
     }
-  }, [QrResponse]);
+  }, [QrScan, QrResponse]);
+
+  const getContentInfo = (qrdata) => {
+    setQrResponse(qrdata);
+    const userId = localStorage.getItem(LS_DID_KEY);
+    const data = {...qrdata, userId, idUser: socket.current.id,};
+    socket.current.emit("contentInfo", data);
+    addToast("fetching info about the content", {
+      appearance: "info",
+      autoDismiss: true,
+      autoDismissTimeout: 3000,
+    });
+    return setLoader(true);
+  }
 
   return (
     <>
       {display && !hideQrReader && (
         <ReadQrCode
-          socket={socket}
-          QrResponse={QrResponse}
-          setQrResponse={setQrResponse}
+          setQrResponse={getContentInfo}
           QrScan={QrScan}
         />
       )}
-      {QrScan &&
-        !isPurchased &&
-        {
-          request_and_pay: (
-            <ShareCredentialAndPay QrResponse={QrResponse} socket={socket} />
-          ),
-          request_credential: (
-            <ScanShare QrResponse={QrResponse} socket={socket} />
-          ),
-          payment: <ScanPayment QrResponse={QrResponse} socket={socket} />,
-        }[QrType]}
+
+      {loader && <Spinner/> }
+
+      {
+        QrScan && !isPurchased && !loader &&
+          {
+            request_and_pay: (
+              <ShareCredentialAndPay QrResponse={QrResponse} socket={socket} />
+            ),
+            request_credential: (
+              <ScanShare QrResponse={QrResponse} socket={socket} />
+            ),
+            payment: (
+              <ScanPayment QrResponse={QrResponse} socket={socket} />
+            ),
+          }[QrType]
+      }
     </>
   );
 };

@@ -124,6 +124,8 @@ router.post("/pageview", async (req, res) => {
     isPurchased,
     userBalance,
     stripeAccountId: publisher.stripeAccountId,
+    contentIdType: publisher.contentIdType,
+    contentIdValue: publisher.contentIdValue,
     content: !isPremium
       ? {}
       : {
@@ -134,6 +136,7 @@ router.post("/pageview", async (req, res) => {
           url: premiumContent.url,
           title: premiumContent.title,
           image: premiumContent.image,
+          verification_type: premiumContent.verification_type,
         },
   });
 });

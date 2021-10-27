@@ -83,3 +83,21 @@ export const checkIfAdmin = async (req, res, next) => {
       .send({ error: "You are not authorized to make this request" });
   }
 };
+
+export const checkIfIssuer = async (req, res, next) => {
+  let user;
+  try {
+    const token = getTokenFromRequest(req);
+    user = await getUserFromToken(token);
+    if (!user.issuer) {
+      throw new Error(`User ${user.email} tried to make a user request`);
+    }
+    res.locals.userId = user.user_id;
+    return next();
+  } catch (err) {
+    console.error(err.message);
+    return res
+      .status(401)
+      .send({ error: "You are not authorized to make this request" });
+  }
+};

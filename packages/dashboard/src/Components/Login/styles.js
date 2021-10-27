@@ -41,7 +41,7 @@ export const useStyles = makeStyles((theme) => ({
     textAlign: "center",
   },
   clearSwitchPublisherButton: {
-    color: "#333333",
+    color: "#c6c6c6",
     textAlign: "center",
     cursor: "pointer",
   },

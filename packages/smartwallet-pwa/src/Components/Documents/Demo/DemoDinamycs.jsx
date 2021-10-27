@@ -1,13 +1,21 @@
-import React from "react";
+import { useState } from "react";
 import { useStyles } from "../styled";
 import { useSelector } from "react-redux";
 import Link from "../../Link";
 import IconLeft from "../../../Assets/svg/IconLeft";
 import { useHistory, useParams } from "react-router-dom";
 import MonconImg from "../../../Assets/img/MonconImg";
+
 const DemoDinamycs = () => {
+
   const classes = useStyles();
   const history = useHistory();
+  const dynamycFields = useSelector((state) => state.UserReducer.dynamicFields);
+  const { fieldId } = useParams();
+  const field = dynamycFields.find((field) => field.id === fieldId);
+  const [data, setData] = useState(JSON.parse(localStorage.getItem(`credential_${fieldId}`)));
+
+
   const handleReturn = () => {
     if (history.length <= 2) {
       history.push("/documents");
@@ -15,11 +23,6 @@ const DemoDinamycs = () => {
       history.goBack();
     }
   };
-
-  const dynamycFields = useSelector((state) => state.UserReducer.dynamicFields);
-  const { fieldId } = useParams();
-
-  const field = dynamycFields.find((field) => field.id === fieldId);
 
   return (
     <>
@@ -65,6 +68,31 @@ const DemoDinamycs = () => {
           </div>
         </div>
       </div>
+
+      <div
+        style={{ marginTop: "15px" }}
+        className={classes.documentDetailsContainer}
+      >
+        <div>
+          <div style={{ marginLeft: "20px" }}>
+            <div className={classes.documentsSubtitle}>credential hash</div>
+            <p className={classes.documentsMessage}>{data.hash}</p>
+          </div>
+        </div>
+      </div>
+
+      <div
+        style={{ marginTop: "15px" }}
+        className={classes.documentDetailsContainer}
+      >
+        <div>
+          <div style={{ marginLeft: "20px" }}>
+            <div className={classes.documentsSubtitle}>sawtooth transaction id</div>
+            <p className={classes.documentsMessage}>{data.my_credential_signature_id}</p>
+          </div>
+        </div>
+      </div>
+
     </>
   );
 };

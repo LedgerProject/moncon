@@ -1,15 +1,19 @@
-import React from "react";
-import { useStyles } from "../styled";
+import { useState } from "react";
 import { useSelector } from "react-redux";
+import { useHistory } from "react-router-dom";
+import { useStyles } from "../styled";
 import Link from "../../Link";
 import IconLeft from "../../../Assets/svg/IconLeft";
-import { useHistory } from "react-router-dom";
 import { credential_email } from "../../../Const";
 import MonconImg from "../../../Assets/img/MonconImg";
 
 const DemoEmail = () => {
+
   const classes = useStyles();
   const history = useHistory();
+  const [data, setData] = useState(JSON.parse(localStorage.getItem(credential_email)));
+  const email = useSelector((state) => state.UserReducer[credential_email]);
+
   const handleReturn = () => {
     if (history.length <= 2) {
       history.push("/documents");
@@ -17,8 +21,6 @@ const DemoEmail = () => {
       history.goBack();
     }
   };
-
-  const email = useSelector((state) => state.UserReducer[credential_email]);
 
   return (
     <>
@@ -61,6 +63,29 @@ const DemoEmail = () => {
           <div style={{ marginLeft: "20px" }}>
             <div className={classes.documentsSubtitle}>Message</div>
             <p className={classes.documentsMessage}>{email.value}</p>
+          </div>
+        </div>
+      </div>
+      <div
+        style={{ marginTop: "15px" }}
+        className={classes.documentDetailsContainer}
+      >
+        <div>
+          <div style={{ marginLeft: "20px" }}>
+            <div className={classes.documentsSubtitle}>credential hash</div>
+            <p className={classes.documentsMessage}>{data.hash}</p>
+          </div>
+        </div>
+      </div>
+
+      <div
+        style={{ marginTop: "15px" }}
+        className={classes.documentDetailsContainer}
+      >
+        <div>
+          <div style={{ marginLeft: "20px" }}>
+            <div className={classes.documentsSubtitle}>sawtooth transaction id</div>
+            <p className={classes.documentsMessage}>{data.my_credential_signature_id}</p>
           </div>
         </div>
       </div>

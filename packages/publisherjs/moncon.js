@@ -17,7 +17,6 @@ const queryString = currentScriptSrc.substring(currentScriptSrc.indexOf("?"));
 const urlParams = new URLSearchParams(queryString);
 const publisherId = urlParams.get("id");
 const sessionId = uuidv4();
-const room = uuidv4();
 const url =
   window.location.protocol +
   "//" +
@@ -32,6 +31,11 @@ const UNDERAGE = "UNDERAGE";
 const NO_CREDENTIAL = "NO_CREDENTIAL";
 let condition = false;
 let initialLoad = true;
+let qr = false;
+let request;
+let type;
+let contentNode;
+let contentNodeInnerHtml;
 
 socket.on("connect", () => {
   console.log(socket.id);
@@ -39,6 +43,28 @@ socket.on("connect", () => {
     initialLoad = false;
     sendPageView(userId);
   }
+});
+
+socket.on("contentInfoRequest", (data) => {
+  console.log("contentInfoRequest data");
+  console.table(data);
+  if (data.userId) {
+    console.log(userId);
+    userId = data.userId;
+    localStorage.setItem(LS_KEY_ID, userId);
+    sendPageView(data.userId);
+  }
+  socket.emit("sendContentInfo",{
+    ...data, 
+    stripeAccountId, 
+    hostname: window.location.hostname,
+    request,
+    content:{
+      ...content,
+      amount: AMOUNT_TO_DISPLAY(content.amount),
+    },
+    type,
+  });
 });
 
 socket.on("onLogin", (data) => {
@@ -90,7 +116,6 @@ socket.on("paymentResponse", (data) => {
         message: response.error,
         idProvider: socket.id,
         hostname: window.location.hostname,
-        room,
         paymentValidated: false,
       };
       console.log(response);
@@ -101,20 +126,139 @@ socket.on("paymentResponse", (data) => {
     });
 });
 
-socket.on("disconnect", () => {
-  //setIsConnected(false);
-});
-
 socket.on("webCredentialResponse", (data) => {
   console.log("webCredentialResponse", data);
+  if(!data.credential){
+    let responseData = {
+      id: data.id,
+      room,
+      idProvider: socket.id,
+      hostname: window.location.hostname,
+      validated: false,
+    };
+    return socket.emit("validatedCredential", responseData);
+  }
+
+  if(content.verification_type == 'zkp'){
+    handleZkpProof(data);
+  }else if(content.verification_type == 'w3c') {
+    handleW3cCredential(data);
+  }
+  
+});
+
+function handleZkpProof(data) {
+  
+  if (content.age === NO_CREDENTIAL) {
+    return;
+  }
+
+  const localUserId = data.userId;
+  userId = localUserId;
+  localStorage.setItem(LS_KEY_ID, userId);
+  
+  const apiUrl = `${apiBaseUrl}/zenroom/zkp-verify?did=${data.issuer_did}`
+
+  const body = JSON.stringify({
+    credential_proof: data.credential.credential_proof,
+    claim: content.age.toLowerCase()
+  });
+
+  const state = fetch(apiUrl, {
+    method: "post",
+    headers: {
+      Accept: "application/json",
+      "Content-Type": "application/json",
+    },
+    body,
+  })
+    .then((response) => response.json())
+    .then((response) => {
+      console.log(response)
+      console.log(response, "credential");
+      let responseData = {
+        ...data,
+        id: data.id,
+        idProvider: socket.id,
+        hostname: window.location.hostname,
+      };
+
+      if (response.verifyZkp) {
+        responseData.validated = true;
+        if (content?.amount == 0) {
+          let apiUrl = apiBaseUrl + "/js/credential";
+
+          let body = {
+            ...data,
+            publisherId,
+            userId,
+            contentId: content.id,
+          };
+
+          console.log(body, "body ", userId, "userId");
+
+          fetch(apiUrl, {
+            method: "post",
+            headers: {
+              Accept: "application/json",
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(body),
+          })
+            .then((response) => response.json())
+            .then((response) => {
+              console.log(response, "response of js/credential");
+              sendPageView(userId, true);
+              return socket.emit("validatedCredential", responseData);
+            })
+            .catch((response) => {
+              console.log(response);
+              return
+            });
+        }
+        return socket.emit("validatedCredential", responseData);
+      }
+      else {
+        console.log(response);
+        responseData.validated = false;
+        return socket.emit("validatedCredential", responseData);
+      }
+    })
+    .catch((response) => {
+      let responseData = {
+        ...data,
+        id: data.id,
+        idProvider: socket.id,
+        hostname: window.location.hostname,
+        validated: false
+      };
+      console.log(response, "falloo");
+      return socket.emit("validatedCredential", responseData);
+    });
+}
+
+function handleW3cCredential(data){
+
+  if (content.age === NO_CREDENTIAL) {
+    return;
+  }
 
   const body = {
-    data: data?.credential,
+    credential: data?.credential,
   };
-  const apiUrl_ = "https://apiroom.net/api/moncon/w3c-verify";
-  console.log(apiUrl_, "apiUrl_");
 
-  const state = fetch(apiUrl_, {
+  const apiUrl = `${apiBaseUrl}/zenroom/w3c-verify?did=${data.issuer_did}`
+
+  console.log(apiUrl, "apiUrl");
+
+  let responseData = {
+    ...data,
+    id: data.id,
+    idProvider: socket.id,
+    hostname: window.location.hostname,
+  };
+
+  fetch(apiUrl, {
     method: "post",
     headers: {
       Accept: "application/json",
@@ -124,105 +268,99 @@ socket.on("webCredentialResponse", (data) => {
   })
     .then((response) => response.json())
     .then((response) => {
-      console.log(response.output.length, "credential");
+      console.log(response, "credential");
 
-      if (response.output.length > 0) return true;
-      else return false;
+      if (response.verifyVC) {
+        const localUserId = data?.credential["my-vc"]?.credentialSubject?.id;
+        console.log(userId);
+
+        userId = localUserId;
+        localStorage.setItem(LS_KEY_ID, userId);
+
+        const birthDate =
+          data?.credential["my-vc"].credentialSubject.credential?.birthday;
+        if (!birthDate) {
+          return alert("Invalid credential");
+        }
+
+        const now = DateTime.now();
+        const birthD = DateTime.fromISO(birthDate.split("-").reverse().join("-"));
+        const interval = Interval.fromDateTimes(birthD, now);
+        console.log(interval.length("years"));
+
+
+        if (!interval.isValid) {
+          responseData.validated = false;
+          alert(interval.invalidExplanation);
+          console.log(interval.invalidExplanation);
+          return socket.emit("validatedCredential", responseData);
+        }
+
+        console.log("legal_age", interval.length("years") >= 18);
+        console.log("underage", interval.length("years") < 18);
+
+        const localCondition =
+          content.age === LEGAL_AGE
+            ? interval.length("years") >= 18
+            : interval.length("years") < 18;
+
+        console.log("localCondition", localCondition);
+
+        if (localCondition) {
+          condition = true;
+          responseData.validated = true;
+          if (content?.amount == 0) {
+            let apiUrl = apiBaseUrl + "/js/credential";
+
+            let body = {
+              ...data,
+              publisherId,
+              userId,
+              contentId: content.id,
+            };
+
+            console.log(body, "body ", userId, "userId");
+
+            fetch(apiUrl, {
+              method: "post",
+              headers: {
+                Accept: "application/json",
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify(body),
+            })
+              .then((response) => response.json())
+              .then((response) => {
+                console.log(response, "response of js/credential");
+                sendPageView(userId, true);
+                return socket.emit("validatedCredential", responseData);
+              })
+              .catch((response) => {
+                console.log(response);
+              });
+            return;
+          }
+          return socket.emit("validatedCredential", responseData);
+        } else {
+          responseData.validated = false;
+          socket.emit("validatedCredential", responseData);
+        }
+      }
+      else {
+        console.log(response)
+        responseData.validated = false;
+        return socket.emit("validatedCredential", responseData);
+      }
     })
     .catch((response) => {
       console.log(response, "falloo");
-      return false;
+      responseData.validated = false;
+      return socket.emit("validatedCredential", responseData);
     });
 
-  if (content.age === NO_CREDENTIAL) {
-    return;
-  }
+}
 
-  const localUserId = data?.credential["my-vc"]?.credentialSubject?.id;
-  console.log(userId);
-
-  userId = localUserId;
-  localStorage.setItem(LS_KEY_ID, userId);
-
-  const birthDate =
-    data?.credential["my-vc"].credentialSubject.credential?.birthday;
-  if (!birthDate) {
-    return alert("Invalid credential");
-  }
-
-  const now = DateTime.now();
-  const birthD = DateTime.fromISO(birthDate.split("-").reverse().join("-"));
-  const interval = Interval.fromDateTimes(birthD, now);
-  console.log(interval.length("years"));
-
-  let responseData = {
-    id: data.id,
-    room,
-    idProvider: socket.id,
-    hostname: window.location.hostname,
-  };
-
-  if (!state) {
-    responseData.validated = false;
-    return socket.emit("validatedCredential", responseData);
-  }
-
-  if (!interval.isValid) {
-    responseData.validated = false;
-    alert(interval.invalidExplanation);
-    console.log(interval.invalidExplanation);
-    return socket.emit("validatedCredential", responseData);
-  }
-
-  console.log("legal_age", interval.length("years") >= 18);
-  console.log("underage", interval.length("years") < 18);
-
-  const localCondition =
-    content.age === LEGAL_AGE
-      ? interval.length("years") >= 18
-      : interval.length("years") < 18;
-
-  console.log("localCondition", localCondition);
-
-  if (localCondition) {
-    condition = true;
-    responseData.validated = true;
-    if (content?.amount == 0) {
-      let apiUrl = apiBaseUrl + "/js/credential";
-
-      let body = {
-        ...data,
-        publisherId,
-        userId,
-        contentId: content.id,
-      };
-
-      console.log(body, "body ", userId, "userId");
-
-      fetch(apiUrl, {
-        method: "post",
-        headers: {
-          Accept: "application/json",
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(body),
-      })
-        .then((response) => response.json())
-        .then((response) => {
-          console.log(response, "response of js/credential");
-          sendPageView(userId, true);
-          return socket.emit("validatedCredential", responseData);
-        })
-        .catch((response) => {
-          console.log(response);
-        });
-      return;
-    }
-    return socket.emit("validatedCredential", responseData);
-  } else {
-    responseData.validated = false;
-    socket.emit("validatedCredential", responseData);
-  }
+socket.on("disconnect", () => {
 });
 
 function sendPageView(userId_, justPurchased, onlyCredential) {
@@ -255,28 +393,32 @@ function sendPageView(userId_, justPurchased, onlyCredential) {
     .then((response) => {
       const { isPremium, isLoggedIn, isPurchased, userBalance } = response;
       console.log(response, "response");
+      const { contentIdType, contentIdValue } = response;
       if (isPremium && !isPurchased) {
         content = response.content;
+
         stripeAccountId = response.stripeAccountId;
         console.log(content);
-        showMonconLayer();
-        if (content.age === NO_CREDENTIAL) {
-          showQrCode("payment");
-        } else if (
-          content.age !== NO_CREDENTIAL &&
-          !condition &&
-          content.amount > 0
-        ) {
-          showQrCode("request_and_pay", "credential_birthday");
-        } else if (
-          content.age !== NO_CREDENTIAL &&
-          !condition &&
-          content.amount === 0
-        ) {
-          showQrCode("request_credential", "credential_birthday");
+        if(!qr){
+          showMonconLayer(contentIdType, contentIdValue);
+          if (content.age === NO_CREDENTIAL) {
+            showQrCode("payment",null,contentIdType);
+          } else if (
+            content.age !== NO_CREDENTIAL &&
+            !condition &&
+            content.amount > 0
+          ) {
+            showQrCode("request_and_pay", "credential_birthday",contentIdType);
+          } else if (
+            content.age !== NO_CREDENTIAL &&
+            !condition &&
+            content.amount === 0
+          ) {
+            showQrCode("request_credential", "credential_birthday",contentIdType);
+          }
         }
       } else {
-        hideMonconLayer();
+        hideMonconLayer(contentIdType);
       }
     })
     .catch((err) => {
@@ -298,15 +440,60 @@ function purchase() {
   });
 }
 
-function showMonconLayer() {
-  document.getElementById("moncon-block").style.display = "block";
+function showMonconLayer(contentIdType,ContentIdValue) {
+  let htmlString = `
+  <div ${contentIdType !== 'default'? '':'id="moncon-wrapper"'}>
+    <div ${contentIdType !== 'default'? 'id="moncon-content-active"':'id="moncon-content"'}></div>
+  </div>
+  `;
+  let divLayer = document.createElement("div");
+  divLayer.id = "moncon-block";
+
+  if(contentIdType !== 'default'){
+    divLayer.classList = 'moncon-block-active';
+  }
+
+  console.table({contentIdType,ContentIdValue})
+  divLayer.innerHTML = htmlString.trim();
+  
+  if(contentIdType == "default"){
+    divLayer.style.height = document.body.offsetHeight + "px";
+    document.body.appendChild(divLayer);
+  }
+  else if(contentIdType == "id"){
+    contentNode = document.getElementById(ContentIdValue);
+    divLayer.style.height = (contentNode.parentNode.offsetHeight + 300) + "px";
+    contentNodeInnerHtml = contentNode.innerHTML;
+    contentNode.innerHTML = "";
+    contentNode.appendChild(divLayer);
+  }
+  else if(contentIdType == 'class'){
+    contentNode = document.getElementsByClassName(ContentIdValue)[0];
+    divLayer.style.height = (contentNode.parentNode.offsetHeight + 300) + "px";
+    contentNodeInnerHtml = contentNode.innerHTML;
+    contentNode.innerHTML = "";
+    contentNode.appendChild(divLayer);
+  }
+  else if(contentIdType == 'tag'){
+    contentNode = document.getElementsByTagName(ContentIdValue)[0];
+    divLayer.style.height = (contentNode.parentNode.offsetHeight + 300) + "px";
+    contentNodeInnerHtml = contentNode.innerHTML;
+    contentNode.innerHTML = "";
+    contentNode.appendChild(divLayer);
+  }
+  
+  divLayer.style.display = "block";
 }
 
-function hideMonconLayer() {
-  document.getElementById("moncon-block").style.display = "none";
+function hideMonconLayer(contentIdType) {
   const monconBlock = document.getElementById("moncon-block");
-  monconBlock.setAttribute("aria-hidden", false);
-  document.body.classList.remove("stop-scrolling");
+  monconBlock.style.display = "none";
+  if(contentIdType == 'default'){
+    monconBlock.setAttribute("aria-hidden", false);
+    return document.body.classList.remove("stop-scrolling");
+  }
+  contentNode.removeChild(monconBlock);
+  contentNode.innerHTML = contentNodeInnerHtml;
 }
 
 function getBrowserLocale() {
@@ -314,28 +501,23 @@ function getBrowserLocale() {
 }
 
 function getContentPrice() {
-  return new Intl.NumberFormat(getBrowserLocale(), {
-    style: "currency",
-    currency: content.currency,
-  }).format(content.amount || 0);
+
+  return new Intl.NumberFormat('de-DE', {
+      style: 'currency',
+      currency: 'EUR'
+    }).format(content.amount || 0);
 }
 
-function showQrCode(type, request) {
-  const localContent = Object(content);
-  localContent.amount = AMOUNT_TO_DISPLAY(localContent.amount);
+
+function showQrCode(_type, _request, contentIdType) {
+  type = _type;
+  request = _request;
+
+  qr = true;
 
   const data = {
     idProvider: socket.id,
-    hostname: window.location.hostname,
-    type: type,
-    room,
-    content: localContent,
-    stripeAccountId,
   };
-
-  if (request) {
-    data.request = request;
-  }
 
   console.log(data);
   const qrCode = new QRCodeStyling({
@@ -359,11 +541,11 @@ function showQrCode(type, request) {
   const title = {
     request_and_pay: `If you meet the ${
       content.age === LEGAL_AGE ? "legal age" : "underage"
-    } scan the QR code to unlock this content for ${getContentPrice()}.`,
+    } scan the QR code to unlock this content for ${getContentPrice()} .`,
     request_credential: `If you meet the ${
       content.age === LEGAL_AGE ? "legal age" : "underage"
     } scan the QR code to unlock this content.`,
-    payment: `Scan the QR code to unlock this content for ${getContentPrice()}.`,
+    payment: `Scan the QR code to unlock this content for ${getContentPrice()} .`,
   };
   const htmlStep1 = `  
   
@@ -381,24 +563,37 @@ function showQrCode(type, request) {
     </div>
   `;
 
+
+  const htmlActive = `  
+  <aside class="moncon-active">
+  <div id="moncon-content-active">
+    <div id="moncont-step-active-logo">
+      <img src="${process.env.MONCON_IMAGE_URL}" alt="logo" class="logo"/>
+    </div>
+      <div id="moncon-step-title-active">
+        ${title[type]}
+      </div>     
+        <div class="content-qr">
+            <div id="canvas"></div>
+        </div>
+    <div id="moncon-step-description-active">
+      Use your
+      <a href="${process.env.MONCON_PWA_URL}" id="moncon-link-active" target="blank"> moncon wallet</a>
+    </div>
+        </div>
+    </aside> 
+  `;
+
   var divLayer = document.createElement("div");
   divLayer.id = "moncon-step1";
   divLayer.innerHTML = htmlStep1.trim();
-  const contentDiv = document.getElementById("moncon-content");
   const monconBlock = document.getElementById("moncon-block");
-  monconBlock.setAttribute("aria-hidden", true);
-  document.body.classList.add("stop-scrolling");
+  let contentDiv = monconBlock.childNodes[0].getElementsByTagName('div')[0];
+  console.log(contentDiv)
+  if(contentIdType == 'default'){
+    monconBlock.setAttribute("aria-hidden", true);
+    document.body.classList.add("stop-scrolling");
+  }
   contentDiv.appendChild(divLayer);
   qrCode.append(document.getElementById("canvas"));
 }
-
-var htmlString = `
-  <div id="moncon-wrapper">
-    <div id="moncon-content"></div>
-  </div>
-`;
-var divLayer = document.createElement("div");
-divLayer.id = "moncon-block";
-divLayer.style.height = document.body.offsetHeight + "px";
-divLayer.innerHTML = htmlString.trim();
-document.body.appendChild(divLayer);

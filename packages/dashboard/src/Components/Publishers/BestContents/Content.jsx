@@ -203,7 +203,10 @@ const useStyles = makeStyles((theme) => ({
     background: "rgb(25, 25, 25)",
     color: "#fff",
     cursor: "pointer",
+    marginRight: "13px",
     "@media screen and (max-width: 800px)": {
+      marginRight: "0px",
+      margin: "0px",
       borderRadius: "4px",
       fontSize: "14px",
       fontWeight: 600,
@@ -230,7 +233,6 @@ const useStyles = makeStyles((theme) => ({
       alignItems: "center",
       display: "grid",
       gridTemplateColumns: "repeat(4, minmax(0, 1fr))",
-      marginRight: "10px",
     },
   },
 }));
@@ -251,6 +253,11 @@ const Content = ({
   const handleClick = () => {
     window.open(content.url, "_blank");
   };
+
+ const formatterEuro = new Intl.NumberFormat('de-DE', {
+        style: 'currency',
+        currency: 'EUR'
+     })
 
   return (
     <>
@@ -276,7 +283,7 @@ const Content = ({
                 </Grid>
                 <Grid item xs className={classes.itemMetrics}>
                   <Typography display="inline">
-                    <b>{AMOUNT_TO_DISPLAY(content.totalAmount)}€</b> total
+                    <b>{formatterEuro.format(AMOUNT_TO_DISPLAY(content.totalAmount))}</b> total
                   </Typography>
                 </Grid>
               </Grid>
@@ -288,25 +295,7 @@ const Content = ({
             <div className={classes.cardSection}>
               <div className={classes.cardImage}>
                 <div style={{ textAlign: "center" }}>
-                  {!!content?.image ? (
-                    <Grid
-                      style={{
-                        height: "100%",
-                        display: "flex",
-                        alignItems: "center",
-                      }}
-                    >
-                      <Container
-                        style={{
-                          display: "flex",
-                          alignItems: "center",
-                          flexDirection: "column",
-                        }}
-                      >
-                        <Avatar variant="square" src={content.image} />
-                      </Container>
-                    </Grid>
-                  ) : (
+                 
                     <Grid className={classes.imageFallback}>
                       <Container
                         style={{
@@ -322,7 +311,7 @@ const Content = ({
                         />
                       </Container>
                     </Grid>
-                  )}
+                 
                 </div>
               </div>
               <Grid className={classes.cardContent}>
@@ -348,26 +337,34 @@ const Content = ({
                   <Typography>{ageCredentials[content.age]}</Typography>
                 </Grid>
                 <Grid className={classes.space}>
-                  <Typography>{AMOUNT_TO_DISPLAY(content.amount)}€</Typography>
+                  <Typography>{formatterEuro.format(AMOUNT_TO_DISPLAY(content.amount))}</Typography>
                 </Grid>
                 <Grid>
-                  {changeContentStatus && (
-                    <Switch
-                      checked={content.status === "ACTIVE"}
-                      color="primary"
-                      onChange={() => changeContentStatus(content)}
-                    />
-                  )}
+                  {
+                    changeContentStatus && content.status !== 'DELETED' && (
+                      <Switch
+                        checked={content.status === "ACTIVE"}
+                        color="primary"
+                        onChange={() => changeContentStatus(content)}
+                      />
+                    )
+                  }
                 </Grid>
-                <Grid className={classes.space}>
-                  <div
-                    className={classes.buttonDelete}
-                    onClick={() => deleteContent(content)}
-                  >
-                    Delete
-                  </div>
-                </Grid>
+                {
+                  !!deleteContent &&
+                 
+                    <Grid className={classes.space}>
+                      <div
+                        className={classes.buttonDelete}
+                        onClick={() => deleteContent(content)}
+                      >
+                        Delete
+                      </div>
+                    </Grid>
+            
+                }
               </div>
+              
             </div>
           </Grid>
         </Paper>

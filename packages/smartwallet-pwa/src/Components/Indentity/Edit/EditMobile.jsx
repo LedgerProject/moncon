@@ -28,7 +28,7 @@ const EditMobile = () => {
         autoDismissTimeout: 2000,
       });
     } else {
-      const payload = { id: credential_mobil, status: "false" };
+      const payload = { id: credential_mobil, status: false, pending:false };
       if (mobilePhone) {
         payload.value = mobilePhone;
       }

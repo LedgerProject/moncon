@@ -1,8 +1,9 @@
 import { useState, useEffect } from "react";
-import { useStyles } from "./styled";
-import Fab from "@material-ui/core/Fab";
+import { useHistory } from "react-router";
+import { Fab, Grid } from "@material-ui/core";
 import { useToasts } from "react-toast-notifications";
-
+import { saveAs } from 'file-saver';
+import { useStyles } from "./styled";
 import IconSecurity from "../../Assets/svg/IconSecurity";
 import IconCreditCard from "../../Assets/svg/IconCreditCard";
 import IconMail from "../../Assets/svg/IconMail";
@@ -11,15 +12,19 @@ import Link from "../Link";
 import IconWeb from "../../Assets/svg/IconWeb";
 import IconSpeaker from "../../Assets/svg/IconSpeaker";
 import apiService from "../../services/apiService";
-import { LS_PAYMENT_METHOD_KEY, LS_CUSTOMER_KEY } from "../../Const";
+import { encrypt, getDataFromLS } from "../../services/backupService" ;
+import { LS_PAYMENT_METHOD_KEY, LS_CUSTOMER_KEY, LS_KEY_PAIR, LS_PBKDF_KEY } from "../../Const";
 
 const Settings = () => {
   const classes = useStyles();
+  const history = useHistory();
 
   const [card, setCard] = useState(
     window.localStorage.getItem(LS_PAYMENT_METHOD_KEY)
   );
+
   const { addToast } = useToasts();
+
   useEffect(() => {
     const paymentMethod = localStorage.getItem(LS_PAYMENT_METHOD_KEY);
     if (paymentMethod) {
@@ -69,6 +74,37 @@ const Settings = () => {
     });
   };
 
+  const generateBackUp = async () => {
+    const data = getDataFromLS()
+    
+    const base64Keypair = localStorage.getItem(LS_KEY_PAIR);
+
+    const keypair = JSON.parse(atob(base64Keypair));
+
+    const encryptedData = await encrypt(data, keypair);
+
+    const PBKDF = JSON.parse(localStorage.getItem(LS_PBKDF_KEY));
+
+    const dataBlob = new Blob([encryptedData], {type : 'application/json'});
+    const keypairBlob = new Blob(
+      [
+        JSON.stringify(PBKDF,null,4)
+      ],
+      {
+        type : 'application/json'
+      }
+    );
+    
+    saveAs(dataBlob, "moncon_wallet_backup.json");
+    saveAs(keypairBlob,"moncon_wallet_pbkdf.json");
+    
+    return;
+  }
+
+  const importBackUp = () => {
+    return history.push("/settings/import-backup")
+  }
+
   return (
     <>
       <div className={classes.root}>
@@ -84,7 +120,24 @@ const Settings = () => {
           </Fab>
           <div>
             <h1 className={classes.titleSettings}>Backup Your Identity</h1>
-            <p className={classes.settingsP}>Coming Soon</p>
+            <Grid container spacing={8}>
+              <Grid item xs={5}>
+                <button
+                  className={classes.buttonBlue}
+                  onClick={() => importBackUp()}
+                >
+                  import
+                </button>
+              </Grid>
+              <Grid item xs={5}>
+                <button
+                  className={classes.buttonBlue}
+                  onClick={() => generateBackUp()}
+                >
+                  export
+                </button>
+              </Grid>
+            </Grid>
           </div>
         </div>
 

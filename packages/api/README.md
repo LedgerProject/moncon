@@ -55,7 +55,7 @@ docker run --name moncon-database -p 27017:27017 -d mongo
 To start the local development server execute the following command.
 
 ```
-npm start
+npm run dev
 ```
 
 ## ⛏️ Built Using <a name = "built_using"></a>

@@ -1,12 +1,12 @@
 import React from "react";
 import { useSelector } from "react-redux";
-import IconUse from "../../Assets/svg/IconUse";
 import { Link } from "react-router-dom";
 import { useStyles } from "./styled";
 import MonconImg from "../../Assets/img/MonconImg";
 const DemoField = ({ to, path, title, field }) => {
   const classes = useStyles();
   const state = useSelector((state) => state.UserReducer[path].value);
+  console.log(path)
 
   return (
     <>

@@ -22,7 +22,13 @@ export const useStyles = makeStyles((theme) => ({
       height: "130%",
     },
   },
-
+  imageFallback: {
+    "@media screen and (max-width: 400px)": {
+      textAlign: "revert",
+      marginLeft: "-5px",
+      marginRight: theme.spacing(0.5),
+    },
+  },
   button: {
     background: "#7e41ff",
     borderRadius: 97.15,

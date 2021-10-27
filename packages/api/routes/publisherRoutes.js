@@ -18,7 +18,9 @@ import NotOwnerError from "../errors/NotOwnerError.js";
 import PremiumContentModel, {
   PREMIUMCONTENT_STATUS_DELETED,
   PREMIUMCONTENT_STATUS_ACTIVE,
+  PREMIUMCONTENT_STATUS_INACTIVE,
   NO_CREDENTIAL,
+  VERIFICATION_METHOD_ZKP,
 } from "../models/premiumContent.js";
 import { AMOUNT_TO_DISPLAY } from "../Const.js";
 
@@ -65,13 +67,17 @@ router.get("/premiumContent", async (req, res) => {
   const publisherId = res.locals.userId;
 
   const response = await PublisherModel.findOne({ id: publisherId }).populate(
-    "premiumContent"
+    {
+      path:"premiumContent",
+      match: { status: { $in: [PREMIUMCONTENT_STATUS_ACTIVE,PREMIUMCONTENT_STATUS_INACTIVE] } },
+    }
   );
+  console.log(response.premiumContent);
   res.json(response ? response.premiumContent : []);
 });
 
 router.put("/premiumContent", async (req, res) => {
-  const { url, domain, image, title, amount, age } = req.body;
+  const { url, domain, image, title, amount, age, verification_type } = req.body;
   const publisherId = res.locals.userId;
 
   const exists = await PremiumContentModel.findOne({
@@ -95,6 +101,7 @@ router.put("/premiumContent", async (req, res) => {
         image,
         domain,
         age: age || NO_CREDENTIAL,
+        verification_type: verification_type || age? VERIFICATION_METHOD_ZKP : NO_CREDENTIAL, 
         status: PREMIUMCONTENT_STATUS_ACTIVE,
       },
       { upsert: true, new: true }
@@ -103,7 +110,12 @@ router.put("/premiumContent", async (req, res) => {
       { id: publisherId },
       { $addToSet: { premiumContent: premiumContent._id } },
       { upsert: true, new: true }
-    ).populate("premiumContent");
+    ).populate(
+      {
+        path:"premiumContent",
+        match: { status: { $in: [PREMIUMCONTENT_STATUS_ACTIVE,PREMIUMCONTENT_STATUS_INACTIVE] } },
+      }
+    );
 
     return res.json(response.premiumContent);
   } catch (err) {
@@ -118,16 +130,19 @@ router.put("/premiumContentStatus", async (req, res) => {
   try {
     await PremiumContentModel.findOneAndUpdate(
       { publisherId, url },
-      { $set: { status: PREMIUMCONTENT_STATUS_DELETED } },
+      { $set: { status: PREMIUMCONTENT_STATUS_INACTIVE } },
       { upsert: true, new: true }
     );
     const response = await PublisherModel.findOne({ id: publisherId }).populate(
-      "premiumContent"
+      {
+        path:"premiumContent",
+        match: { status: { $in: [PREMIUMCONTENT_STATUS_ACTIVE,PREMIUMCONTENT_STATUS_INACTIVE] } },
+      }
     );
     res.json(response.premiumContent);
   } catch (err) {
-    console.error("Error deleting premium content: ", err);
-    return res.status(500).json({ error: "Error deleting premium content" });
+    console.error("Error changing status of premium content: ", err);
+    return res.status(500).json({ error: "Error changing status of premium content" });
   }
 });
 
@@ -136,28 +151,18 @@ router.delete("/premiumContent", async (req, res) => {
   const publisherId = res.locals.userId;
 
   try {
-    const content = await PremiumContentModel.findOne({ publisherId, url });
-
-    if (!content) {
-      console.error("Error content does not exist");
-      return res.status(500).json({ error: "Error content does not exist" });
-    }
-
-    await PremiumContentModel.deleteOne({ _id: content._id });
-
-    const publisher = await PublisherModel.findOne({ id: publisherId });
-
-    publisher.premiumContent = publisher.premiumContent.filter(
-      (id) => String(id) !== String(content._id)
+    await PremiumContentModel.findOneAndUpdate(
+      { publisherId, url },
+      { $set: { status: PREMIUMCONTENT_STATUS_DELETED } },
+      { upsert: true, new: true }
     );
-
-    publisher.save();
-
     const response = await PublisherModel.findOne({ id: publisherId }).populate(
-      "premiumContent"
+      {
+        path:"premiumContent",
+        match: { status: { $in: [PREMIUMCONTENT_STATUS_ACTIVE,PREMIUMCONTENT_STATUS_INACTIVE] } },
+      }
     );
-
-    res.status(200).json(response.premiumContent);
+    res.json(response.premiumContent);
   } catch (err) {
     console.error("Error deleting premium content: ", err);
     return res.status(500).json({ error: "Error deleting premium content" });
@@ -269,7 +274,7 @@ router.get("/bestContents", async (req, res) => {
     PublisherModel.findOne({ id: publisherId }).populate("premiumContent"),
   ]);
 
-  const bestContents = await Promise.all(
+  let bestContents = await Promise.all(
     metrics.map(async (metric) => {
       const contentInfo = publisher.premiumContent.find(
         (content) => String(content._id) === String(metric._id)
@@ -279,6 +284,9 @@ router.get("/bestContents", async (req, res) => {
         premiumContentId: metric._id,
       });
 
+      if(!contentInfo){
+        return
+      }
       return {
         premiumContentId: metric._id,
         url: contentInfo.url,
@@ -298,6 +306,8 @@ router.get("/bestContents", async (req, res) => {
       };
     })
   );
+
+  bestContents = bestContents.filter((content) => !!content)
 
   res.json(bestContents);
 });
@@ -515,6 +525,45 @@ router.post("/account-link", async (req, res) => {
     console.error("Error creating account link: ", err);
     return res.status(500).json({ error: "Error creating account link" });
   }
+});
+
+router.put("/contentId", async (req, res) => {
+  let { contentIdType, contentIdValue } = req.query;
+  console.log(req.query)
+  console.table({contentIdType, contentIdValue})
+  const publisherId = res.locals.userId;
+  try {
+    const response = await PublisherModel.findOneAndUpdate(
+      { id: publisherId },
+      { $set: { 
+          contentIdType,
+          contentIdValue, 
+        } 
+      },
+      { upsert: true, new: true }
+    );
+    console.log(response)
+    contentIdType = response.contentIdType;
+    contentIdValue  = response.contentIdValue; 
+    res.json({ contentIdType,contentIdValue});
+  } catch (err) {
+    console.error("Error updating content type and value: ", err);
+    return res.status(500).json({ error: "Error updating content type and value" });
+  }
+
+});
+
+router.get("/contentId", async (req, res) => {
+  const publisherId = res.locals.userId;
+  try {
+    const publisher = await PublisherModel.findOne({id: publisherId});
+    const { contentIdType, contentIdValue } = publisher;
+    res.json({ contentIdType, contentIdValue });
+  } catch (err) {
+    console.error("Error getting content type and value: ", err);
+    return res.status(500).json({ error: "Error getting content type and value" });
+  }
+
 });
 
 export default router;
