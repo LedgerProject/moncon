@@ -7,10 +7,10 @@ MAINTAINER Jhonattan Ramirez <camicasii@hotmail.com>
 
 WORKDIR /usr/src/app
 COPY . .
-RUN yarn install
+RUN npm install
 # done
 
-EXPOSE 8080
+EXPOSE 8081
 
-CMD ["yarn", "start"]
+CMD [ "node","src/server.js" ]]
 

@@ -6,11 +6,11 @@ services:
     volumes:
       - ./:/home/node/app    
     expose:
-      - "8080"
+      - "8081"
     command: "npm start"
     environment:
       - VIRTUAL_HOST=did.driver.moncon.co
-      - VIRTUAL_PORT=8080
+      - VIRTUAL_PORT=8081
       - LETSENCRYPT_HOST=did.driver.moncon.co
       - LETSENCRYPT_EMAIL=Hello@infinitelabs.co
     networks:
