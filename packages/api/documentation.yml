@@ -1,0 +1,24 @@
+toc:
+  - name: Services/Contracts
+    description: |
+      these are the zenroom contracts.
+    children:
+      - createW3cKeyPair
+      - singVC
+      - verifyVC
+      - createZkpPrivateKey
+      - createZkpPublicKey
+      - signZkp
+      - verifyZkp
+  - name: Types
+    description: |
+      custom data types
+    children:
+      - keypair
+      - vc
+      - keys
+      - derived_key
+      - credential_request
+      - credential_signature
+      - aggregated_credentials
+      - proof

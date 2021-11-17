@@ -3,6 +3,7 @@ import Stripe from "stripe";
 import moment from "moment";
 import validUrl from "valid-url";
 import mongoose from "mongoose";
+import { DateTime, Interval } from "luxon";
 import PublisherModel from "../models/publisher.js";
 import MetricsModel, {
   PAGEVIEW_ANONYMOUS,
@@ -25,10 +26,19 @@ import PremiumContentModel, {
 import { AMOUNT_TO_DISPLAY } from "../Const.js";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
+
 const feePercent = 5;
-const stripeFee = 2.9;
-const calculateFee = (purcharseAmount) =>
-  ((feePercent + stripeFee) * purcharseAmount) / 100;
+const stripeFee = 3;
+
+const daysBeforeMoneyDisponibility = 8;
+
+const calculateFee = (purcharseAmount) => {
+  return (feePercent + stripeFee) * (purcharseAmount / 100) + 30;
+};
+
+const calculateUnpaidBalance = (total, purchase) => {
+  return (total || 0) + purchase.amount;
+};
 
 const router = express.Router();
 
@@ -65,27 +75,36 @@ router.get("/previewUrl", async (req, res) => {
 
 router.get("/premiumContent", async (req, res) => {
   const publisherId = res.locals.userId;
-
-  const response = await PublisherModel.findOne({ id: publisherId }).populate(
-    {
-      path:"premiumContent",
-      match: { status: { $in: [PREMIUMCONTENT_STATUS_ACTIVE,PREMIUMCONTENT_STATUS_INACTIVE] } },
-    }
-  );
-  console.log(response.premiumContent);
-  res.json(response ? response.premiumContent : []);
+  console.log(publisherId)
+  const response = await PublisherModel.findOne({ id: publisherId }).populate({
+    path: "premiumContent",
+    match: {
+      status: {
+        $in: [PREMIUMCONTENT_STATUS_ACTIVE, PREMIUMCONTENT_STATUS_INACTIVE],
+      },
+    },
+  });
+  res.json(response ? response?.premiumContent : []);
 });
 
 router.put("/premiumContent", async (req, res) => {
-  const { url, domain, image, title, amount, age, verification_type } = req.body;
+  const { url, domain, image, title, amount, conditionType, condition, verification_type } =
+    req.body;
   const publisherId = res.locals.userId;
+  
+  console.table(req.body);
 
   const exists = await PremiumContentModel.findOne({
     publisherId: publisherId,
     url,
   });
+  
   if (exists && exists?.status === PREMIUMCONTENT_STATUS_ACTIVE) {
     return res.status(400).json({ error: "This content is already premium" });
+  }
+
+  if(conditionType && conditionType != NO_CREDENTIAL & !condition || condition == NO_CREDENTIAL){
+    res.status(400).json({error:"If you select a type of condition to be meeted, you should select the condition "});
   }
 
   try {
@@ -100,8 +119,16 @@ router.put("/premiumContent", async (req, res) => {
         title,
         image,
         domain,
-        age: age || NO_CREDENTIAL,
-        verification_type: verification_type || age? VERIFICATION_METHOD_ZKP : NO_CREDENTIAL, 
+        age: conditionType == "age" ? condition : NO_CREDENTIAL,
+        nationality: conditionType == "nationality" ? condition : NO_CREDENTIAL,
+        condition: conditionType && condition? conditionType : NO_CREDENTIAL,
+        verification_type:
+          verification_type ? verification_type : 
+            condition && conditionType && condition != NO_CREDENTIAL && conditionType != NO_CREDENTIAL
+            ? 
+              VERIFICATION_METHOD_ZKP
+            :
+              NO_CREDENTIAL,
         status: PREMIUMCONTENT_STATUS_ACTIVE,
       },
       { upsert: true, new: true }
@@ -110,12 +137,14 @@ router.put("/premiumContent", async (req, res) => {
       { id: publisherId },
       { $addToSet: { premiumContent: premiumContent._id } },
       { upsert: true, new: true }
-    ).populate(
-      {
-        path:"premiumContent",
-        match: { status: { $in: [PREMIUMCONTENT_STATUS_ACTIVE,PREMIUMCONTENT_STATUS_INACTIVE] } },
-      }
-    );
+    ).populate({
+      path: "premiumContent",
+      match: {
+        status: {
+          $in: [PREMIUMCONTENT_STATUS_ACTIVE, PREMIUMCONTENT_STATUS_INACTIVE],
+        },
+      },
+    });
 
     return res.json(response.premiumContent);
   } catch (err) {
@@ -135,14 +164,20 @@ router.put("/premiumContentStatus", async (req, res) => {
     );
     const response = await PublisherModel.findOne({ id: publisherId }).populate(
       {
-        path:"premiumContent",
-        match: { status: { $in: [PREMIUMCONTENT_STATUS_ACTIVE,PREMIUMCONTENT_STATUS_INACTIVE] } },
+        path: "premiumContent",
+        match: {
+          status: {
+            $in: [PREMIUMCONTENT_STATUS_ACTIVE, PREMIUMCONTENT_STATUS_INACTIVE],
+          },
+        },
       }
     );
     res.json(response.premiumContent);
   } catch (err) {
     console.error("Error changing status of premium content: ", err);
-    return res.status(500).json({ error: "Error changing status of premium content" });
+    return res
+      .status(500)
+      .json({ error: "Error changing status of premium content" });
   }
 });
 
@@ -158,8 +193,12 @@ router.delete("/premiumContent", async (req, res) => {
     );
     const response = await PublisherModel.findOne({ id: publisherId }).populate(
       {
-        path:"premiumContent",
-        match: { status: { $in: [PREMIUMCONTENT_STATUS_ACTIVE,PREMIUMCONTENT_STATUS_INACTIVE] } },
+        path: "premiumContent",
+        match: {
+          status: {
+            $in: [PREMIUMCONTENT_STATUS_ACTIVE, PREMIUMCONTENT_STATUS_INACTIVE],
+          },
+        },
       }
     );
     res.json(response.premiumContent);
@@ -284,8 +323,8 @@ router.get("/bestContents", async (req, res) => {
         premiumContentId: metric._id,
       });
 
-      if(!contentInfo){
-        return
+      if (!contentInfo) {
+        return;
       }
       return {
         premiumContentId: metric._id,
@@ -307,7 +346,7 @@ router.get("/bestContents", async (req, res) => {
     })
   );
 
-  bestContents = bestContents.filter((content) => !!content)
+  bestContents = bestContents.filter((content) => !!content);
 
   res.json(bestContents);
 });
@@ -385,16 +424,43 @@ router.get("/unpaid-balance", async (req, res) => {
   const publisherId = res.locals.userId;
   console.table({ publisherId });
 
+  const now = DateTime.now();
+
+  const filterPurchases = (purchases) => {
+    const purchaseDate = DateTime.fromISO(
+      new Date(purchases.createdAt).toISOString()
+    );
+    const interval = Interval.fromDateTimes(purchaseDate, now);
+
+    if (!interval.isValid) {
+      return false;
+    }
+
+    if (interval.length("days") >= daysBeforeMoneyDisponibility) {
+      return true;
+    }
+    return false;
+  };
+
   try {
-    const purchases = await PurchasesModel.find({
+    let purchases = await PurchasesModel.find({
       publisherId,
       status: PURCHASES_STATUS_UNPAID,
     });
-    const unpaidBalance = purchases.reduce(
-      (total, purchase) => (total || 0) + purchase.amount,
-      0
-    );
+
+    purchases = purchases.filter(filterPurchases);
+
+    const unpaidBalance = purchases.reduce(calculateUnpaidBalance, 0);
+
+    console.log(unpaidBalance);
+
+    if (!unpaidBalance) {
+      return res.status(200).json({ unpaidBalance: 0 });
+    }
+
     const fee = calculateFee(unpaidBalance);
+    console.log(fee);
+
     return res.status(200).json({ unpaidBalance: unpaidBalance - fee });
   } catch (err) {
     console.error("Error returning unpaid balance : ", err);
@@ -408,15 +474,31 @@ router.post("/pay-to-stripe", async (req, res) => {
   let unpaidBalance = 0;
   let purchases = [];
 
+  const now = DateTime.now();
+
+  const filterPurchases = (purchases) => {
+    const purchaseDate = DateTime.fromISO(
+      new Date(purchases.createdAt).toISOString()
+    );
+    const interval = Interval.fromDateTimes(purchaseDate, now);
+
+    if (!interval.isValid) {
+      return false;
+    }
+
+    if (interval.length("days") >= daysBeforeMoneyDisponibility) {
+      return true;
+    }
+    return false;
+  };
+
   try {
     purchases = await PurchasesModel.find({
       publisherId,
       status: PURCHASES_STATUS_UNPAID,
     });
-    unpaidBalance = purchases.reduce(
-      (total, purchase) => (total || 0) + purchase.amount,
-      0
-    );
+    purchases = purchases.filter(filterPurchases);
+    unpaidBalance = purchases.reduce(calculateUnpaidBalance, 0);
   } catch (err) {
     console.error("Error returning calculating balance : ", err);
     return res
@@ -424,8 +506,16 @@ router.post("/pay-to-stripe", async (req, res) => {
       .json({ error: "Error returning calculating balance" });
   }
 
-  const publisher = await PublisherModel.findOne({ id: publisherId });
+  console.log(unpaidBalance);
 
+  if(!unpaidBalance){
+    return res
+      .status(400)
+      .json({error: "Error there's no balance to withdraw"});
+  }
+
+  const publisher = await PublisherModel.findOne({ id: publisherId });
+  console.log(publisher);
   const stripeAccountId = publisher?.stripeAccountId;
   if (!stripeAccountId) {
     console.error("Error User does not have a stripe account ");
@@ -435,6 +525,7 @@ router.post("/pay-to-stripe", async (req, res) => {
       .json({ error: "Error User does not have a stripe account" });
   }
   const fee = calculateFee(unpaidBalance);
+  console.log(fee);
   try {
     const transfer = await stripe.transfers.create({
       amount: unpaidBalance - fee,
@@ -449,13 +540,15 @@ router.post("/pay-to-stripe", async (req, res) => {
   }
 
   try {
-    purchases.forEach(async (purchase) => {
-      await PurchasesModel.findOneAndUpdate(
+    const results = purchases.map(async (purchase) => {
+      return await PurchasesModel.findOneAndUpdate(
         { _id: purchase._id },
         { $set: { status: PURCHASES_STATUS_PAID } },
         { upsert: true, new: true }
       );
     });
+
+    await Promise.all(results);
   } catch (err) {
     console.error(
       "Error changing status of purchases content from unpaid to paid : ",
@@ -529,41 +622,44 @@ router.post("/account-link", async (req, res) => {
 
 router.put("/contentId", async (req, res) => {
   let { contentIdType, contentIdValue } = req.query;
-  console.log(req.query)
-  console.table({contentIdType, contentIdValue})
+  console.log(req.query);
+  console.table({ contentIdType, contentIdValue });
   const publisherId = res.locals.userId;
   try {
     const response = await PublisherModel.findOneAndUpdate(
       { id: publisherId },
-      { $set: { 
+      {
+        $set: {
           contentIdType,
-          contentIdValue, 
-        } 
+          contentIdValue,
+        },
       },
       { upsert: true, new: true }
     );
-    console.log(response)
+    console.log(response);
     contentIdType = response.contentIdType;
-    contentIdValue  = response.contentIdValue; 
-    res.json({ contentIdType,contentIdValue});
+    contentIdValue = response.contentIdValue;
+    res.json({ contentIdType, contentIdValue });
   } catch (err) {
     console.error("Error updating content type and value: ", err);
-    return res.status(500).json({ error: "Error updating content type and value" });
+    return res
+      .status(500)
+      .json({ error: "Error updating content type and value" });
   }
-
 });
 
 router.get("/contentId", async (req, res) => {
   const publisherId = res.locals.userId;
   try {
-    const publisher = await PublisherModel.findOne({id: publisherId});
+    const publisher = await PublisherModel.findOne({ id: publisherId });
     const { contentIdType, contentIdValue } = publisher;
     res.json({ contentIdType, contentIdValue });
   } catch (err) {
     console.error("Error getting content type and value: ", err);
-    return res.status(500).json({ error: "Error getting content type and value" });
+    return res
+      .status(500)
+      .json({ error: "Error getting content type and value" });
   }
-
 });
 
 export default router;

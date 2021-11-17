@@ -1,8 +1,13 @@
 import express from "express";
 import didMethod from 'did-method-generic';
-import { zencode_exec } from "zenroom";
 import admin from "../services/firebaseService.js";
 import IssuerModel from '../models/issuer.js';
+import {data} from "../services/credentials/credentialsData/index.js";
+import {
+  CreateW3cKeyPair,
+  CreateZkpPrivateKey,
+  CreateZkpPublicKey
+} from "../services/credentials/contract/initializeIssuer.js";
 
 const router = express.Router();
 
@@ -28,126 +33,69 @@ router.get("/users", async (req, res) => {
 
 router.post("/create-issuer", async (req, res) => {
   const {password, email} = req.body;
+
   try{
+    //create account on firebase
     const user = await admin.auth().createUser({
       email,
       password,
     });
+    
+    //set custom role
     const id = user.uid;
     const did = (await didHandler.generate()).id;
     await admin.auth().setCustomUserClaims(user.uid, { issuer: true });
+    
+    //initialize objects
     let wc3Keypair = {};
     let wc3PublicKey = {};
-    let zkpPrivateKeypair = {
-      underage:{},
-      legal_age:{},
-    }
-    let zkpPublicKeypair = {
-      underage:{},
-      legal_age:{},
-    }
+
+    let zkpPrivateKeypair = {}
+    let zkpPublicKeypair = {}
+    
+    //create w3c keypair
     try {
-      const contract = `
-      Scenario 'ecdh': Create the keypair
-      Given my name is in a 'string' named 'did'
-      When I create the keypair
-      Then print my data`
-      const credentia = req.body;
-      const result = await zencode_exec(contract, {
-        data: JSON.stringify({did}),
-        conf: `color=0, debug=0`,
-      });
-      wc3Keypair = JSON.parse(result.result)[did];
-    } catch (error) {
-      console.log(error);
+      wc3Keypair = await CreateW3cKeyPair(did);
+      if(!wc3Keypair){
+        return res.status(400).json({error:'Error generating the wc3Keypair'});
+      }
+    } catch (err) {
+      console.log(err);
       return res.status(400).json({error:'Error generating the wc3Keypair'});
     }
     wc3PublicKey = {public_key: wc3Keypair.keypair.public_key}
-    try {
-      const contract = `
-        Rule check version 2.0.0
-        Scenario 'credential': Credential Issuer private keys
-        Given my name is in a 'string' named 'did'
-        when I create the issuer key
-        Then print my 'keys'`
 
-      const data = JSON.stringify({did});
+    //create zkp keys
+    
+    const conditionTypes = Object.keys(data);
 
-      let result = await zencode_exec(contract, {data});
+    const promises = await conditionTypes.map(async (conditionCategory) => {
+      zkpPrivateKeypair[conditionCategory] = {};
+      zkpPublicKeypair[conditionCategory] = {};
+      const localPomises = await data[conditionCategory].map(async(condition) => {
+        let key = {};
+        //creating zkp private key
+        try{
+          zkpPrivateKeypair[conditionCategory][condition] = await CreateZkpPrivateKey(did);
+          key = zkpPrivateKeypair[conditionCategory][condition];
+        }catch(err){
+          console.log(err);
+          return res.status(400).json({error:'Error generating the Zkp private key'});
+        }
+        //creating zkp public key
+        try{
+          zkpPublicKeypair[conditionCategory][condition] = await CreateZkpPublicKey(did,key);
+        }catch(err){
+          console.log(err);
+          return res.status(400).json({error:'Error generating the Zkp public key'});
+        }
+        return condition;
+      })
+      await Promise.all(localPomises);
+      return localPomises
+    });
 
-      if(result.result.length > 0){
-        result = JSON.parse(result.result)[did];
-        zkpPrivateKeypair.underage = result
-      }
-    } catch (error) {
-      console.log(error);
-      return res.status(400).json({error:'Error generating the Zkp private key'});
-    }
-    try {
-      const contract = `
-        Rule check version 2.0.0
-        Scenario 'credential': Credential Issuer private keys
-        Given my name is in a 'string' named 'did'
-        when I create the issuer key
-        Then print my 'keys'`
-
-      const data = JSON.stringify({did});
-
-      let result = await zencode_exec(contract, {data});
-
-      if(result.result.length > 0){
-        result = JSON.parse(result.result)[did];
-        zkpPrivateKeypair.legal_age = result
-      }
-    } catch (error) {
-      console.log(error);
-      return res.status(400).json({error:'Error generating the Zkp private key'});
-    }
-
-     try {
-      const contract = `
-        Rule check version 2.0.0
-        Scenario 'credential': Credential Issuer private keys
-        Given my name is in a 'string' named 'did'
-        Given that I have my 'keys'
-        When I create the issuer public key
-        Then print my 'issuer public key'`
-
-      const data = JSON.stringify({did});
-      const keys = JSON.stringify({[did]:zkpPrivateKeypair.underage})
-      console.log(keys)
-      let result = await zencode_exec(contract, {data,keys});
-
-      if(result.result.length > 0){
-        result = JSON.parse(result.result)[did];
-        zkpPublicKeypair.underage = result
-      }
-    } catch (error) {
-      console.log(error);
-      return res.status(400).json({error:'Error generating the Zkp public key'});
-    }
-
-    try {
-      const contract = `
-        Rule check version 2.0.0
-        Scenario 'credential': Credential Issuer private keys
-        Given my name is in a 'string' named 'did'
-        Given that I have my 'keys'
-        when I create the issuer public key
-        Then print my 'issuer public key'`
-
-      const data = JSON.stringify({did});
-      const keys = JSON.stringify({[did]:zkpPrivateKeypair.legal_age})
-      let result = await zencode_exec(contract, {data,keys});
-
-      if(result.result.length > 0){
-        result = JSON.parse(result.result)[did];
-        zkpPublicKeypair.legal_age = result
-      }
-    } catch (error) {
-      console.log(error);
-      return res.status(400).json({error:'Error generating the Zkp public key'});
-    }
+    await Promise.all(promises)
 
     await IssuerModel.create({
       id,

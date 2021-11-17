@@ -9,7 +9,6 @@ import userRoutes from "./routes/userRoutes.js";
 import adminRoutes from "./routes/adminRoutes.js";
 import jsRoutes from "./routes/jsRoutes.js";
 import zenroomRouter from "./routes/zenroomRouter.js";
-import testRoutes from './routes/testRoutes.js'
 import issuerRoutes from './routes/issuerRoutes.js';
 import {
   checkIfAdmin,
@@ -37,10 +36,6 @@ app.use("/v1/admin", checkIfAdmin, adminRoutes);
 app.use("/v1/js", jsRoutes);
 app.use("/v1/zenroom", zenroomRouter);
 app.use("/v1/issuer", checkIfIssuer, issuerRoutes);
-
-if (process.env.NODE_ENV === "development") {
-  app.use("/v1/test", testRoutes)  
-}
 
 http.listen(port, async () => {
   try {

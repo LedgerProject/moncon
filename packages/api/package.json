@@ -7,6 +7,8 @@
   "scripts": {
     "start": "node --inspect -r dotenv/config app.js",
     "dev": "nodemon --inspect -r dotenv/config app.js",
+    "docs:build": "documentation build ./app.js --config documentation.yml -f html --github -o docs",
+    "docs:lint": "documentation lint ./app.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Infinite Labs",
@@ -33,6 +35,7 @@
     "zenroom": "2.2.0-da286ed0"
   },
   "devDependencies": {
+    "documentation": "^13.2.5",
     "nodemon": "^2.0.7",
     "prettier": "2.3.2"
   }
