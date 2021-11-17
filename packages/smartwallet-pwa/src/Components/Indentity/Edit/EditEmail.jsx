@@ -112,7 +112,7 @@ const EditEmail = () => {
               color="primary"
               type="submit"
             >
-              ADD CLAIM
+              ADD DATA
             </Button>
           </ValidatorForm>
         </Container>

@@ -75,8 +75,11 @@ const EditField = ReactLazyPreload(() =>
 const DemoEmail = ReactLazyPreload(() =>
   import("./Components/Documents/Demo/DemoEmail")
 );
-const DemoPostal = ReactLazyPreload(() =>
-  import("./Components/Documents/Demo/DemoPostal")
+const DemoCountry = ReactLazyPreload(() =>
+  import("./Components/Documents/Demo/DemoCountry")
+);
+const DemoRegion = ReactLazyPreload(() =>
+  import("./Components/Documents/Demo/DemoRegion")
 );
 const DemoDateBirth = ReactLazyPreload(() =>
   import("./Components/Documents/Demo/DemoDateBirth")
@@ -87,6 +90,10 @@ const DemoDinamycs = ReactLazyPreload(() =>
 const EditAdd = ReactLazyPreload(() =>
   import("./Components/Indentity/Edit/Add")
 );
+const EditRegion = ReactLazyPreload(() =>
+  import("./Components/Indentity/Edit/EditRegion")
+);
+
 const Identity = ReactLazyPreload(() =>
   import("./Components/Indentity/Indentity")
 );
@@ -110,8 +117,8 @@ const EditEmail = ReactLazyPreload(() =>
 const EditMobile = ReactLazyPreload(() =>
   import("./Components/Indentity/Edit/EditMobile")
 );
-const EditPostal = ReactLazyPreload(() =>
-  import("./Components/Indentity/Edit/EditPostal")
+const EditCountry = ReactLazyPreload(() =>
+  import("./Components/Indentity/Edit/EditCountry")
 );
 const EditDateBirth = ReactLazyPreload(() =>
   import("./Components/Indentity/Edit/EditDateBirth")
@@ -232,20 +239,21 @@ function App() {
         return
       }
       credentialSocketRef.current.emit('subscribeToCredentialRequestStatus',{userId});
-      credentialSocketRef.current.on("updateCredentialStatus", (data) => {
-        updateCredential(data,credentialSocketRef,dispatch,addToast)
+      credentialSocketRef.current.on("updateCredentialStatus", async (data) => {
+        console.log("updateCredential event")
+        await updateCredential(data,credentialSocketRef,dispatch,addToast)
       });
     });
     console.log('updateCredential useEffect')
     return () => {
-      credentialSocketRef.current.on("disconnect", () => {
+      credentialSocketRef.current.on("disconnect", async () => {
         console.log("disconnect");
-        credentialSocketRef.current.off("updateCredentialStatus", (data) => {
-          updateCredential(data,credentialSocketRef,dispatch,addToast)
+        credentialSocketRef.current.off("updateCredentialStatus", async (data) => {
+          await updateCredential(data,credentialSocketRef,dispatch,addToast)
         });
       });
     };
-  }, []);
+  }, [credentialSocketRef,updateCredential]);
 
   useEffect(() => {
     let userId = localStorage.getItem(LS_DID_KEY);
@@ -253,7 +261,11 @@ function App() {
       return
     }
     console.log('getPendingResponses useEffect')
-    getPendingResponses(userId,credentialSocketRef,dispatch,addToast)
+    const f = async () =>{
+      await getPendingResponses(userId,credentialSocketRef,dispatch,addToast)
+
+    }
+    f()
 
   }, []);
 
@@ -277,7 +289,7 @@ function App() {
             EditName,
             EditEmail,
             EditMobile,
-            EditPostal,
+            EditCountry,
             EditAdd,
           }}
         >
@@ -307,9 +319,15 @@ function App() {
             </Suspense>
           </Route>
 
-          <Route exact path="/identity/edit/postal">
+          <Route exact path="/identity/edit/country">
             <Suspense fallback={<Spinner />}>
-              <EditPostal />
+              <EditCountry />
+            </Suspense>
+          </Route>
+
+          <Route exact path="/identity/edit/region">
+            <Suspense fallback={<Spinner />}>
+              <EditRegion />
             </Suspense>
           </Route>
 
@@ -324,6 +342,7 @@ function App() {
               <EditAdd />
             </Suspense>
           </Route>
+
 
           <Route exact path="/credentials">
             <Suspense fallback={<Spinner />}>
@@ -385,9 +404,15 @@ function App() {
             </Suspense>
           </Route>
 
-          <Route exact path="/documents/demo/postal">
+          <Route exact path="/documents/demo/country">
             <Suspense fallback={<Spinner />}>
-              <DemoPostal />
+              <DemoCountry />
+            </Suspense>
+          </Route>
+
+          <Route exact path="/documents/demo/region">
+            <Suspense fallback={<Spinner />}>
+              <DemoRegion />
             </Suspense>
           </Route>
         </ContextProvider>

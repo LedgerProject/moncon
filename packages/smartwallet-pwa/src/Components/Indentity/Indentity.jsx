@@ -15,9 +15,12 @@ import PendingDocument from "../../Assets/svg/PendingDocument";
 import {
   credential_mobil,
   credential_email,
-  credential_address,
+  credential_country,
   credential_birthday,
+  credential_region,
   LS_DID_KEY,
+  BYTES_TO_MB,
+  MAX_IMAGE_SIZE
 } from "../../Const";
 
 const Identity = () => {
@@ -29,21 +32,37 @@ const Identity = () => {
   const name = useSelector((state) => state.UserReducer.name.value);
   const lastName = useSelector((state) => state.UserReducer.lastName.value);
   const dinamycFields = useSelector((state) => state.UserReducer.dynamicFields);
-  const address = useSelector(
-    (state) => state.UserReducer[credential_address].value.address
+  const country = useSelector(
+    (state) => state.UserReducer[credential_country].value
   );
-  const id = useSelector((state) => state.UserReducer[credential_address].id);
-  const status = useSelector((state) => state.UserReducer[credential_address].status);
-  const pending = useSelector((state) => state.UserReducer[credential_address].pending);
+  const id = useSelector((state) => state.UserReducer[credential_country].id);
+  const status = useSelector((state) => state.UserReducer[credential_country].status);
+  const pending = useSelector((state) => state.UserReducer[credential_country].pending);
   const userId = localStorage.getItem(LS_DID_KEY);
 
   const credential = async (file) => {
-    if (!address) {
+
+    if (!country) {
       return addToast("Add a value to the identity", {
         appearance: "error",
         autoDismiss: true,
         autoDismissTimeout: 4000,
       });
+    }
+
+    console.log("image size", BYTES_TO_MB(file.size) + "mb")
+    console.log("max image size", BYTES_TO_MB(MAX_IMAGE_SIZE) - 1 +"mb")
+
+
+    if(file.size > MAX_IMAGE_SIZE){
+      return addToast(
+        `The image should not be bigger than ${BYTES_TO_MB(MAX_IMAGE_SIZE)-1} mb`,
+        {
+          appearance: "error",
+          autoDismiss: true,
+          autoDismissTimeout: 4000,
+        }
+      )
     }
 
     const formData = new FormData();
@@ -52,7 +71,7 @@ const Identity = () => {
       formData.append("image", file);
       console.log('formData',formData.getAll("image"));
 
-      const url = `/user/upload-image?userId=${userId}&credential_type=${credential_address}`
+      const url = `/user/upload-image?userId=${userId}&credential_type=${credential_country}`
       const image = await apiService.post(url , formData, {
         headers: {
           'Content-Type': 'multipart/form-data'
@@ -61,7 +80,7 @@ const Identity = () => {
 
       console.log('image',image)
 
-      await createRequestToIssuer(credential_address, userId, image.data.image, address);
+      await createRequestToIssuer(credential_country, userId, image.data.image, country);
 
     }catch(err){
       console.log(err)
@@ -72,7 +91,7 @@ const Identity = () => {
       })
     }
 
-    const payload = { id: `${id}`, value:address, pending: true };
+    const payload = { id: `${id}`, value: country, pending: true };
 
     dispatchUserData({
       type: "update",
@@ -168,7 +187,7 @@ const Identity = () => {
           <div className={classes.contentPersonal}>
             <Fab
               component={Link}
-              to="/identity/edit/postal"
+              to="/identity/edit/country"
               color="secondary"
               aria-label="edit"
               className={classes.fab}
@@ -184,13 +203,13 @@ const Identity = () => {
               }}
             >
               <div>
-                <p className={classes.titleName}>Postal Address</p>
+                <p className={classes.titleName}>Country of Residence</p>
                 <Link
-                  to="/identity/edit/postal"
+                  to="/identity/edit/country"
                   style={{ textDecoration: "none" }}
                 >
                   <h1 className={classes.name}>
-                    {address || <span className={classes.add}>+ add</span>}
+                    {country || <span className={classes.add}>+ add</span>}
                   </h1>
                 </Link>
               </div>
@@ -214,7 +233,7 @@ const Identity = () => {
                       color="primary"
                       type="submit"
                       handleFile={handleFile}
-                      inputId={credential_address}
+                      inputId={credential_country}
                     >
                       Ask for credential
                     </LoadingButton>
@@ -223,6 +242,13 @@ const Identity = () => {
               </div>
             </div>
           </div>
+          
+          <Field
+            to="/identity/edit/region"
+            path={credential_region}
+            title="Region of Residence"
+            field="region"
+          />
 
           {dinamycFields.map((values, index) => {
             return <DinamycField values={values} index={index} key={index} />;

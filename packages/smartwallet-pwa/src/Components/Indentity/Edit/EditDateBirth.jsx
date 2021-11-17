@@ -126,7 +126,7 @@ const EditDateBirth = () => {
               color="primary"
               type="submit"
             >
-              ADD CLAIM
+              ADD DATA
             </Button>
           </form>
         </Container>

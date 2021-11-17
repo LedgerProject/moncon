@@ -6,8 +6,9 @@ import { useStyles } from "./styled";
 import {
   credential_mobil,
   credential_email,
-  credential_address,
+  credential_country,
   credential_birthday,
+  credential_region
 } from "../../Const";
 import MonconImg from "../../Assets/img/MonconImg";
 
@@ -19,17 +20,18 @@ const Documents = () => {
     (state) => state.UserReducer[credential_birthday]
   );
   const dinamycFields = useSelector((state) => state.UserReducer.dynamicFields);
-  const address = useSelector((state) => state.UserReducer[credential_address]);
+  const country = useSelector((state) => state.UserReducer[credential_country]);
+  const region = useSelector((state) => state.UserReducer[credential_region]);
   console.log(mobile);
   console.log(email);
   console.log(datebirth)
   console.log(dinamycFields)
-  console.log(address)
+  console.log(country)
 
   return (
     <div style={{ marginBottom: "30px" }}>
       {
-        email.status || mobile.status || datebirth.status || address.status ? (
+        email.status || mobile.status || datebirth.status || country.status  || region.status? (
           <Container>
             <h1 className={classes.titleCredentials}>Credentials</h1>
             {
@@ -63,30 +65,62 @@ const Documents = () => {
             )
           }
           {
-            address.status && (
+            country.status && (
               <div
                 className={classes.proofContainer}
                 style={{ marginTop: "20px" }}
               >
                 <Link
-                  to={`/documents/demo/postal`}
+                  to={`/documents/demo/country`}
                   style={{ textDecoration: "none" }}
                 >
                   <h1 className={classes.proofTitle}>
                     Proof Of ID Credential Demo
                   </h1>
                   <div className={classes.contentPersonal}>
-                    <Link to={`/documents/demo/postal`} className={classes.fab}>
+                    <Link to={`/documents/demo/country`} className={classes.fab}>
                       <MonconImg />
                     </Link>
                     <div>
-                      <div className={classes.proofSubtitle}>Postal Adress</div>
+                      <div className={classes.proofSubtitle}>Country of Residence</div>
                       <Link
                         to="/"
                         className={classes.link}
                         style={{ textDecoration: "none" }}
                       >
-                        {address.value.address}
+                        {country.value}
+                      </Link>
+                    </div>
+                  </div>
+                </Link>
+              </div>
+            )
+          }
+          {
+            region.status && (
+              <div
+                className={classes.proofContainer}
+                style={{ marginTop: "20px" }}
+              >
+                <Link
+                  to={`/documents/demo/region`}
+                  style={{ textDecoration: "none" }}
+                >
+                  <h1 className={classes.proofTitle}>
+                    Proof Of ID Credential Demo
+                  </h1>
+                  <div className={classes.contentPersonal}>
+                    <Link to={`/documents/demo/region`} className={classes.fab}>
+                      <MonconImg />
+                    </Link>
+                    <div>
+                      <div className={classes.proofSubtitle}>Region of Residence</div>
+                      <Link
+                        to="/"
+                        className={classes.link}
+                        style={{ textDecoration: "none" }}
+                      >
+                        {region.value}
                       </Link>
                     </div>
                   </div>

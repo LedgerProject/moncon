@@ -76,27 +76,24 @@ const DemoDateBirth = () => {
         className={classes.documentDetailsContainer}
       >
         <div>
-          <div style={{ marginLeft: "20px" }}>
-            <div className={classes.documentsSubtitle}>credential hash</div>
-            <p className={classes.documentsMessage}>{data.hash}</p>
+          <div style={{ marginLeft: "20px", paddingRight:"30px" }}>
+            <div className={classes.documentsSubtitle}>sawtooth w3c credential transaction id</div>
+            <p className={classes.documentsMessage}>{data.myTag}</p>
           </div>
         </div>
       </div>
 
       <div
-        style={{ marginTop: "15px" }}
+        style={{ marginTop: "15px", marginBottom: "60px", paddingRight:"30px" }}
         className={classes.documentDetailsContainer}
       >
         <div>
           <div style={{ marginLeft: "20px" }}>
-            <div className={classes.documentsSubtitle}>sawtooth transaction id</div>
-            <p className={classes.documentsMessage}>{data.my_credential_signature_id}</p>
+            <div className={classes.documentsSubtitle}>sawtooth zkp credential transaction id</div>
+            <p className={classes.documentsMessage}>{data.zkp.myTag}</p>
           </div>
         </div>
       </div>
-      <br/>
-      <br/>
-      <br/>
     </>
   );
 };

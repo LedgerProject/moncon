@@ -25,9 +25,10 @@ const LoadingButton = ({ loading, text, done, handleFile, inputId, ...other }) =
           <input
             ref={hiddenFileInput}
             type="file"
+            id={inputId}
+            capture="environment"
             accept="image/*"
             style={{ display: 'none' }}
-            id={inputId}
             onChange={handleFile}
           />
           <label htmlFor={inputId}>

@@ -65,7 +65,7 @@ export const useStyles = makeStyles((theme) => ({
     lineHeight: "24px",
     letter: "0.15px",
     fontWeight: 400,
-    wordBreak: "break-all",
+    wordBreak: "inherit",
     color: "black !important",
     "@media screen and (max-width: 800px)": {
       fontSize: "1.6rem",

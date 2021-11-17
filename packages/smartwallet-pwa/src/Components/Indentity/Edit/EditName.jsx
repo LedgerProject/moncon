@@ -29,7 +29,7 @@ const EditName = () => {
   const handleClick = (event) => {
     event.preventDefault();
     if (name === nameValue && lastName === lastNameValue) {
-      addToast("No changes have been made", {
+      return addToast("No changes have been made", {
         appearance: "warning",
         autoDismiss: true,
         autoDismissTimeout: 2000,
@@ -117,7 +117,7 @@ const EditName = () => {
             color="primary"
             type="submit"
           >
-            ADD CLAIM
+            ADD DATA
           </Button>
         </Container>
       </div>
