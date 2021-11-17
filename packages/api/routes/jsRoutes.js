@@ -52,9 +52,15 @@ router.post("/pageview", async (req, res) => {
     }
   }
 
-  const publisher = await PublisherModel.findOne({ id: publisherId }).populate(
-    "premiumContent"
-  );
+  const publisher = await PublisherModel.findOne({ id: publisherId }).populate({
+    path: "premiumContent",
+    match: {
+      status: {
+        $in: [PREMIUMCONTENT_STATUS_ACTIVE],
+      },
+    },
+  });
+  
   if (!publisher) {
     return res.status(400).send("Invalid publisher id");
   }
