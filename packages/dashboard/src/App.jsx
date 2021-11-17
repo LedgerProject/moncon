@@ -104,7 +104,7 @@ function App() {
         socket
       }}
     >
-      {location.pathname !== "/auth" && location.pathname !== "/newlogin" && (
+      {location.pathname !== "/auth" && (
         <Header />
       )}
       <div className={classes.root}>

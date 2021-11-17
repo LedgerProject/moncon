@@ -1,19 +1,20 @@
+import { useEffect, useState } from "react";
 import {
- InputAdornment,
+  InputAdornment,
   Grid,
   Typography,
   makeStyles,
   TextField,
-   InputLabel,
+  InputLabel,
   MenuItem,
   FormControl,
   Select,
   Button,
-  Paper
+  Paper,
 } from "@material-ui/core";
-import { useEffect, useState } from "react";
-import apiService from "../../../Services/apiService.js";
 import { useToasts } from "react-toast-notifications";
+import apiService from "../../../Services/apiService.js";
+
 const useStyles = makeStyles((theme) => ({
   root: {
     padding: 20,
@@ -37,9 +38,9 @@ const useStyles = makeStyles((theme) => ({
     padding: "0px 10px",
     borderColor: "#fff",
     boxShadow: "0 1px 2px 0 rgba(0, 0, 0, 0.05)",
-    textAlign: 'center',
+    textAlign: "center",
   },
-  grid:{
+  grid: {
     display: "grid",
     justifyContent: "center",
     justifySelf: "center",
@@ -59,13 +60,13 @@ const useStyles = makeStyles((theme) => ({
 const BlockedContentElement = () => {
   const { addToast } = useToasts();
   const classes = useStyles();
-  const [elementType, setElementType] = useState('');
-  const [elementName, setElementName] = useState('');
+  const [elementType, setElementType] = useState("");
+  const [elementName, setElementName] = useState("");
   const [open, setOpen] = useState(false);
   const TAGS = "tag";
   const CLASS = "class";
   const ID = "id";
-  const DEFAULT = "default"; 
+  const DEFAULT = "default";
 
   const handleSelect = (event) => {
     setElementType(event.target.value);
@@ -85,36 +86,37 @@ const BlockedContentElement = () => {
 
   useEffect(() => {
     const getInfo = async () => {
-      const response = await apiService.get('/publisher/contentId');
-      console.log(response)
+      const response = await apiService.get("/publisher/contentId");
+      console.log(response);
       const { contentIdType, contentIdValue } = response?.data || {};
-      setElementName(contentIdValue || '');
-      setElementType(contentIdType || '');
+      setElementName(contentIdValue || "");
+      setElementType(contentIdType || "");
     };
     getInfo();
-  },[]);
+  }, []);
 
   const handleClick = async () => {
-    try{
-      
-      const response = await apiService.put(`/publisher/contentId/?contentIdType=${elementType}&contentIdValue=${elementName}`);
- addToast(`Has been placed correctly ${elementType} and element ${elementName}`, {
-        appearance: "success",
-        autoDismiss: true,
-        autoDismissTimeout: 7000,
-      });
-    }catch(err){
+    try {
+      const response = await apiService.put(
+        `/publisher/contentId/?contentIdType=${elementType}&contentIdValue=${elementName}`
+      );
+      addToast(
+        `Has been placed correctly ${elementType} and element ${elementName}`,
+        {
+          appearance: "success",
+          autoDismiss: true,
+          autoDismissTimeout: 7000,
+        }
+      );
+    } catch (err) {
       console.log(err);
- addToast(`${err}`, {
+      addToast(`${err}`, {
         appearance: "error",
         autoDismiss: true,
         autoDismissTimeout: 7000,
       });
-
     }
-
   };
-  
 
   return (
     <Paper className={classes.root} elevation={0}>
@@ -144,12 +146,17 @@ const BlockedContentElement = () => {
             <MenuItem value={CLASS}>class</MenuItem>
           </Select>
         </FormControl>
-        <form className={classes.root} noValidate autoComplete="off" style={{paddingTop: '10px'}}>
+        <form
+          className={classes.root}
+          noValidate
+          autoComplete="off"
+          style={{ paddingTop: "10px" }}
+        >
           <TextField
             value={elementName}
-            id="standard-basic" 
+            id="standard-basic"
             label="Element"
-            onChange={handleTextField} 
+            onChange={handleTextField}
           />
         </form>
       </Grid>
@@ -160,7 +167,7 @@ const BlockedContentElement = () => {
           component="span"
           onClick={handleClick}
         >
-         Blocked
+          Blocked
         </Button>
       </Grid>
     </Paper>

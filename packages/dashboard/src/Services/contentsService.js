@@ -15,7 +15,7 @@ export const isValidURL = (str) => {
 };
 
 export const addNewContent = (urlData) => {
-  const { url, title, image, amount, domain, age } = urlData;
+  const { url, title, image, amount, domain, conditionType, condition } = urlData;
   if (!url) throw new Error("You need to enter a URL");
   if (!isValidURL(url)) throw new Error("Invalid URL");
 
@@ -25,7 +25,8 @@ export const addNewContent = (urlData) => {
     image,
     amount: AMOUNT_TO_STORE(amount),
     domain,
-    age,
+    conditionType,
+    condition
   });
 };
 

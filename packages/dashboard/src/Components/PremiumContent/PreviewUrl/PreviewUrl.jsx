@@ -1,3 +1,5 @@
+import { useState } from "react";
+import { useHistory } from "react-router";
 import {
   InputAdornment,
   Grid,
@@ -10,13 +12,13 @@ import {
   MenuItem,
   FormControl,
   Select,
+  Container,
 } from "@material-ui/core";
-import { useState } from "react";
-import Spinner from "./Spinner";
-import { useHistory } from "react-router";
 import { useToasts } from "react-toast-notifications";
+import Spinner from "./Spinner";
 import IconDocuments from "../../../Assets/svg/IconDocuments";
-import { Container } from "@material-ui/core";
+import { CREDENTIAL_SUPPORT_ZKP, CONDITION_TYPE_TO_CREDENTIAL } from "../../../Constants";
+import { countries, ageConditions } from "./credentialsData";
 
 const useStyles = makeStyles((theme) => ({
   containerAddUrl: {
@@ -191,77 +193,111 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const PreviewUrl = ({ previewUrl, addUrl, loading, stripeAccountId }) => {
+
   const classes = useStyles();
   const [amount, setAmount] = useState(0);
-  const [age, setAge] = useState("");
-  const [open, setOpen] = useState(false);
+  const [conditionType, setConditionType] = useState("");
+  const [condition, setCondition] = useState("");
+  const [verification_type,setVerificationType] = useState("");
+  const [openConditionType, setOpenConditionType] = useState(false);
+  const [openCondition, setOpenCondition] = useState(false);
   const [openVerification, setOpenVerification] = useState(false);
-  const [verification_type,setVerificationType] = useState('');
+  const NO_CREDENTIAL = "NO_CREDENTIAL";
+  const AGE = "age";
+  const NATIONALITY = "nationality";
   const LEGAL_AGE = "LEGAL_AGE";
   const UNDERAGE = "UNDERAGE";
-  const NO_CREDENTIAL = "NO_CREDENTIAL";
   const ZKP = 'zkp';
   const W3C = 'w3c';
   const history = useHistory();
   const { addToast } = useToasts();
 
+  const conditionTypeToData = {
+    [NATIONALITY]: countries,
+    [AGE]: ageConditions,
+  };
+
+  const conditionTypeToStyles = {
+    [NATIONALITY]: {
+      marginLeft:"5em",
+      marginRight:"12.5em",
+    },
+    [AGE]:{
+      marginLeft:"5.5em",
+      marginRight:"17.5em",
+    },
+  };
+
   const handleAmountChange = (event) => {
     setAmount(event.target.value);
   };
+  const errOptions = {
+    appearance: "error",
+    autoDismiss: true,
+    autoDismissTimeout: 2500,
+  }
 
   const handleBlockClick = () => {
     let localAmount = String(amount).replace(",", ".");
 
     if (!stripeAccountId) {
-      addToast("You must create a stripe account to be able to loock content", {
-        appearance: "error",
-        autoDismiss: true,
-        autoDismissTimeout: 7000,
-      });
+      addToast("You must create a stripe account to be able to loock content",errOptions);
       return history.push("/publishers/settings");
     }
     if (isNaN(localAmount)) {
-      return addToast("The price should contain only numbers", {
-        appearance: "error",
-        autoDismiss: true,
-        autoDismissTimeout: 2500,
-      });
+      return addToast("The price should contain only numbers",errOptions);
     }
-    if (amount == 0 && (age === "" || age === NO_CREDENTIAL)) {
+    if (amount == 0 && (condition === "" || condition === NO_CREDENTIAL)) {
       addToast(
         "you should have a price greater than 0 or ask a credential to block the content",
-        {
-          appearance: "error",
-          autoDismiss: true,
-          autoDismissTimeout: 2500,
-        }
+        errOptions
       );
       return;
+    }
+
+    if(!condition && conditionType && conditionType != NO_CREDENTIAL){
+      return addToast(
+        `You should select a condition or change the condition to be meet to don't require condition`,
+        errOptions
+      );
     }
 
     let info = Object(previewUrl);
 
     info.amount = parseFloat(localAmount);
-    info.age = age;
+    info.conditionType = conditionType;
+    info.condition = condition;
     info.verification_type = verification_type;
     addUrl(info);
     setAmount(0);
   };
 
-  const handleChange = (event) => {
-    setAge(event.target.value);
+  const handleConditionChange = (event) => {
+    setCondition(event.target.value);
+  };
+
+  const handleConditionTypeChange = (event) => {
+    setConditionType(event.target.value);
   };
 
   const handleVerificationType = (event) => {
     setVerificationType(event.target.value);
   }
 
-  const handleClose = () => {
-    setOpen(false);
+  const handleCloseConditionType = () => {
+    setOpenConditionType(false);
   };
 
-  const handleOpen = () => {
-    setOpen(true);
+  const handleOpenConditionType = () => {
+    setOpenConditionType(true);
+  };
+
+  const handleCloseCondition = () => {
+    setOpenCondition(false);
+  };
+
+  const handleOpenCondition = () => {
+    setOpenCondition(true);
   };
 
   const handleCloseVerification = () => {
@@ -348,6 +384,7 @@ const PreviewUrl = ({ previewUrl, addUrl, loading, stripeAccountId }) => {
               />
             </Box>
           </Box>
+
           <Box
             className={classes.container}
             display="flex"
@@ -378,72 +415,131 @@ const PreviewUrl = ({ previewUrl, addUrl, loading, stripeAccountId }) => {
                 <Select
                   labelId="demo-controlled-open-select-label"
                   id="demo-controlled-open-select"
-                  open={open}
-                  onClose={handleClose}
-                  onOpen={handleOpen}
-                  value={age}
-                  onChange={handleChange}
+                  open={openConditionType}
+                  onClose={handleCloseConditionType}
+                  onOpen={handleOpenConditionType}
+                  value={conditionType}
+                  onChange={handleConditionTypeChange}
                 >
                   <MenuItem value="">
                     <em>Select</em>
                   </MenuItem>
-                  <MenuItem value={LEGAL_AGE}>Legal age</MenuItem>
-                  <MenuItem value={UNDERAGE}>Underage</MenuItem>
+                  <MenuItem value={AGE}>Age</MenuItem>
+                  <MenuItem value={NATIONALITY}>Nationality</MenuItem>
                   <MenuItem value={NO_CREDENTIAL}>
-                    Don't require credential
+                    Don't require condition
                   </MenuItem>
                 </Select>
               </FormControl>
             </Box>
-            </Box>
-            <Box
-              className={classes.container}
-              display="flex"
-              justifyContent="center"
-              alignItems="center"
-            >
-              <Box
-                className={classes.boxSelect}
-                style={{
-                  display: "flex",
-                  alignSelf: "center",
-                  marginLeft: "5em",
-                  marginRight: "7.90em",
-                  justifySelf: "end",
-                }}
-              >
-                <Typography variant="h6">credential verification method</Typography>
-              </Box>
-              <Box
-                style={{
-                  display: "flex",
-                  alignSelf: "center",
-                  justifySelf: "center",
-                }}
-              >
-                <FormControl className={classes.formControl}>
-                  <InputLabel id="demo-controlled-open-select-label"></InputLabel>
-                  <Select
-                    labelId="demo-controlled-open-select-label"
-                    id="demo-controlled-open-select"
-                    open={openVerification}
-                    onClose={handleCloseVerification}
-                    onOpen={handleOpenVerification}
-                    value={verification_type}
-                    onChange={handleVerificationType}
-                  >
-                    <MenuItem value="">
-                      <em>Select</em>
-                    </MenuItem>
-                    <MenuItem value={ZKP}>zkp</MenuItem>
-                    <MenuItem value={W3C}>w3c</MenuItem>
-                    <MenuItem value={NO_CREDENTIAL}>
-                      default
-                    </MenuItem>
-                  </Select>
-                </FormControl>
-              </Box>
           </Box>
+          {
+            conditionType != "" && conditionType != NO_CREDENTIAL &&
+              <Box
+                className={classes.container}
+                display="flex"
+                justifyContent="center"
+                alignItems="center"
+              >
+                <Box
+                  className={classes.boxSelect}
+                  style={{
+                    display: "flex",
+                    alignSelf: "center",
+                    marginLeft: conditionTypeToStyles[conditionType].marginLeft,
+                    marginRight: conditionTypeToStyles[conditionType].marginRight,
+                    justifySelf: "end",
+                  }}
+                >
+                  <Typography variant="h6">
+                    {
+                      `${conditionType.slice(0,1).toUpperCase()}${conditionType.slice(1)} condition`
+                    }
+                  </Typography>
+                </Box>
+                <Box
+                  style={{
+                    display: "flex",
+                    alignSelf: "center",
+                    justifySelf: "center",
+                  }}
+                >
+                  <FormControl className={classes.formControl}>
+                    <InputLabel id="demo-controlled-open-select-label"></InputLabel>
+                    <Select
+                      labelId="demo-controlled-open-select-label"
+                      id="demo-controlled-open-select"
+                      open={openCondition}
+                      onClose={handleCloseCondition}
+                      onOpen={handleOpenCondition}
+                      value={condition}
+                      onChange={handleConditionChange}
+                    >
+                      <MenuItem value="">
+                        <em>Select</em>
+                      </MenuItem>
+                      {
+                        conditionTypeToData[conditionType]?.map((data) => (
+                          <MenuItem value={data.value}>{data.name}</MenuItem>
+                        ))
+
+                      }
+                    </Select>
+                  </FormControl>
+                </Box>
+                </Box>
+          }
+            {
+              CREDENTIAL_SUPPORT_ZKP.includes(CONDITION_TYPE_TO_CREDENTIAL[conditionType]) &&
+                condition &&
+                <Box
+                  className={classes.container}
+                  display="flex"
+                  justifyContent="center"
+                  alignItems="center"
+                >
+                  <Box
+                    className={classes.boxSelect}
+                    style={{
+                      display: "flex",
+                      alignSelf: "center",
+                      marginLeft: "5em",
+                      marginRight: "7.9em",
+                      justifySelf: "end",
+                    }}
+                  >
+                    <Typography variant="h6">Credential verification method</Typography>
+                  </Box>
+                  <Box
+                    style={{
+                      display: "flex",
+                      alignSelf: "center",
+                      justifySelf: "center",
+                      marginLeft: "-3em",
+                    }}
+                  >
+                    <FormControl className={classes.formControl}>
+                      <InputLabel id="demo-controlled-open-select-label"></InputLabel>
+                      <Select
+                        labelId="demo-controlled-open-select-label"
+                        id="demo-controlled-open-select"
+                        open={openVerification}
+                        onClose={handleCloseVerification}
+                        onOpen={handleOpenVerification}
+                        value={verification_type}
+                        onChange={handleVerificationType}
+                      >
+                        <MenuItem value="">
+                          <em>Select</em>
+                        </MenuItem>
+                        <MenuItem value={ZKP}>zkp</MenuItem>
+                        <MenuItem value={W3C}>w3c</MenuItem>
+                      </Select>
+                    </FormControl>
+                  </Box>
+              </Box>
+
+            }
 
           <Grid
             style={{ marginTop: "60px", marginBottom: "20px" }}
@@ -457,7 +553,7 @@ const PreviewUrl = ({ previewUrl, addUrl, loading, stripeAccountId }) => {
               onClick={handleBlockClick}
               className={classes.buttonLook}
             >
-              Look Content
+              Lock Content
             </div>
           </Grid>
         </>

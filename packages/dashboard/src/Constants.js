@@ -28,13 +28,21 @@ export const credential_mobile = "credential_mobile";
 
 export const credential_email = "credential_email";
 
-export const credential_address = "credential_address";
+export const credential_country = "credential_country";
+
+export const credential_region = "credential_region";
 
 export const credential_birthday = "credential_birthday";
 
 export const CREDENTIAL_SUPPORT_ZKP = [
-  credential_birthday
-]; 
+  credential_birthday,
+  credential_country,
+];
+
+export const CONDITION_TYPE_TO_CREDENTIAL = {
+  age: credential_birthday,
+  nationality: credential_country,
+};
 
 export const NORMALIZE_AMOUNT = 100;
 export const AMOUNT_TO_DISPLAY = (amount) => amount / NORMALIZE_AMOUNT;

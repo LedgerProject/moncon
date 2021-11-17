@@ -1,5 +1,6 @@
-import { Typography, Paper, Button, makeStyles } from "@material-ui/core";
 import { useContext } from "react";
+import { Typography, Paper, Button, makeStyles } from "@material-ui/core";
+import { useToasts } from "react-toast-notifications";
 import AppContext from "../../../AppContext";
 
 const useStyles = makeStyles(() => ({
@@ -22,6 +23,7 @@ const useStyles = makeStyles(() => ({
 const Integration = () => {
   const classes = useStyles();
   const { userId } = useContext(AppContext);
+  const { addToast } = useToasts();
 
   const scripts = `<link rel="stylesheet" href="${process.env.REACT_APP_MONCON_CDN_URL}/moncon.css">
     <script src="${process.env.REACT_APP_MONCON_CDN_URL}/moncon.js?id=${userId}" async></script>
@@ -36,7 +38,14 @@ const Integration = () => {
       }
       await navigator.clipboard.writeText(scripts);
     } catch (err) {
-      alert("For copy the scripts is necessary the clipboard permission");
+      addToast(
+        "For copy the scripts is necessary the clipboard permission",
+        {
+          appearance: "warning",
+          autoDismiss: true,
+          autoDismissTimeout: 7000,
+        } 
+      );
     }
   };
 

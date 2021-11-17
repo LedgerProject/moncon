@@ -11,6 +11,7 @@ import {
 	makeStyles
 } from '@material-ui/core';
 import { useToasts } from "react-toast-notifications";
+import ImageWithLoading from "../../ImageWithLoading";
 import apiService from "../../../Services/apiService";
 import AppContext from "../../../AppContext";
 import { CREDENTIAL_SUPPORT_ZKP } from "../../../Constants";
@@ -22,8 +23,21 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
+const errorOptions = {
+	appearance: "error",
+	autoDismiss: true,
+	autoDismissTimeout: 5000,
+}
+
+const successOptions = {
+	appearance: "success",
+	autoDismiss: true,
+	autoDismissTimeout: 5000,
+} 
+
 const Request = ({match, history}) => {
-	const [request, setRequest] = useState(false);
+
+	const [request, setRequest] = useState("");
 	const { socket } = useContext(AppContext);
 	const classes = useStyles();
 	const { addToast } = useToasts();
@@ -38,6 +52,11 @@ const Request = ({match, history}) => {
 			setRequest(response.data)
 		}catch(err){
 			console.log(err)
+			addToast("Error fetching updated data",{
+				appearance: "error",
+				autoDismiss: true,
+				autoDismissTimeout: 5000,
+			})
 			setRequest(null)
 		}
 	}
@@ -47,10 +66,12 @@ const Request = ({match, history}) => {
 	},[]);
 
 	const approve = async () => {
+		addToast("Approving, please wait",{...successOptions,appearance:"info"});
+		let signedCredentials = {};
+		let w3cCredential = {};
+
 		try{
-			let signedCredentials = {};
-			
-			const w3cCredential = await apiService.post('/issuer/w3c-sign',{requestId:request._id});
+			w3cCredential = await apiService.post('/issuer/w3c-sign',{requestId:request._id});
 			signedCredentials = w3cCredential.data;
 			
 			console.log('w3c result',w3cCredential.data);
@@ -60,16 +81,25 @@ const Request = ({match, history}) => {
 				
 				console.log('zkp result',zkpCredential.data);
 				
-				signedCredentials = {...signedCredentials,...zkpCredential.data.userData}
+				signedCredentials = {...signedCredentials,zkp:{...zkpCredential.data.userData}}
 			}
-			
+	
 			console.log('signedCredentials', signedCredentials)
+		}catch(err){
+			console.log(err)
+			let message = 'Error signing credentials';
+			return addToast(message,errorOptions);
+		}
+		
+		try{
 			
 			const result = await apiService.post('/issuer/approve-credential',{
 				_id: request._id,
 				signedCredentials
 			})
 			
+			addToast("Credential successfully approved",successOptions);
+
 			socket.current.emit('changedCredentialRequestStatus', result.data.request);
 			update()
 		
@@ -77,15 +107,10 @@ const Request = ({match, history}) => {
 			console.log(err)
 			update()
 			let message = 'Error updating credential request status';
-			const options = {
-				appearance: "error",
-				autoDismiss: true,
-				autoDismissTimeout: 5000,
-			}
 			if(err.message.endsWith("400")){
 				message = "This credential request already has been approved or declined"
 			}
-			addToast(message,options);
+			addToast(message,errorOptions);
 		}
 	}
 
@@ -93,20 +118,16 @@ const Request = ({match, history}) => {
 		try{
 			const result = await apiService.post('/issuer/decline-credential',{_id: request._id})
 			socket.current.emit('changedCredentialRequestStatus', result.data.request);
+			addToast("Credential successfully declined",successOptions);
 			update()
 		}catch(err){
 			console.log(err.message)
 			update() 
 			let message = 'Error updating credential request status';
-			const options = {
-				appearance: "error",
-				autoDismiss: true,
-				autoDismissTimeout: 5000,
-			}
 			if(err.message.endsWith("400")){
 				message = "This credential request already has been approved or declined"
 			}
-			addToast(message,options);
+			addToast(message,errorOptions);
 		}
 	}
 
@@ -142,7 +163,7 @@ const Request = ({match, history}) => {
 					:(
 						<Card>
 							<CardMedia>
-						    	<img 
+						    <ImageWithLoading
 									src={request.data} 
 									alt="document"
 									className={classes.media}
@@ -150,7 +171,7 @@ const Request = ({match, history}) => {
 							</CardMedia>
 							<CardContent>
 								<Typography align='center' gutterBottom variant="h5" component="h2">
-									Credential: {request.credential}
+									Certificate {request.credential.replace("credential_","")}
 								</Typography>
 								<Typography align='center' variant="h6" component="p">
 									claim: {request.claim}
@@ -159,26 +180,29 @@ const Request = ({match, history}) => {
 									status: {request.status}
 								</Typography>
 							</CardContent>
-							<CardActions>
-								<Grid container justify="center">
-									<Button 
-										variant='contained' 
-										color='primary'
-										onClick={decline}
-									>
-										decline
-									</Button>
-								</Grid>
-								<Grid container justify="center" >
-									<Button 
-										variant='contained' 
-										color='primary'
-										onClick={approve}
-									>
-										approve
-									</Button>
-								</Grid>
-							</CardActions>
+							{
+								request.status == "pending" &&
+								<CardActions>
+									<Grid container justify="center">
+										<Button 
+											variant='contained' 
+											color='primary'
+											onClick={decline}
+										>
+											decline
+										</Button>
+									</Grid>
+									<Grid container justify="center" >
+										<Button 
+											variant='contained' 
+											color='primary'
+											onClick={approve}
+										>
+											approve
+										</Button>
+									</Grid>
+								</CardActions>
+							}
 						</Card>
 					)
 				}

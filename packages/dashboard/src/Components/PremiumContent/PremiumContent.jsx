@@ -22,6 +22,7 @@ import SectionTitle from "../SectionTitle";
 import PreviewUrl from "./PreviewUrl/PreviewUrl";
 import Successful from "../Successful";
 import { useToasts } from "react-toast-notifications";
+
 const useStyles = makeStyles((theme) => ({
   containerAddUrl: {
     padding: 20,
@@ -64,6 +65,7 @@ const PremiumContent = () => {
   const [loadingPreviewUrl, setLoadingPreviewUrl] = useState(false);
   const [isSuccessful, setSuccessful] = useState(false);
   const [stripeAccountId, setStripeAccountId] = useState("");
+  
   useEffect(() => {
     apiService.get("/publisher/premiumContent").then((response) => {
       setContents(response.data);
@@ -72,8 +74,8 @@ const PremiumContent = () => {
 
   useEffect(() => {
     apiService.get("/publisher/account").then((response) => {
-      setStripeAccountId(response.data.stripeAccountId);
-      console.log(response.data.stripeAccountId);
+      setStripeAccountId(response.data?.stripeAccountId);
+      console.log(response.data?.stripeAccountId);
     });
   }, []);
 
@@ -96,7 +98,13 @@ const PremiumContent = () => {
       setLoadingPreviewUrl(false);
     } catch (err) {
       console.log(err);
-      alert(err.message);
+      setLoadingPreviewUrl(false);
+      setDisplayPreviewUrl(false);
+      addToast(err.message,{
+        appearance: "error",
+        autoDismiss: true,
+        autoDismissTimeout: 7000,
+      });
     }
   };
 
@@ -109,7 +117,11 @@ const PremiumContent = () => {
       setSuccessful(true);
     } catch (err) {
       console.log(err.message);
-      alert(err.message);
+      addToast(err.message,{
+        appearance: "error",
+        autoDismiss: true,
+        autoDismissTimeout: 7000,
+      });
     }
   };
 

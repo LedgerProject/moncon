@@ -60,7 +60,7 @@ const useStyles = makeStyles(() => ({
   },
   listItem: {
   	cursor:'pointer'
-  }
+  },
 }));
 
 const UserRequest = ({user}) => {
@@ -81,20 +81,25 @@ const UserRequest = ({user}) => {
 			<Accordion>
 				<AccordionSummary expandIcon={<ExpandMoreIcon />}>
 					<Typography variant='h5'>
-						{user?.userId}
+						user : {user?.userId}
 					</Typography>
 				</AccordionSummary>
 				<AccordionDetails>
 					<List>
 						{
-							user?.request.map((request) => (
-									<ListItem 
-										className={classes.listItem} 
-										onClick={() => handleClick(request._id)}
-										key={request._id}
-									>
-										<ListItemText primary={request.credential}/>
-									</ListItem>
+							user?.request.map((request,index) => (
+									<>
+										<ListItem 
+											className={classes.listItem} 
+											onClick={() => handleClick(request._id)}
+											key={index}
+										>
+											<ListItemText primary={`${index + 1}. Certificate ${request.credential.replace("credential_","")}`}/>
+										</ListItem>
+										{
+											index < user.request.length - 1 &&  <hr/>
+										}
+									</>
 								)
 							)
 						}

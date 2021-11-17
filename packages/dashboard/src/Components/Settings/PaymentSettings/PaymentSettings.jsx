@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import {
   Typography,
   TextField,
@@ -7,9 +8,9 @@ import {
   Grid,
   Link,
 } from "@material-ui/core";
-import { useEffect, useState } from "react";
-import apiService from "../../../Services/apiService.js";
 import moment from "moment";
+import { useToasts } from "react-toast-notifications";
+import apiService from "../../../Services/apiService.js";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -29,11 +30,24 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
+const errorOptions = {
+  appearance: "error",
+  autoDismiss: true,
+  autoDismissTimeout: 7000,
+}
+
+const successOptions = {
+  appearance: "success",
+  autoDismiss: true,
+  autoDismissTimeout: 7000,
+} 
+
 const PaymentSettings = () => {
   const classes = useStyles();
   const [stripeAccountId, setStripeAccountId] = useState("");
   const [linkExpireAt, setLinkExpireAt] = useState("");
   const [url, setUrl] = useState("");
+  const { addToast } = useToasts();
 
   useEffect(() => {
     apiService.get("/publisher/account").then((response) => {
@@ -47,8 +61,11 @@ const PaymentSettings = () => {
       const response = await apiService.post("/publisher/account");
       if (response.status !== 200) {
         console.log(response);
-        alert("Some error has occurred in our servers");
-        return;
+
+        return addToast(
+          "Some error has occurred in our servers",
+          errorOptions
+        );
       }
       console.log(response.data.stripeAccountId);
       account = response.data.stripeAccountId;
@@ -62,8 +79,10 @@ const PaymentSettings = () => {
     const { expires_at, url } = response.data;
     if (!expires_at || !url) {
       console.log(response);
-      alert("Some error has occurred in our servers");
-      return;
+      return addToast(
+        "Some error has occurred in our servers",
+        errorOptions
+      );
     }
 
     setLinkExpireAt(

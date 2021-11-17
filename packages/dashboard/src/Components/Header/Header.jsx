@@ -146,7 +146,7 @@ export default function Header() {
               </Button>
             )}
             <AvatarMenu setTabIndex={setTabIndex} className={classes.avatar} />
-            {!!isMobile && (
+            {!!isMobile && userRole == ROLE_PUBLISHER && (
               <>
                 <div
                   onClick={handleMenu}

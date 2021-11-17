@@ -72,7 +72,7 @@ const Issuer = () => {
 
   return (
     <>
-      <SectionTitle title="Dashboard" />
+      <SectionTitle title="Pending credentials request" />
       <Grid container spacing={3} className={classes.marginBottom}>
       </Grid>
       {

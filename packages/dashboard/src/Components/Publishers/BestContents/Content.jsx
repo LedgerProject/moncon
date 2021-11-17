@@ -249,6 +249,11 @@ const Content = ({
     NO_CREDENTIAL: "No Credential",
   };
 
+  const conditionMessage = {
+    age: `Age: ${ageCredentials[content.age]}`,
+    nationality: `Nationality:  ${content.nationality}`,
+  }
+
   const classes = useStyles();
   const handleClick = () => {
     window.open(content.url, "_blank");
@@ -334,7 +339,7 @@ const Content = ({
               </Grid>
               <div className={classes.cardItem}>
                 <Grid className={classes.space}>
-                  <Typography>{ageCredentials[content.age]}</Typography>
+                  <Typography>{conditionMessage[content.condition]}</Typography>
                 </Grid>
                 <Grid className={classes.space}>
                   <Typography>{formatterEuro.format(AMOUNT_TO_DISPLAY(content.amount))}</Typography>

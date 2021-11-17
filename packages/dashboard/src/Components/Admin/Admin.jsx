@@ -16,6 +16,7 @@ import {
   Button,
   FormHelperText
 } from "@material-ui/core";
+import { useToasts } from "react-toast-notifications";
 import SectionTitle from "../SectionTitle";
 
 const useStyles = makeStyles((theme) =>({
@@ -51,6 +52,7 @@ const Admin = () => {
   const [password, setPassword] = useState('');
   const [email, setEmail] = useState('');
   const [error, setError] = useState(null);
+  const { addToast } = useToasts();
 
   const classes = useStyles();
 
@@ -69,6 +71,12 @@ const Admin = () => {
       return setError('You need to enter a email')
     }
 
+    addToast("Creating issuer, please wait",{
+      appearance: "info",
+      autoDismiss: true,
+      autoDismissTimeout: 5000,
+    });
+    
     const response = await apiService.post('/admin/create-issuer',{password, email});
 
     if(!response?.data?.success){
@@ -78,7 +86,11 @@ const Admin = () => {
 
     getUsersData();
 
-    return alert('issuer created')
+    return addToast('issuer created',{
+      appearance: "success",
+      autoDismiss: true,
+      autoDismissTimeout: 5000,
+    })
 
   }
 
