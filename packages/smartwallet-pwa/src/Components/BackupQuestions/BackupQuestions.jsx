@@ -5,12 +5,15 @@ import {
 	Grid,
 	Typography,
 	TextField,
+	FormHelperText,
 	Button,
+	IconButton,
 	makeStyles
 } from '@material-ui/core';
 import { useToasts } from "react-toast-notifications";
 import { LS_KEY_PAIR, LS_DID_KEY, LS_PBKDF_KEY } from "../../Const";
 import apiService from "../../services/apiService";
+import CloseIcon from "../../Assets/svg/CloseIcon";
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -41,7 +44,54 @@ const useStyles = makeStyles(theme => ({
     marginTop: 10,
     marginBottom: 20,
   },
+  close: {
+    position: 'absolute',
+    cursor: 'pointer',
+    marginTop: '8px',
+  }
 }));
+
+const Close = ({handleReturn}) => {
+	const classes = useStyles();
+	const [width,setWidth] = useState(0);
+
+	const getDialogWidth = () => {
+    const newWidth = document.getElementById("DialogPaper")?.clientWidth
+
+    if(!newWidth){
+    	return
+    }
+
+    setWidth(newWidth);
+  };
+
+  // Get 'width' and 'height' after the initial render and every time the list changes
+  useEffect(() => {
+    getDialogWidth();
+  }, []);
+
+  // Update 'width' and 'height' when the window resizes
+  useEffect(() => {
+    window.addEventListener("resize", getDialogWidth);
+
+    return () => {
+			window.removeEventListener("resize", getDialogWidth);    	
+    }
+  }, []);
+
+  return (
+  	<div
+			onClick={handleReturn}
+			className={classes.close}
+			style={{
+				marginLeft: `${width - 32}px`
+			}}
+		>
+			<CloseIcon/>
+		</div>
+  )
+  
+}
 
 const BackupQuestions = () => {
 	const classes = useStyles();
@@ -156,6 +206,10 @@ const BackupQuestions = () => {
   		}
   	}
 
+ 	const handleReturn = () => {
+		setShowDialog(false);
+	}
+
 	return (
 		<>
 			<Dialog
@@ -170,19 +224,25 @@ const BackupQuestions = () => {
 						margin: 0,
 						width: "calc(110% - 64px)",
 						maxHeight: "calc(85% - 64px)", 
-					}
+					},
+					id: "DialogPaper",
 				}}
 				BackdropProps={{ 
 					style: { backgroundColor: "transparent" } 
 				}}
 			>
+				
+				<Close handleReturn={handleReturn}/>
+
 				<DialogContent>
 					<Typography variant="h2" >
 						You need to answer the following questions 
 					</Typography>
+					<br/>
 					<Typography variant="h3" >
 						Answer only 3 questions
 					</Typography>
+					<br/>
 					<Typography variant="h4">
 						this data will be used to generate a private key, that will be used to encrypt your backups
 					</Typography>
@@ -201,14 +261,20 @@ const BackupQuestions = () => {
 									xs={12}
 									key={question[0]}
 								>
+									<FormHelperText style={{
+										fontSize: "1.5rem",
+										marginBottom:"-5px",
+										textAlign: "center"
+									}}>
+                    {question[1]}
+                  </FormHelperText>
 									<TextField
 										id={question[0]}
-										label={question[1]}
-							        	value={inputData[question[0]]}
-							        	onChange={handleChange(question[0])}
-							        	fullWidth
-							        	InputLabelProps={inputLabelProps}
-							        	InputProps={inputProps}
+							      value={inputData[question[0]]}
+							     	onChange={handleChange(question[0])}
+							     	fullWidth
+							     	InputLabelProps={inputLabelProps}
+						       	InputProps={inputProps}
 									/>
 								</Grid>
 							))

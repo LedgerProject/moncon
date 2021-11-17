@@ -55,7 +55,7 @@ const ScanShare = ({ QrResponse, socket, setCredential_verified }) => {
 
         return setCredential_verified(true);
       } else {
-        addToast("Credential in not valid", {
+        addToast("Credential is not valid", {
           appearance: "error",
           autoDismiss: true,
           autoDismissTimeout: 3000,
@@ -98,7 +98,7 @@ const ScanShare = ({ QrResponse, socket, setCredential_verified }) => {
     console.log(credential)
 
     if(data.content.verification_type==='w3c'){
-      data.credential = {"my-vc":credential.['my-vc']}
+      data.credential = {"my-vc": credential['my-vc']}
     }
 
     else if(data.content.verification_type==='zkp'){
@@ -106,7 +106,7 @@ const ScanShare = ({ QrResponse, socket, setCredential_verified }) => {
         aggregated_credentials, 
         issuer_public_key,
         keys
-      } = credential;
+      } = credential.zkp;
 
       const proof = await createProof(
         aggregated_credentials,

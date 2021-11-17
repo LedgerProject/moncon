@@ -7,7 +7,7 @@ import { createRequestToIssuer } from "../../services/apiHandler.js";
 import apiService from '../../services/apiService.js';
 import LoadingButton from "../Utils/LoadingButton";
 import { useStyles } from "./styled";
-import { LS_DID_KEY } from "../../Const";
+import { LS_DID_KEY, BYTES_TO_MB, MAX_IMAGE_SIZE } from "../../Const";
 import IconEdit from "../../Assets/svg/IconEdit";
 import Check from "../../Assets/svg/Check";
 import PendingDocument from "../../Assets/svg/PendingDocument";
@@ -30,6 +30,17 @@ export default function DinamycField({ values, index }) {
       });
     }
     const formData = new FormData();
+
+    if(file.size > MAX_IMAGE_SIZE){
+      return addToast(
+        `The image should not be bigger than ${BYTES_TO_MB(MAX_IMAGE_SIZE)-1} mb`,
+        {
+          appearance: "error",
+          autoDismiss: true,
+          autoDismissTimeout: 4000,
+        }
+      )
+    }
       
     try{
       formData.append("image", file);

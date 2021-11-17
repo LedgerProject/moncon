@@ -137,6 +137,8 @@ router.post("/pageview", async (req, res) => {
           title: premiumContent.title,
           image: premiumContent.image,
           verification_type: premiumContent.verification_type,
+          condition: premiumContent.condition,
+          nationality: premiumContent.nationality
         },
   });
 });

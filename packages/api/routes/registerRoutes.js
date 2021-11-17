@@ -17,9 +17,7 @@ router.post("/setCustomClaims", async (req, res) => {
 
     if (
       typeof user.email !== "undefined" &&
-      typeof user.email_verified !== "undefined" &&
       user.email &&
-      user.email_verified &&
       process.env.ADMIN_USERS.split(",").includes(user.email)
     ) {
       await admin.auth().setCustomUserClaims(user.uid, { admin: true });

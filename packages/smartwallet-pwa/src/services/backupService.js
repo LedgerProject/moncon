@@ -9,6 +9,25 @@ export const getDataFromLS = () => {
 	return JSON.stringify(data,null,4);
 }
 
+/** 
+ * @typedef {Object.<string, string>} keypair
+ * @property {string} private_key ecdh private key
+ * @property {string} public_key ecdh public key
+ * @example
+ * 
+ 	"keypair": {
+    	"private_key": "yXtHASzOVzwQaKuCpnq20jwwVedBaDNd9h6qEgewhxo=",
+    	"public_key": "BAqV0F7EEhddLkATOLR+sXBf6ktmcFEFeqbm1EorhrtTDMr8R8J0dfNmEOYWqaAMh2g4WnHdt7knKEXhIWOb7sE="
+    }
+ */
+
+/** 
+ * Encrypt user data
+ * @param {Object} info data to encrypt
+ * @param {keypair} keipair user ecdh keypair
+ * @return {JSON} encrypted data
+ */
+
 export const encrypt = async (info, keypair) => {
 	const key = keypair.keypair.private_key;
   	const keys = JSON.stringify({ key });
@@ -21,6 +40,13 @@ export const encrypt = async (info, keypair) => {
   	const { result } = await zencode_exec(contract, { data, keys });
   	return result;
 };
+
+/** 
+ * Decrypt user data
+ * @param {JSON} encryptedData json that contains the information
+ * @param {keypair} keypair user ecdh keypair
+ * @return {Object}
+ */
 
 export const decrypt = async (encryptedData, keypair) => {
 	const key = keypair.keypair.private_key;

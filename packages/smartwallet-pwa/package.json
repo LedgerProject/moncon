@@ -16,6 +16,7 @@
     "axios": "^0.21.1",
     "clsx": "^1.1.1",
     "did-method-generic": "^1.0.1",
+    "documentation": "^13.2.5",
     "file-saver": "^2.0.5",
     "luxon": "^2.0.2",
     "material-ui-phone-number": "^2.2.6",
@@ -48,6 +49,8 @@
     "deploy:staging": "scp -r build infinitelabs:/home/ubuntu/site/pwa",
     "build:deploy": "yarn  build && yarn deploy:staging",
     "test": "react-scripts test",
+    "docs:build": "documentation build ./src/App.jsx --config documentation.yml -f html --github -o docs",
+    "docs:lint": "documentation lint ./App.jsx",
     "eject": "react-scripts eject"
   },
   "eslintConfig": {

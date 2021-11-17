@@ -85,7 +85,6 @@ const Settings = () => {
 
     const PBKDF = JSON.parse(localStorage.getItem(LS_PBKDF_KEY));
 
-    const dataBlob = new Blob([encryptedData], {type : 'application/json'});
     const keypairBlob = new Blob(
       [
         JSON.stringify(PBKDF,null,4)
@@ -95,7 +94,21 @@ const Settings = () => {
       }
     );
     
-    saveAs(dataBlob, "moncon_wallet_backup.json");
+    try{
+      const response = await apiService.post("/user/update-backup",{
+        public_key: keypair.keypair.public_key,
+        backup: encryptedData,
+      });
+      console.log(response);
+    }catch(err){
+      console.log(err);
+      return addToast("Error creating backup",{
+        appearance: "error",
+        autoDismiss: true,
+        autoDismissTimeout: 2000,
+      })
+    }
+    
     saveAs(keypairBlob,"moncon_wallet_pbkdf.json");
     
     return;

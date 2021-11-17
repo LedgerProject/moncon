@@ -1,6 +1,8 @@
 import apiService from './apiService';
+import {aggregatesSignature} from "./zkpService";
+import {LS_USER_KEY} from "../Const"
 
-export const updateCredential = (data, socketRef, dispatch,toast) => {
+export const updateCredential = async (data, socketRef, dispatch,toast) => {
 	const socket = socketRef.current
 	const payload = { id: `${data.credential}`, value: `${data.claim}`, pending:false };
 	
@@ -8,16 +10,30 @@ export const updateCredential = (data, socketRef, dispatch,toast) => {
 	if(!data.signedCredential){
 		data.signedCredential= {}
 	}
+
 	console.log(payload)
 
 	dispatch({
 		type: "update",
 		payload,
 	});
-	localStorage.setItem(data.credential,JSON.stringify({...data.signedCredential}));
+
+	let lsData = {}
+
+	if(data?.signedCredential?.zkp){
+		let ls = JSON.parse(localStorage.getItem(data.credential));
+		const aggregated_credentials = await aggregatesSignature(data.signedCredential.zkp.credential_signature, ls.keys);
+		const zkp = {...data.signedCredential.zkp, ...ls, aggregated_credentials};
+		lsData = JSON.stringify({...data.signedCredential, zkp});
+	}else{
+		lsData = JSON.stringify({...data.signedCredential});
+	}
+
+
+	localStorage.setItem(data.credential,lsData);
 
 	if(!payload.status) {
-		const message = `${data.credential} has been declined`; 
+		const message = `Credential ${data.credential.replace("credential_")} has been declined`; 
 		const options = {
 			appearance: "error",
 			autoDismiss: true,
@@ -25,7 +41,7 @@ export const updateCredential = (data, socketRef, dispatch,toast) => {
 		};
 		toast(message,options)
 	}else{
-		const message = `${data.credential} has been approved`; 
+		const message = `Credential ${data.credential.replace("credential_")} has been approved`; 
 		const options = {
 			appearance: "success",
 			autoDismiss: true,
@@ -39,10 +55,15 @@ export const updateCredential = (data, socketRef, dispatch,toast) => {
 
 export const getPendingResponses = async (userId, socketRef, dispatch,toast) => {
 	console.log('getPendingResponses')
+	
 	const response = await apiService.post("/zenroom/check-pending-request",{userId});
+	
 	console.log(response.data)
-	response.data.pendingRequest.forEach((data) => {
+
+	const promises = await response.data.pendingRequest.map(async (data) => {
 		console.log('iteration of getPendingResponses forEach loop')
-		updateCredential(data, socketRef, dispatch, toast)
+		await updateCredential(data, socketRef, dispatch, toast)
 	});
+
+	await Promise.all(promises);
 }

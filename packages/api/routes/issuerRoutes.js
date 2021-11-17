@@ -12,10 +12,8 @@ import CredentialRequestModel,{
 import {
   singVC,
   signZkp,
-  hashData,
-  userZkpKeys,
-  aggregatesSignature
 } from "../services/credentials/contract/contracts.js";
+import {getCondition} from "../services/credentials/credentialsData/index.js";
 
 const apiroom = axios.create({
     baseURL: process.env.APIROOM_BASE_URL,
@@ -102,6 +100,7 @@ router.post("/decline-credential", async (req, res) => {
     }
 
     request.status = CREDENTIAL_REQUEST_STATUS_DECLINED;
+    request.signedCredential = {};
     await request.save();
     console.log(request)
     res.status(200).json({request});
@@ -120,49 +119,24 @@ router.post("/zkp-sign", async (req, res) => {
   const did = issuer.did;
   
   const request = await CredentialRequestModel.findById(requestId);
-  const { userId, credential, claim } = request;
+  const { userId, credential, claim, signedCredential } = request;
 
   let data = JSON.stringify({userId});
   let result = {};
-  let userData = {};
+  let userData = {...signedCredential};
+
+  //Check in which condition the claim fullfils
+  console.log("Check in which condition the claim fullfils")
+  let data_keys = {}
+
+  const conditions = getCondition(credential, claim);
+
+  data_keys[did] = JSON.parse(issuer.issuer_private_keys).zkp[conditions.conditionCategory][conditions.condition]
+  data_keys.issuer_public_key = JSON.parse(issuer.issuer_public_keys).zkp[conditions.conditionCategory][conditions.condition].issuer_public_key
   
-  //create credential keys and request
-  try{
-    result = await zencode_exec(userZkpKeys, {data});
-
-    if(!(result.result.length > 0)){
-      console.log(result)
-      return res.status(500).json({error:'Error generating user keys'})
-    }
-
-    result = JSON.parse(result.result);
-  }catch(err){
-    console.log(err)
-    return res.status(500).json({error:'Error generating user keys'})
-  }
-
-  userData = result;
-
-  const getAge = (birthDate) => {
-    const now = DateTime.now();
-    const birthD = DateTime.fromISO(birthDate.split("-").reverse().join("-"));
-    const interval = Interval.fromDateTimes(birthD, now);
-    return interval.length("years");
-  }
-
-  const age = getAge(claim)
-
-  let data_keys = {};
-  if(age >= 18){
-    data_keys[did] = JSON.parse(issuer.issuer_private_keys).zkp['legal_age']
-    data_keys.issuer_public_key = JSON.parse(issuer.issuer_public_keys).zkp['legal_age'].issuer_public_key
-  }
-  else{
-    data_keys[did] = JSON.parse(issuer.issuer_private_keys).zkp['underage']
-    data_keys.issuer_public_key = JSON.parse(issuer.issuer_public_keys).zkp['underage'].issuer_public_key
-  }
 
   //sign credential request
+  console.log("sign credential request");
   try{
     result = await zencode_exec(signZkp, {
       data: JSON.stringify({
@@ -186,7 +160,7 @@ router.post("/zkp-sign", async (req, res) => {
 
   const {keys, verifier, ...response_data} = result;
 
-  userData = {...userData, ...response_data}
+  userData = {...userData, ...response_data};
 
   data = JSON.stringify({
     userId,
@@ -200,22 +174,19 @@ router.post("/zkp-sign", async (req, res) => {
   }
   data_keys = JSON.stringify(data_keys)
 
-  try{
-    result = await zencode_exec(aggregatesSignature, {data, keys: data_keys});
-
-    if(!(result.result.length > 0)){
-      console.log(result)
-      return res.status(500).json({error:'Error generating aggregated signature'})
-    }
-
-    result = JSON.parse(result.result)[userId];
-  }catch(err){
-    console.log(err)
-    return res.status(500).json({error:'Error generating aggregated signature'})
-  }
-
-  userData.aggregated_credentials = result;
   userData.issuer_did = did;
+
+  //upload to sawrooth
+  
+  console.log("upload to sawrooth");
+
+  const sawtoothCredential = await apiroom.post('/save-object-on-sawtooth',{data:{credential: userData.credential_signature }});
+
+  const { myTag } = sawtoothCredential.data;
+
+  console.log({myTag})
+
+  userData.myTag = myTag;
 
   return res.status(200).json({userData})
 
@@ -224,6 +195,7 @@ router.post("/zkp-sign", async (req, res) => {
 router.post("/w3c-sign", async (req, res) => {
   try {
     const id = res.locals.userId;
+    console.log(id)
     const { requestId } = req.body;
     
     const issuer = await IssuerModel.findOne({id})
@@ -231,7 +203,9 @@ router.post("/w3c-sign", async (req, res) => {
     
     const request = await CredentialRequestModel.findById(requestId);
     const { userId, credential, claim } = request;
+    
     const credential_did = (await didHandler.generate()).id;
+    
     const credentialSubject = {
       id: request.userId,
       credential: {
@@ -239,16 +213,6 @@ router.post("/w3c-sign", async (req, res) => {
         [credential.replace('credential_','')]: request.claim
       }
     }
-
-    const hashResult = await zencode_exec(hashData, {
-      data: JSON.stringify({info: credential_did}),
-      conf: `color=0, debug=1`,
-    });
-
-    const hash = JSON.parse(hashResult.result).hash;
-    console.log(hash)
-
-    credentialSubject.credential.hash = hash
 
     console.log(credentialSubject, "credentialSubject");
     const zenData = {
@@ -278,11 +242,13 @@ router.post("/w3c-sign", async (req, res) => {
       conf: `color=0, debug=0`,
     });
 
-    const sawtoothResponse = await apiroom.post('/save-on-sawtooth',{data:{hash}});
+    const sawtoothCredential = await apiroom.post('/save-object-on-sawtooth',{data:{credential: JSON.parse(result.result)}}) 
+
+    const { myTag } = sawtoothCredential.data;
 
     const response = {
       ...JSON.parse(result.result),
-      ...sawtoothResponse.data,
+      myTag,
       issuer_did: did
     }
 

@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useDispatch } from "react-redux";
-import { Container, Button, TextField, Grid, Typography, } from "@material-ui/core";
+import { Container, Button, TextField, Grid, Typography, FormHelperText } from "@material-ui/core";
 import { useHistory } from "react-router";
 import { useToasts } from "react-toast-notifications";
 import apiService from "../../services/apiService";
@@ -18,7 +18,6 @@ const ImportBackup = () => {
   const classes = useStyles();
   const { addToast } = useToasts();
   const history = useHistory();
-  const [encryptedData, setEncryptedData] = useState({});
   const [pbkdf, setPbkdf] = useState({})
   const [questions, setQuestions] = useState(null);
   const [inputData, setInputData] = useState({
@@ -63,7 +62,7 @@ const ImportBackup = () => {
   const handleClick = async (event) => {
     event.preventDefault();
 
-    if(!encryptedData || !pbkdf){
+    if(!pbkdf){
       addToast('You need to submit the info',errOptions);
       return
     }
@@ -101,11 +100,24 @@ const ImportBackup = () => {
       return addToast("Error re-generating the keypair",errOptions);
     }
 
+    let data = {};
+    let encryptedData = {};
+    console.log(decryptionKeys.keypair.public_key)
+    try{
+      data = (await apiService.post("/user/get-backup",{public_key: decryptionKeys.keypair.public_key})).data;
+      encryptedData = data.result.backup;
+    }catch(err){
+      console.log(err);
+      return addToast("Error finding the backup",errOptions);
+    }
+
     let decryptedData = {}
     try{
-      const decrypResult = await decrypt(encryptedData, decryptionKeys)
+      const decrypResult = await decrypt(JSON.parse(encryptedData), decryptionKeys)
+      console.log(decrypResult)
       decryptedData = JSON.parse(decrypResult);
     }catch(err){
+      console.log(err)
       return addToast("Incorrect PBKDF",errOptions);
     }
 
@@ -118,12 +130,6 @@ const ImportBackup = () => {
 
     handleReturn();
   };
-
-  const handleEncryptedData = async (event) => {
-    const file = await event.currentTarget.files[0].text();
-
-    setEncryptedData(JSON.parse(file));
-  }
 
   const handlePBKDF = async (event) => {
     const file = await event.currentTarget.files[0].text();
@@ -157,36 +163,13 @@ const ImportBackup = () => {
           <Typography color='secondary' variant='h1' className={classes.title}>
             Import Backup
           </Typography>
-          <form className={classes.mnemonicRoot} noValidate autoComplete="off">
+          <form 
+            className={classes.mnemonicRoot}
+            noValidate 
+            autoComplete="off"
+          >
             <br />
             <Grid container item xs={12} justifyContent='center'>
-              <Grid container item xs={12} justifyContent='center'>
-                <Button
-                  component="label"
-                  className={classes.mnemonicButtonBlue}
-                  variant="contained"
-                  color="primary"
-                >
-                  <Grid container item xs={12} justifyContent='center'>
-
-                    <Grid container item xs={12} justifyContent='center'>
-                      <Typography 
-                        variant='body1'
-                        className={classes.uploadImageLabel} 
-                        display='inline'
-                      >
-                        Upload Backup
-                      </Typography>
-                    </Grid> 
-                  </Grid> 
-                  <input
-                    onChange={handleEncryptedData}
-                    type="file"
-                    accept='.json'
-                    hidden
-                  />
-                </Button>
-              </Grid>
               <Grid container item xs={12} justifyContent='center'>
                 <Button
                   component="label"
@@ -230,18 +213,26 @@ const ImportBackup = () => {
                     xs={10}
                     key={question[0]}
                   >
+                    <FormHelperText style={{
+                        color:"#e0e0e0",
+                        fontSize: "1.5rem",
+                        marginBottom:"-5px",
+                        textAlign:"center",
+                      }}
+                    >
+                      {question[1]}
+                    </FormHelperText>
                     <TextField
                       id={question[0]}
-                      label={question[1]}
-                          value={inputData[question[0]]}
-                          onChange={handleChange(question[0])}
-                          fullWidth
-                          InputProps={{
-                            style:{
-                              color:"#fff",
-                              fontSize: "1.8rem",
-                            },
-                          }}
+                      value={inputData[question[0]]}
+                      onChange={handleChange(question[0])}
+                      fullWidth
+                      InputProps={{
+                        style:{
+                          color:"#fff",
+                          fontSize: "1.8rem",
+                        },
+                      }}
                     />
                   </Grid>
                 ))
@@ -253,7 +244,10 @@ const ImportBackup = () => {
               variant="contained"
               color="primary"
               type="submit"
-              disabled={!Object.keys(encryptedData).length > 0 || !Object.keys(pbkdf).length > 0}
+              disabled={!Object.keys(pbkdf).length > 0}
+              style={{
+                marginBottom: "100px"
+              }}
             >
               Continue
             </Button>

@@ -28,12 +28,15 @@ export const credential_mobil = "credential_mobile";
 
 export const credential_email = "credential_email";
 
-export const credential_address = "credential_address";
+export const credential_country = "credential_country";
+
+export const credential_region = "credential_region";
 
 export const credential_birthday = "credential_birthday";
 
 export const CREDENTIAL_SUPPORT_ZKP = [
-  credential_birthday
+  credential_birthday,
+  credential_country,
 ]; 
 
 export const initialState = {
@@ -41,24 +44,13 @@ export const initialState = {
   lastName: { id: "lastName", value: "", status: false, pending:false, },
   [credential_email]: { id: credential_email, value: "", status: false, pending:false, },
   [credential_mobil]: { id: credential_mobil, value: "", status: false, pending:false, },
-  [credential_birthday]: {
-    id: credential_birthday,
-    value: "",
-    status: false,
-    pending:false,
-  },
-  [credential_address]: {
-    id: credential_address,
-    value: {
-      address_line_1: "",
-      address_line_2: "",
-      postal_code: "",
-      city: "",
-      country: "",
-    },
-    status: false,
-    pending:false,
-  },
+  [credential_birthday]: { id: credential_birthday, value: "", status: false, pending:false,},
+  [credential_country]: { id: credential_country, value: "", status: false, pending:false,},
+  [credential_region]: { id: credential_region, value: "", status: false, pending:false,},
   dynamicFields: [],
   articles: [],
 };
+
+const MB_IN_BYTES = 1048576//1.548.576
+export const BYTES_TO_MB = (bytes) => (bytes / MB_IN_BYTES);
+export const MAX_IMAGE_SIZE = 21 * MB_IN_BYTES;

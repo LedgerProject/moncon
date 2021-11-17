@@ -38,20 +38,29 @@ const PremiumContentSchema = new Schema({
   domain: {
     type: String,
   },
+  /*
+    To Do 
+    see if exist a better way to add conditions dinamically
+  */
+  condition:{
+    type: String,
+    enum: ["age","nationality", NO_CREDENTIAL],
+    default: NO_CREDENTIAL
+  },
   age: {
     type: String,
     enum: [LEGAL_AGE, UNDERAGE, NO_CREDENTIAL],
     default: NO_CREDENTIAL,
+  },
+  nationality:{
+    type: String,
+    default: NO_CREDENTIAL
   },
   verification_type: {
     type: String,
     enum: [VERIFICATION_METHOD_W3C, VERIFICATION_METHOD_ZKP, NO_CREDENTIAL],
     default: NO_CREDENTIAL,
   },
-  /*
-    To Do 
-    see if exist a better way to add conditions dinamically
-  */
   status: {
     type: String,
     required: true,

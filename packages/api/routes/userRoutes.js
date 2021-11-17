@@ -13,6 +13,7 @@ import {
 } from "keypair-lib";
 import { setFileName } from '../middlewares/multerMiddleware.js';
 import { AMOUNT_TO_STORE } from "../Const.js";
+import BackupModel from '../models/backup.js';
 
 const router = express.Router();
 
@@ -273,6 +274,30 @@ router.post('/keypair', async (req, res) => {
     console.log("Error creating keypair", err);
     return res.status(500).json({error:"Error creating keypair"});
   }
+});
+
+router.post('/update-backup', async (req, res) => {
+  const { public_key, backup } = req.body;
+
+  const result = await BackupModel.findOneAndUpdate(
+    {publicKey: public_key},
+    {
+      backup,
+      lastUpdated: Date.now()
+    },
+    { upsert: true, new: true }
+  );
+
+  res.status(200).json({result});
+});
+
+router.post('/get-backup', async (req, res) => {
+  const { public_key } = req.body;
+
+  const result = await BackupModel.findOne({publicKey:public_key});
+
+
+  res.status(200).json({result});
 });
 
 export default router;

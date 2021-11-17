@@ -1,0 +1,2095 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset='utf-8'>
+  <title>moncon-api 1.0.0 | Documentation</title>
+  <meta name='description' content='Moncon API'>
+  <meta name='viewport' content='width=device-width,initial-scale=1'>
+  <link href='assets/bass.css' rel='stylesheet'>
+  <link href='assets/style.css' rel='stylesheet'>
+  <link href='assets/github.css' rel='stylesheet'>
+  <link href='assets/split.css' rel='stylesheet'>
+</head>
+<body class='documentation m0'>
+    <div class='flex'>
+      <div id='split-left' class='overflow-auto fs0 height-viewport-100'>
+        <div class='py1 px2'>
+          <h3 class='mb0 no-anchor'>moncon-api</h3>
+          <div class='mb1'><code>1.0.0</code></div>
+          <input
+            placeholder='Filter'
+            id='filter-input'
+            class='col12 block input'
+            spellcheck='false'
+            autocapitalize='off'
+            autocorrect='off'
+            type='text' />
+          <div id='toc'>
+            <ul class='list-reset h5 py1-ul'>
+              
+                
+                <li><a
+                  href='#servicescontracts'
+                  class="h5 bold black caps toggle-sibling">
+                  Services/Contracts
+                  <span class='icon'>▸</span>
+                </a>
+                
+                <div class='toggle-target display-none'>
+                  
+                  <ul class='list-reset py1-ul pl1'>
+                    <li class='h5'><span>Static members</span></li>
+                    
+                      <li><a
+                        href='#createw3ckeypair'
+                        class='regular pre-open'>
+                        .createW3cKeyPair
+                      </a></li>
+                    
+                      <li><a
+                        href='#singvc'
+                        class='regular pre-open'>
+                        .singVC
+                      </a></li>
+                    
+                      <li><a
+                        href='#verifyvc'
+                        class='regular pre-open'>
+                        .verifyVC
+                      </a></li>
+                    
+                      <li><a
+                        href='#createzkpprivatekey'
+                        class='regular pre-open'>
+                        .createZkpPrivateKey
+                      </a></li>
+                    
+                      <li><a
+                        href='#createzkppublickey'
+                        class='regular pre-open'>
+                        .createZkpPublicKey
+                      </a></li>
+                    
+                      <li><a
+                        href='#signzkp'
+                        class='regular pre-open'>
+                        .signZkp
+                      </a></li>
+                    
+                      <li><a
+                        href='#verifyzkp'
+                        class='regular pre-open'>
+                        .verifyZkp
+                      </a></li>
+                    
+                    </ul>
+                  
+                  
+                  
+                  
+                </div>
+                
+                </li>
+              
+                
+                <li><a
+                  href='#types'
+                  class="h5 bold black caps toggle-sibling">
+                  Types
+                  <span class='icon'>▸</span>
+                </a>
+                
+                <div class='toggle-target display-none'>
+                  
+                  <ul class='list-reset py1-ul pl1'>
+                    <li class='h5'><span>Static members</span></li>
+                    
+                      <li><a
+                        href='#keypair'
+                        class='regular pre-open'>
+                        .keypair
+                      </a></li>
+                    
+                      <li><a
+                        href='#vc'
+                        class='regular pre-open'>
+                        .vc
+                      </a></li>
+                    
+                      <li><a
+                        href='#keys'
+                        class='regular pre-open'>
+                        .keys
+                      </a></li>
+                    
+                      <li><a
+                        href='#derived_key'
+                        class='regular pre-open'>
+                        .derived_key
+                      </a></li>
+                    
+                      <li><a
+                        href='#credential_request'
+                        class='regular pre-open'>
+                        .credential_request
+                      </a></li>
+                    
+                      <li><a
+                        href='#credential_signature'
+                        class='regular pre-open'>
+                        .credential_signature
+                      </a></li>
+                    
+                      <li><a
+                        href='#aggregated_credentials'
+                        class='regular pre-open'>
+                        .aggregated_credentials
+                      </a></li>
+                    
+                      <li><a
+                        href='#proof'
+                        class='regular pre-open'>
+                        .proof
+                      </a></li>
+                    
+                    </ul>
+                  
+                  
+                  
+                  
+                </div>
+                
+                </li>
+              
+            </ul>
+          </div>
+          <div class='mt1 h6 quiet'>
+            <a href='https://documentation.js.org/reading-documentation.html'>Need help reading this?</a>
+          </div>
+        </div>
+      </div>
+      <div id='split-right' class='relative overflow-auto height-viewport-100'>
+        
+          
+          <section class='p2 mb2 clearfix bg-white minishadow'>
+
+  
+  <div class='clearfix'>
+    
+    <h3 class='fl m0' id='servicescontracts'>
+      Services/Contracts
+    </h3>
+    
+    
+  </div>
+  
+
+  <p>these are the zenroom contracts.</p>
+
+    <div class='pre p1 fill-light mt0'>Services/Contracts</div>
+  
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    <div class='py1 quiet mt1 prose-big'>Static Members</div>
+    <div class="clearfix">
+  
+    <div class='border-bottom' id='createw3ckeypair'>
+      <div class="clearfix small pointer toggle-sibling">
+        <div class="py1 contain">
+            <a class='icon pin-right py1 dark-link caret-right'>▸</a>
+            <span class='code strong strong truncate'>createW3cKeyPair</span>
+        </div>
+      </div>
+      <div class="clearfix display-none toggle-target">
+        <section class='p2 mb2 clearfix bg-white minishadow'>
+
+  
+  <div class='clearfix'>
+    
+    
+      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://gitlab.com/infinite-labs/moncon-framework/blob/ddac8902f61caa9710de6060a67a4b218a60664d/packages/api/services/credentials/contract/contracts.js#L154-L158'>
+      <span>packages/api/services/credentials/contract/contracts.js</span>
+      </a>
+    
+  </div>
+  
+
+  
+    <div class='pre p1 fill-light mt0'>createW3cKeyPair</div>
+  
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+    <div class='py1 quiet mt1 prose-big'>Parameters</div>
+    <div class='prose'>
+      
+        <div class='space-bottom0'>
+          <div>
+            <span class='code bold'>data</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a>)</code>
+	    dynamic data
+
+          </div>
+          
+          <table class='mt1 mb2 fixed-table h5 col-12'>
+            <colgroup>
+              <col width='30%' />
+              <col width='70%' />
+            </colgroup>
+            <thead>
+              <tr class='bold fill-light'>
+                <th>Name</th>
+                <th>Description</th>
+              </tr>
+            </thead>
+            <tbody class='mt1'>
+              
+                <tr>
+  <td class='break-word'><span class='code bold'>data.did</span> <code class='quiet'><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></code>
+  </td>
+  <td class='break-word'><span>did of the issuer
+</span></td>
+</tr>
+
+
+              
+            </tbody>
+          </table>
+          
+        </div>
+      
+    </div>
+  
+
+  
+
+  
+    
+      <div class='py1 quiet mt1 prose-big'>Returns</div>
+      <code><a href="#keypair">keypair</a></code>:
+        
+      
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+</section>
+
+      </div>
+    </div>
+  
+    <div class='border-bottom' id='singvc'>
+      <div class="clearfix small pointer toggle-sibling">
+        <div class="py1 contain">
+            <a class='icon pin-right py1 dark-link caret-right'>▸</a>
+            <span class='code strong strong truncate'>singVC</span>
+        </div>
+      </div>
+      <div class="clearfix display-none toggle-target">
+        <section class='p2 mb2 clearfix bg-white minishadow'>
+
+  
+  <div class='clearfix'>
+    
+    
+      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://gitlab.com/infinite-labs/moncon-framework/blob/ddac8902f61caa9710de6060a67a4b218a60664d/packages/api/services/credentials/contract/contracts.js#L172-L197'>
+      <span>packages/api/services/credentials/contract/contracts.js</span>
+      </a>
+    
+  </div>
+  
+
+  <p>Zenroom contract that signs a w3c vc</p>
+
+    <div class='pre p1 fill-light mt0'>singVC</div>
+  
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+    <div class='py1 quiet mt1 prose-big'>Parameters</div>
+    <div class='prose'>
+      
+        <div class='space-bottom0'>
+          <div>
+            <span class='code bold'>data</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a>)</code>
+	    dynamic data
+
+          </div>
+          
+          <table class='mt1 mb2 fixed-table h5 col-12'>
+            <colgroup>
+              <col width='30%' />
+              <col width='70%' />
+            </colgroup>
+            <thead>
+              <tr class='bold fill-light'>
+                <th>Name</th>
+                <th>Description</th>
+              </tr>
+            </thead>
+            <tbody class='mt1'>
+              
+                <tr>
+  <td class='break-word'><span class='code bold'>data.my-vc</span> <code class='quiet'><a href="#vc">vc</a></code>
+  </td>
+  <td class='break-word'><span>any non-signed wc3 vc
+</span></td>
+</tr>
+
+
+              
+                <tr>
+  <td class='break-word'><span class='code bold'>data.PublicKeyUrl</span> <code class='quiet'><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></code>
+  </td>
+  <td class='break-word'><span>the endpoint url to get the isssuer publick key
+</span></td>
+</tr>
+
+
+              
+            </tbody>
+          </table>
+          
+        </div>
+      
+        <div class='space-bottom0'>
+          <div>
+            <span class='code bold'>keys</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a>)</code>
+	    object that holds cryptographics keys
+
+          </div>
+          
+          <table class='mt1 mb2 fixed-table h5 col-12'>
+            <colgroup>
+              <col width='30%' />
+              <col width='70%' />
+            </colgroup>
+            <thead>
+              <tr class='bold fill-light'>
+                <th>Name</th>
+                <th>Description</th>
+              </tr>
+            </thead>
+            <tbody class='mt1'>
+              
+                <tr>
+  <td class='break-word'><span class='code bold'>keys.Issuer</span> <code class='quiet'><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a></code>
+  </td>
+  <td class='break-word'><span>object that holds issuer info
+</span></td>
+</tr>
+
+
+              
+            </tbody>
+          </table>
+          
+        </div>
+      
+        <div class='space-bottom0'>
+          <div>
+            <span class='code bold'>Issuer</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a>)</code>
+	    object that holds the keypair
+
+          </div>
+          
+          <table class='mt1 mb2 fixed-table h5 col-12'>
+            <colgroup>
+              <col width='30%' />
+              <col width='70%' />
+            </colgroup>
+            <thead>
+              <tr class='bold fill-light'>
+                <th>Name</th>
+                <th>Description</th>
+              </tr>
+            </thead>
+            <tbody class='mt1'>
+              
+                <tr>
+  <td class='break-word'><span class='code bold'>Issuer.keypair</span> <code class='quiet'><a href="#keypair">keypair</a></code>
+  </td>
+  <td class='break-word'><span>any ecdh keypair
+</span></td>
+</tr>
+
+
+              
+            </tbody>
+          </table>
+          
+        </div>
+      
+    </div>
+  
+
+  
+
+  
+    
+      <div class='py1 quiet mt1 prose-big'>Returns</div>
+      <code><a href="#vc">vc</a></code>:
+        signed vc
+
+      
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+</section>
+
+      </div>
+    </div>
+  
+    <div class='border-bottom' id='verifyvc'>
+      <div class="clearfix small pointer toggle-sibling">
+        <div class="py1 contain">
+            <a class='icon pin-right py1 dark-link caret-right'>▸</a>
+            <span class='code strong strong truncate'>verifyVC</span>
+        </div>
+      </div>
+      <div class="clearfix display-none toggle-target">
+        <section class='p2 mb2 clearfix bg-white minishadow'>
+
+  
+  <div class='clearfix'>
+    
+    
+      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://gitlab.com/infinite-labs/moncon-framework/blob/ddac8902f61caa9710de6060a67a4b218a60664d/packages/api/services/credentials/contract/contracts.js#L209-L229'>
+      <span>packages/api/services/credentials/contract/contracts.js</span>
+      </a>
+    
+  </div>
+  
+
+  <p>Zenroom contract that verify a w3c vc</p>
+
+    <div class='pre p1 fill-light mt0'>verifyVC</div>
+  
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+    <div class='py1 quiet mt1 prose-big'>Parameters</div>
+    <div class='prose'>
+      
+        <div class='space-bottom0'>
+          <div>
+            <span class='code bold'>data</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a>)</code>
+	    dynamic data
+
+          </div>
+          
+          <table class='mt1 mb2 fixed-table h5 col-12'>
+            <colgroup>
+              <col width='30%' />
+              <col width='70%' />
+            </colgroup>
+            <thead>
+              <tr class='bold fill-light'>
+                <th>Name</th>
+                <th>Description</th>
+              </tr>
+            </thead>
+            <tbody class='mt1'>
+              
+                <tr>
+  <td class='break-word'><span class='code bold'>data.my-vc</span> <code class='quiet'><a href="#vc">vc</a></code>
+  </td>
+  <td class='break-word'><span>signed vc
+</span></td>
+</tr>
+
+
+              
+            </tbody>
+          </table>
+          
+        </div>
+      
+        <div class='space-bottom0'>
+          <div>
+            <span class='code bold'>keys</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a>)</code>
+	    object that holds cryptographics keys
+
+          </div>
+          
+          <table class='mt1 mb2 fixed-table h5 col-12'>
+            <colgroup>
+              <col width='30%' />
+              <col width='70%' />
+            </colgroup>
+            <thead>
+              <tr class='bold fill-light'>
+                <th>Name</th>
+                <th>Description</th>
+              </tr>
+            </thead>
+            <tbody class='mt1'>
+              
+                <tr>
+  <td class='break-word'><span class='code bold'>keys.Issuer</span> <code class='quiet'><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a></code>
+  </td>
+  <td class='break-word'><span>object that holds issuer info
+</span></td>
+</tr>
+
+
+              
+            </tbody>
+          </table>
+          
+        </div>
+      
+        <div class='space-bottom0'>
+          <div>
+            <span class='code bold'>Issuer</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a>)</code>
+	    issuer object inside of keys
+
+          </div>
+          
+          <table class='mt1 mb2 fixed-table h5 col-12'>
+            <colgroup>
+              <col width='30%' />
+              <col width='70%' />
+            </colgroup>
+            <thead>
+              <tr class='bold fill-light'>
+                <th>Name</th>
+                <th>Description</th>
+              </tr>
+            </thead>
+            <tbody class='mt1'>
+              
+                <tr>
+  <td class='break-word'><span class='code bold'>Issuer.public_key</span> <code class='quiet'>keypair.public_key</code>
+  </td>
+  <td class='break-word'><span>ecdh public key
+</span></td>
+</tr>
+
+
+              
+            </tbody>
+          </table>
+          
+        </div>
+      
+    </div>
+  
+
+  
+
+  
+    
+      <div class='py1 quiet mt1 prose-big'>Returns</div>
+      <code><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></code>:
+        
+      
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+</section>
+
+      </div>
+    </div>
+  
+    <div class='border-bottom' id='createzkpprivatekey'>
+      <div class="clearfix small pointer toggle-sibling">
+        <div class="py1 contain">
+            <a class='icon pin-right py1 dark-link caret-right'>▸</a>
+            <span class='code strong strong truncate'>createZkpPrivateKey</span>
+        </div>
+      </div>
+      <div class="clearfix display-none toggle-target">
+        <section class='p2 mb2 clearfix bg-white minishadow'>
+
+  
+  <div class='clearfix'>
+    
+    
+      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://gitlab.com/infinite-labs/moncon-framework/blob/ddac8902f61caa9710de6060a67a4b218a60664d/packages/api/services/credentials/contract/contracts.js#L237-L242'>
+      <span>packages/api/services/credentials/contract/contracts.js</span>
+      </a>
+    
+  </div>
+  
+
+  
+    <div class='pre p1 fill-light mt0'>createZkpPrivateKey</div>
+  
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+    <div class='py1 quiet mt1 prose-big'>Parameters</div>
+    <div class='prose'>
+      
+        <div class='space-bottom0'>
+          <div>
+            <span class='code bold'>data</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a>)</code>
+	    dynamic data
+
+          </div>
+          
+          <table class='mt1 mb2 fixed-table h5 col-12'>
+            <colgroup>
+              <col width='30%' />
+              <col width='70%' />
+            </colgroup>
+            <thead>
+              <tr class='bold fill-light'>
+                <th>Name</th>
+                <th>Description</th>
+              </tr>
+            </thead>
+            <tbody class='mt1'>
+              
+                <tr>
+  <td class='break-word'><span class='code bold'>data.did</span> <code class='quiet'><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></code>
+  </td>
+  <td class='break-word'><span>did of the issuer
+</span></td>
+</tr>
+
+
+              
+            </tbody>
+          </table>
+          
+        </div>
+      
+    </div>
+  
+
+  
+
+  
+    
+      <div class='py1 quiet mt1 prose-big'>Returns</div>
+      <code><a href="#keys">keys</a></code>:
+        issuer private key
+
+      
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+</section>
+
+      </div>
+    </div>
+  
+    <div class='border-bottom' id='createzkppublickey'>
+      <div class="clearfix small pointer toggle-sibling">
+        <div class="py1 contain">
+            <a class='icon pin-right py1 dark-link caret-right'>▸</a>
+            <span class='code strong strong truncate'>createZkpPublicKey</span>
+        </div>
+      </div>
+      <div class="clearfix display-none toggle-target">
+        <section class='p2 mb2 clearfix bg-white minishadow'>
+
+  
+  <div class='clearfix'>
+    
+    
+      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://gitlab.com/infinite-labs/moncon-framework/blob/ddac8902f61caa9710de6060a67a4b218a60664d/packages/api/services/credentials/contract/contracts.js#L254-L260'>
+      <span>packages/api/services/credentials/contract/contracts.js</span>
+      </a>
+    
+  </div>
+  
+
+  
+    <div class='pre p1 fill-light mt0'>createZkpPublicKey</div>
+  
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+    <div class='py1 quiet mt1 prose-big'>Parameters</div>
+    <div class='prose'>
+      
+        <div class='space-bottom0'>
+          <div>
+            <span class='code bold'>data</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a>)</code>
+	    dynamic data
+
+          </div>
+          
+          <table class='mt1 mb2 fixed-table h5 col-12'>
+            <colgroup>
+              <col width='30%' />
+              <col width='70%' />
+            </colgroup>
+            <thead>
+              <tr class='bold fill-light'>
+                <th>Name</th>
+                <th>Description</th>
+              </tr>
+            </thead>
+            <tbody class='mt1'>
+              
+                <tr>
+  <td class='break-word'><span class='code bold'>data.did</span> <code class='quiet'><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></code>
+  </td>
+  <td class='break-word'><span>did of the issuer
+</span></td>
+</tr>
+
+
+              
+            </tbody>
+          </table>
+          
+        </div>
+      
+        <div class='space-bottom0'>
+          <div>
+            <span class='code bold'>keys</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a>)</code>
+	    cryptpgraphic keys
+
+          </div>
+          
+          <table class='mt1 mb2 fixed-table h5 col-12'>
+            <colgroup>
+              <col width='30%' />
+              <col width='70%' />
+            </colgroup>
+            <thead>
+              <tr class='bold fill-light'>
+                <th>Name</th>
+                <th>Description</th>
+              </tr>
+            </thead>
+            <tbody class='mt1'>
+              
+                <tr>
+  <td class='break-word'><span class='code bold'>keys.did</span> <code class='quiet'><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a></code>
+  </td>
+  <td class='break-word'><span>where did is the value of data.did
+</span></td>
+</tr>
+
+
+              
+            </tbody>
+          </table>
+          
+        </div>
+      
+        <div class='space-bottom0'>
+          <div>
+            <span class='code bold'>did</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a>)</code>
+	    this is the did Object inside keys
+
+          </div>
+          
+          <table class='mt1 mb2 fixed-table h5 col-12'>
+            <colgroup>
+              <col width='30%' />
+              <col width='70%' />
+            </colgroup>
+            <thead>
+              <tr class='bold fill-light'>
+                <th>Name</th>
+                <th>Description</th>
+              </tr>
+            </thead>
+            <tbody class='mt1'>
+              
+                <tr>
+  <td class='break-word'><span class='code bold'>did.keys</span> <code class='quiet'><a href="#keys">keys</a></code>
+  </td>
+  <td class='break-word'><span>issuer private key
+</span></td>
+</tr>
+
+
+              
+            </tbody>
+          </table>
+          
+        </div>
+      
+    </div>
+  
+
+  
+
+  
+    
+      <div class='py1 quiet mt1 prose-big'>Returns</div>
+      <code><a href="#derived_key">derived_key</a></code>:
+        issuer public key
+
+      
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+</section>
+
+      </div>
+    </div>
+  
+    <div class='border-bottom' id='signzkp'>
+      <div class="clearfix small pointer toggle-sibling">
+        <div class="py1 contain">
+            <a class='icon pin-right py1 dark-link caret-right'>▸</a>
+            <span class='code strong strong truncate'>signZkp</span>
+        </div>
+      </div>
+      <div class="clearfix display-none toggle-target">
+        <section class='p2 mb2 clearfix bg-white minishadow'>
+
+  
+  <div class='clearfix'>
+    
+    
+      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://gitlab.com/infinite-labs/moncon-framework/blob/ddac8902f61caa9710de6060a67a4b218a60664d/packages/api/services/credentials/contract/contracts.js#L272-L280'>
+      <span>packages/api/services/credentials/contract/contracts.js</span>
+      </a>
+    
+  </div>
+  
+
+  <p>Zenroom contract that sign a credential request</p>
+
+    <div class='pre p1 fill-light mt0'>signZkp</div>
+  
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+    <div class='py1 quiet mt1 prose-big'>Parameters</div>
+    <div class='prose'>
+      
+        <div class='space-bottom0'>
+          <div>
+            <span class='code bold'>data</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a>)</code>
+	    dynamic data
+
+          </div>
+          
+          <table class='mt1 mb2 fixed-table h5 col-12'>
+            <colgroup>
+              <col width='30%' />
+              <col width='70%' />
+            </colgroup>
+            <thead>
+              <tr class='bold fill-light'>
+                <th>Name</th>
+                <th>Description</th>
+              </tr>
+            </thead>
+            <tbody class='mt1'>
+              
+                <tr>
+  <td class='break-word'><span class='code bold'>data.did</span> <code class='quiet'><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></code>
+  </td>
+  <td class='break-word'><span>issuer did
+</span></td>
+</tr>
+
+
+              
+                <tr>
+  <td class='break-word'><span class='code bold'>data.issuer_public_key</span> <code class='quiet'><a href="#derived_key">derived_key</a></code>
+  </td>
+  <td class='break-word'><span>is the public key
+</span></td>
+</tr>
+
+
+              
+                <tr>
+  <td class='break-word'><span class='code bold'>data.credential_request</span> <code class='quiet'><a href="#credential_request">credential_request</a></code>
+  </td>
+  <td class='break-word'><span>user credential request
+</span></td>
+</tr>
+
+
+              
+            </tbody>
+          </table>
+          
+        </div>
+      
+        <div class='space-bottom0'>
+          <div>
+            <span class='code bold'>did</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a>)</code>
+	    where did is the value of the did string
+
+          </div>
+          
+          <table class='mt1 mb2 fixed-table h5 col-12'>
+            <colgroup>
+              <col width='30%' />
+              <col width='70%' />
+            </colgroup>
+            <thead>
+              <tr class='bold fill-light'>
+                <th>Name</th>
+                <th>Description</th>
+              </tr>
+            </thead>
+            <tbody class='mt1'>
+              
+                <tr>
+  <td class='break-word'><span class='code bold'>did.keys</span> <code class='quiet'><a href="#keys">keys</a></code>
+  </td>
+  <td class='break-word'><span>issuer private key
+</span></td>
+</tr>
+
+
+              
+            </tbody>
+          </table>
+          
+        </div>
+      
+    </div>
+  
+
+  
+
+  
+    
+      <div class='py1 quiet mt1 prose-big'>Returns</div>
+      <code><a href="#credential_signature">credential_signature</a></code>:
+        signed credential request
+
+      
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+</section>
+
+      </div>
+    </div>
+  
+    <div class='border-bottom' id='verifyzkp'>
+      <div class="clearfix small pointer toggle-sibling">
+        <div class="py1 contain">
+            <a class='icon pin-right py1 dark-link caret-right'>▸</a>
+            <span class='code strong strong truncate'>verifyZkp</span>
+        </div>
+      </div>
+      <div class="clearfix display-none toggle-target">
+        <section class='p2 mb2 clearfix bg-white minishadow'>
+
+  
+  <div class='clearfix'>
+    
+    
+      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://gitlab.com/infinite-labs/moncon-framework/blob/ddac8902f61caa9710de6060a67a4b218a60664d/packages/api/services/credentials/contract/contracts.js#L292-L300'>
+      <span>packages/api/services/credentials/contract/contracts.js</span>
+      </a>
+    
+  </div>
+  
+
+  <p>Zenroom contract that verify a zkp proof</p>
+
+    <div class='pre p1 fill-light mt0'>verifyZkp</div>
+  
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+    <div class='py1 quiet mt1 prose-big'>Parameters</div>
+    <div class='prose'>
+      
+        <div class='space-bottom0'>
+          <div>
+            <span class='code bold'>data</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a>)</code>
+	    dynamic data
+
+          </div>
+          
+          <table class='mt1 mb2 fixed-table h5 col-12'>
+            <colgroup>
+              <col width='30%' />
+              <col width='70%' />
+            </colgroup>
+            <thead>
+              <tr class='bold fill-light'>
+                <th>Name</th>
+                <th>Description</th>
+              </tr>
+            </thead>
+            <tbody class='mt1'>
+              
+                <tr>
+  <td class='break-word'><span class='code bold'>data.did</span> <code class='quiet'><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></code>
+  </td>
+  <td class='break-word'><span>issuer did
+</span></td>
+</tr>
+
+
+              
+                <tr>
+  <td class='break-word'><span class='code bold'>data.credential_proof</span> <code class='quiet'><a href="#proof">proof</a></code>
+  </td>
+  <td class='break-word'><span>zkp proof
+</span></td>
+</tr>
+
+
+              
+            </tbody>
+          </table>
+          
+        </div>
+      
+        <div class='space-bottom0'>
+          <div>
+            <span class='code bold'>did</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a>)</code>
+	    where did is the value of the did string
+
+          </div>
+          
+          <table class='mt1 mb2 fixed-table h5 col-12'>
+            <colgroup>
+              <col width='30%' />
+              <col width='70%' />
+            </colgroup>
+            <thead>
+              <tr class='bold fill-light'>
+                <th>Name</th>
+                <th>Description</th>
+              </tr>
+            </thead>
+            <tbody class='mt1'>
+              
+                <tr>
+  <td class='break-word'><span class='code bold'>did.issuer_public_key</span> <code class='quiet'><a href="#derived_key">derived_key</a></code>
+  </td>
+  <td class='break-word'><span>public key
+</span></td>
+</tr>
+
+
+              
+            </tbody>
+          </table>
+          
+        </div>
+      
+    </div>
+  
+
+  
+
+  
+    
+      <div class='py1 quiet mt1 prose-big'>Returns</div>
+      <code><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></code>:
+        
+      
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+</section>
+
+      </div>
+    </div>
+  
+</div>
+
+  
+
+  
+
+  
+
+  
+</section>
+
+          
+        
+          
+          <section class='p2 mb2 clearfix bg-white minishadow'>
+
+  
+  <div class='clearfix'>
+    
+    <h3 class='fl m0' id='types'>
+      Types
+    </h3>
+    
+    
+  </div>
+  
+
+  <p>custom data types</p>
+
+    <div class='pre p1 fill-light mt0'>Types</div>
+  
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    <div class='py1 quiet mt1 prose-big'>Static Members</div>
+    <div class="clearfix">
+  
+    <div class='border-bottom' id='keypair'>
+      <div class="clearfix small pointer toggle-sibling">
+        <div class="py1 contain">
+            <a class='icon pin-right py1 dark-link caret-right'>▸</a>
+            <span class='code strong strong truncate'>keypair</span>
+        </div>
+      </div>
+      <div class="clearfix display-none toggle-target">
+        <section class='p2 mb2 clearfix bg-white minishadow'>
+
+  
+  <div class='clearfix'>
+    
+    
+      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://gitlab.com/infinite-labs/moncon-framework/blob/ddac8902f61caa9710de6060a67a4b218a60664d/packages/api/services/credentials/contract/contracts.js#L96-L106'>
+      <span>packages/api/services/credentials/contract/contracts.js</span>
+      </a>
+    
+  </div>
+  
+
+  
+    <div class='pre p1 fill-light mt0'>keypair</div>
+  
+    <p>
+      Type:
+      <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a>&#x3C;<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>, <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>>
+    </p>
+  
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+
+  
+    <div class='py1 quiet mt1 prose-big'>Properties</div>
+    <div>
+      
+        <div class='space-bottom0'>
+          <span class='code bold'>private_key</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>)</code>
+          : ecdh private key
+
+          
+        </div>
+      
+        <div class='space-bottom0'>
+          <span class='code bold'>public_key</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>)</code>
+          : ecdh public key
+
+          
+        </div>
+      
+    </div>
+  
+
+  
+
+  
+
+  
+
+  
+    <div class='py1 quiet mt1 prose-big'>Example</div>
+    
+      
+      <pre class='p1 overflow-auto round fill-light'><span class="hljs-string">&quot;keypair&quot;</span>: {
+<span class="hljs-string">&quot;private_key&quot;</span>: <span class="hljs-string">&quot;yXtHASzOVzwQaKuCpnq20jwwVedBaDNd9h6qEgewhxo=&quot;</span>,
+<span class="hljs-string">&quot;public_key&quot;</span>: <span class="hljs-string">&quot;BAqV0F7EEhddLkATOLR+sXBf6ktmcFEFeqbm1EorhrtTDMr8R8J0dfNmEOYWqaAMh2g4WnHdt7knKEXhIWOb7sE=&quot;</span>
+}</pre>
+    
+  
+
+  
+
+  
+
+  
+
+  
+</section>
+
+      </div>
+    </div>
+  
+    <div class='border-bottom' id='vc'>
+      <div class="clearfix small pointer toggle-sibling">
+        <div class="py1 contain">
+            <a class='icon pin-right py1 dark-link caret-right'>▸</a>
+            <span class='code strong strong truncate'>vc</span>
+        </div>
+      </div>
+      <div class="clearfix display-none toggle-target">
+        <section class='p2 mb2 clearfix bg-white minishadow'>
+
+  
+  <div class='clearfix'>
+    
+    
+      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://gitlab.com/infinite-labs/moncon-framework/blob/ddac8902f61caa9710de6060a67a4b218a60664d/packages/api/services/credentials/contract/contracts.js#L108-L146'>
+      <span>packages/api/services/credentials/contract/contracts.js</span>
+      </a>
+    
+  </div>
+  
+
+  
+    <div class='pre p1 fill-light mt0'>vc</div>
+  
+    <p>
+      Type:
+      <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a>&#x3C;<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>, (<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a> | <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a> | <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a> | <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Date">Date</a> | <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array">Array</a>)>
+    </p>
+  
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    <div class='py1 quiet mt1 prose-big'>Example</div>
+    
+      
+      <pre class='p1 overflow-auto round fill-light'><span class="hljs-string">&quot;my-vc&quot;</span>: {
+<span class="hljs-string">&quot;@context&quot;</span>: [
+<span class="hljs-string">&quot;https://www.w3.org/2018/credentials/v1&quot;</span>,
+<span class="hljs-string">&quot;https://www.w3.org/2018/credentials/examples/v1&quot;</span>
+],
+<span class="hljs-string">&quot;credentialSubject&quot;</span>: {
+<span class="hljs-string">&quot;alumniOf&quot;</span>: {
+<span class="hljs-string">&quot;id&quot;</span>: <span class="hljs-string">&quot;did:example:c276e12ec21ebfeb1f712ebc6f1&quot;</span>,
+<span class="hljs-string">&quot;name&quot;</span>: [
+{
+<span class="hljs-string">&quot;lang&quot;</span>: <span class="hljs-string">&quot;en&quot;</span>,
+<span class="hljs-string">&quot;value&quot;</span>: <span class="hljs-string">&quot;Example University&quot;</span>
+},
+{
+<span class="hljs-string">&quot;lang&quot;</span>: <span class="hljs-string">&quot;fr&quot;</span>,
+<span class="hljs-string">&quot;value&quot;</span>: <span class="hljs-string">&quot;Exemple d&#x27;Université&quot;</span>
+}
+]
+},
+<span class="hljs-string">&quot;id&quot;</span>: <span class="hljs-string">&quot;did:example:ebfeb1f712ebc6f1c276e12ec21&quot;</span>
+},
+<span class="hljs-string">&quot;id&quot;</span>: <span class="hljs-string">&quot;http://example.edu/credentials/1872&quot;</span>,
+<span class="hljs-string">&quot;issuanceDate&quot;</span>: <span class="hljs-string">&quot;2010-01-01T19:73:24Z&quot;</span>,
+<span class="hljs-string">&quot;issuer&quot;</span>: <span class="hljs-string">&quot;https://example.edu/issuers/565049&quot;</span>,
+<span class="hljs-string">&quot;proof&quot;</span>: {
+<span class="hljs-string">&quot;jws&quot;</span>: <span class="hljs-string">&quot;eyJhbGciOiJFUzI1NksiLCJiNjQiOnRydWUsImNyaXQiOiJiNjQifQ..yTY9BQQnxJedmnS0Jw71dZD53YPIrwfpfjbXgS8dQtxoymIRC20NbhcGR-YeWl_1zGlWxgzNO2B8UDGbIdGl2Q&quot;</span>,
+<span class="hljs-string">&quot;proofPurpose&quot;</span>: <span class="hljs-string">&quot;authenticate&quot;</span>,
+<span class="hljs-string">&quot;type&quot;</span>: <span class="hljs-string">&quot;Zenroom&quot;</span>,
+<span class="hljs-string">&quot;verificationMethod&quot;</span>: <span class="hljs-string">&quot;https://apiroom.net/api/dyneorg/w3c-public-key&quot;</span>
+},
+<span class="hljs-string">&quot;type&quot;</span>: [
+<span class="hljs-string">&quot;VerifiableCredential&quot;</span>,
+<span class="hljs-string">&quot;AlumniCredential&quot;</span>
+]
+}</pre>
+    
+  
+
+  
+
+  
+
+  
+
+  
+</section>
+
+      </div>
+    </div>
+  
+    <div class='border-bottom' id='keys'>
+      <div class="clearfix small pointer toggle-sibling">
+        <div class="py1 contain">
+            <a class='icon pin-right py1 dark-link caret-right'>▸</a>
+            <span class='code strong strong truncate'>keys</span>
+        </div>
+      </div>
+      <div class="clearfix display-none toggle-target">
+        <section class='p2 mb2 clearfix bg-white minishadow'>
+
+  
+  <div class='clearfix'>
+    
+    
+      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://gitlab.com/infinite-labs/moncon-framework/blob/ddac8902f61caa9710de6060a67a4b218a60664d/packages/api/services/credentials/contract/contracts.js#L1-L9'>
+      <span>packages/api/services/credentials/contract/contracts.js</span>
+      </a>
+    
+  </div>
+  
+
+  
+    <div class='pre p1 fill-light mt0'>keys</div>
+  
+    <p>
+      Type:
+      <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a>&#x3C;<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>, <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>>
+    </p>
+  
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+
+  
+    <div class='py1 quiet mt1 prose-big'>Properties</div>
+    <div>
+      
+        <div class='space-bottom0'>
+          <span class='code bold'>credential</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>)</code>
+          : cryptographic key
+
+          
+        </div>
+      
+    </div>
+  
+
+  
+
+  
+
+  
+
+  
+    <div class='py1 quiet mt1 prose-big'>Example</div>
+    
+      
+      <pre class='p1 overflow-auto round fill-light'><span class="hljs-string">&quot;keys&quot;</span>: {
+<span class="hljs-string">&quot;credential&quot;</span>: <span class="hljs-string">&quot;Wqazqj9muBGZLOKWCx3u16IkbIantYapNXXm0xEKqFg=&quot;</span>
+}</pre>
+    
+  
+
+  
+
+  
+
+  
+
+  
+</section>
+
+      </div>
+    </div>
+  
+    <div class='border-bottom' id='derived_key'>
+      <div class="clearfix small pointer toggle-sibling">
+        <div class="py1 contain">
+            <a class='icon pin-right py1 dark-link caret-right'>▸</a>
+            <span class='code strong strong truncate'>derived_key</span>
+        </div>
+      </div>
+      <div class="clearfix display-none toggle-target">
+        <section class='p2 mb2 clearfix bg-white minishadow'>
+
+  
+  <div class='clearfix'>
+    
+    
+      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://gitlab.com/infinite-labs/moncon-framework/blob/ddac8902f61caa9710de6060a67a4b218a60664d/packages/api/services/credentials/contract/contracts.js#L11-L22'>
+      <span>packages/api/services/credentials/contract/contracts.js</span>
+      </a>
+    
+  </div>
+  
+
+  <p>cryptographic keys derivated from <a href="#keys">keys</a></p>
+
+    <div class='pre p1 fill-light mt0'>derived_key</div>
+  
+    <p>
+      Type:
+      <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a>&#x3C;<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>, <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>>
+    </p>
+  
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+
+  
+    <div class='py1 quiet mt1 prose-big'>Properties</div>
+    <div>
+      
+        <div class='space-bottom0'>
+          <span class='code bold'>alpha</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>)</code>
+          : cryptographic key
+
+          
+        </div>
+      
+        <div class='space-bottom0'>
+          <span class='code bold'>beta</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>)</code>
+          : cryptographic key
+
+          
+        </div>
+      
+    </div>
+  
+
+  
+
+  
+
+  
+
+  
+    <div class='py1 quiet mt1 prose-big'>Example</div>
+    
+      
+      <pre class='p1 overflow-auto round fill-light'><span class="hljs-string">&quot;issuer_public_key&quot;</span>: {
+<span class="hljs-string">&quot;alpha&quot;</span>: <span class="hljs-string">&quot;Ci3RNr3mQgZ+vdhwEokPnq7djLCyoTotPpqfBRQZoX8VdKdGBhkGoIAKfwGQSZH0CG1ZyssgkjW/SRKElf5sHhOjZWzt9xhfwv70RWy8rZVCxQjlYsq+ziFVPPj/DEbLD+1UzGq3qD0awV5oWOmbP76ogkBobBrLboBT5cTLiLTqBdFo356Y1LwOFrafSeKQFxkZxsFi6TCXrzKqzJDOo7zPSXmbBQgh14cz9JNdKNxt+vc94qVJCbpdJufLjQeE&quot;</span>,
+<span class="hljs-string">&quot;beta&quot;</span>: <span class="hljs-string">&quot;C1PrsjE2/BamDZIlMgqs+X26/RzgzKkcG4gL2QhEvubGwwE1+jOEcZlvn/Tv3htxCr/8ytK6o6QNit9ry83btHtKkXaTmeg2DbvX9A5vix9K6s9Y5kcbj0BDsEAePcu0EOdxtJlFsjOcCmOV/DqD+9zq1uVxQvcqSa25PGAtxVOrSOTAuCVX8enZ2mpiNtRZGIF5kROS3KZk98wPz4QtarzbQwV+TWPnE36/R0twjk/S14xYhGMYvjLPKBXr8YpP&quot;</span>
+}</pre>
+    
+  
+
+  
+
+  
+
+  
+
+  
+</section>
+
+      </div>
+    </div>
+  
+    <div class='border-bottom' id='credential_request'>
+      <div class="clearfix small pointer toggle-sibling">
+        <div class="py1 contain">
+            <a class='icon pin-right py1 dark-link caret-right'>▸</a>
+            <span class='code strong strong truncate'>credential_request</span>
+        </div>
+      </div>
+      <div class="clearfix display-none toggle-target">
+        <section class='p2 mb2 clearfix bg-white minishadow'>
+
+  
+  <div class='clearfix'>
+    
+    
+      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://gitlab.com/infinite-labs/moncon-framework/blob/ddac8902f61caa9710de6060a67a4b218a60664d/packages/api/services/credentials/contract/contracts.js#L24-L45'>
+      <span>packages/api/services/credentials/contract/contracts.js</span>
+      </a>
+    
+  </div>
+  
+
+  
+    <div class='pre p1 fill-light mt0'>credential_request</div>
+  
+    <p>
+      Type:
+      <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a>&#x3C;<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>, (<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a> | <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a>)>
+    </p>
+  
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+
+  
+    <div class='py1 quiet mt1 prose-big'>Properties</div>
+    <div>
+      
+        <div class='space-bottom0'>
+          <span class='code bold'>commit</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>)</code>
+          
+          
+        </div>
+      
+        <div class='space-bottom0'>
+          <span class='code bold'>public</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>)</code>
+          
+          
+        </div>
+      
+        <div class='space-bottom0'>
+          <span class='code bold'>pi_s</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a>)</code>
+          
+          
+        </div>
+      
+        <div class='space-bottom0'>
+          <span class='code bold'>sign</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a>)</code>
+          
+          
+        </div>
+      
+    </div>
+  
+
+  
+
+  
+
+  
+
+  
+    <div class='py1 quiet mt1 prose-big'>Example</div>
+    
+      
+      <pre class='p1 overflow-auto round fill-light'><span class="hljs-string">&quot;credential_request&quot;</span>: {
+<span class="hljs-string">&quot;commit&quot;</span>: <span class="hljs-string">&quot;AxKluVHA4I86nE9LBr6c/QWz7oBjZT1XQBLv9CEG1cr0e3DOWAyOd+uXxNCknzCFfA==&quot;</span>,
+<span class="hljs-string">&quot;pi_s&quot;</span>: {
+<span class="hljs-string">&quot;commit&quot;</span>: <span class="hljs-string">&quot;UCZFspfQNI4rysCDIxyKRfRBJ6FUge2VhdXFy4u4APs=&quot;</span>,
+<span class="hljs-string">&quot;rk&quot;</span>: <span class="hljs-string">&quot;JlHxeyPgfC83xrYn/SodS6f6AwNALHFxFY/GIV39+IA=&quot;</span>,
+<span class="hljs-string">&quot;rm&quot;</span>: <span class="hljs-string">&quot;W7QWHqm/YER4FUtDUx+wAu2C6JwKzN/mzf7XEfI8xlY=&quot;</span>,
+<span class="hljs-string">&quot;rr&quot;</span>: <span class="hljs-string">&quot;UOFXIJclPXdhzl9282F3fLt99hwsYw/ItNJIKbE8nJs=&quot;</span>
+},
+<span class="hljs-string">&quot;public&quot;</span>: <span class="hljs-string">&quot;AhYCP1Ct2ZapJuTYNTzWMUIlgPwFNweJFTrJ/0UWg9a/UwvY8g/9VPTgRJCV0X1SXA==&quot;</span>,
+<span class="hljs-string">&quot;sign&quot;</span>: {
+<span class="hljs-string">&quot;a&quot;</span>: <span class="hljs-string">&quot;AwHC0gMKZALnZ36DnB18bgNGRcOZU1NZNkCMkJsBdegstZxzfSFMVyar9CncbFa5oA==&quot;</span>,
+<span class="hljs-string">&quot;b&quot;</span>: <span class="hljs-string">&quot;AwJKblxB6OHktzgT4GvQMbTNleuuV1JxNpqpu/SSGi+hf2XHC2q6N5kHRMucikVQPA==&quot;</span>
+}
+}</pre>
+    
+  
+
+  
+
+  
+
+  
+
+  
+</section>
+
+      </div>
+    </div>
+  
+    <div class='border-bottom' id='credential_signature'>
+      <div class="clearfix small pointer toggle-sibling">
+        <div class="py1 contain">
+            <a class='icon pin-right py1 dark-link caret-right'>▸</a>
+            <span class='code strong strong truncate'>credential_signature</span>
+        </div>
+      </div>
+      <div class="clearfix display-none toggle-target">
+        <section class='p2 mb2 clearfix bg-white minishadow'>
+
+  
+  <div class='clearfix'>
+    
+    
+      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://gitlab.com/infinite-labs/moncon-framework/blob/ddac8902f61caa9710de6060a67a4b218a60664d/packages/api/services/credentials/contract/contracts.js#L47-L59'>
+      <span>packages/api/services/credentials/contract/contracts.js</span>
+      </a>
+    
+  </div>
+  
+
+  
+    <div class='pre p1 fill-light mt0'>credential_signature</div>
+  
+    <p>
+      Type:
+      <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a>&#x3C;<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>, <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>>
+    </p>
+  
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+
+  
+    <div class='py1 quiet mt1 prose-big'>Properties</div>
+    <div>
+      
+        <div class='space-bottom0'>
+          <span class='code bold'>a_tilde</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>)</code>
+          
+          
+        </div>
+      
+        <div class='space-bottom0'>
+          <span class='code bold'>b_tilde</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>)</code>
+          
+          
+        </div>
+      
+        <div class='space-bottom0'>
+          <span class='code bold'>h</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>)</code>
+          
+          
+        </div>
+      
+    </div>
+  
+
+  
+
+  
+
+  
+
+  
+    <div class='py1 quiet mt1 prose-big'>Example</div>
+    
+      
+      <pre class='p1 overflow-auto round fill-light'><span class="hljs-string">&quot;credential_signature&quot;</span>: {
+<span class="hljs-string">&quot;a_tilde&quot;</span>: <span class="hljs-string">&quot;AhN3jd6CDAWc1jLyE8ITfySsnNBg9tkwF1ndduGJb5cQTonfL6wYi0TWcY/J+9p+7Q==&quot;</span>,
+<span class="hljs-string">&quot;b_tilde&quot;</span>: <span class="hljs-string">&quot;AwW32XvYpMJn6jKeHLBy6gsAaW3cZdP2fPXK717lQeA3faYwCAKhONBntknsAp0neg==&quot;</span>,
+<span class="hljs-string">&quot;h&quot;</span>: <span class="hljs-string">&quot;AxcTRhBzHHzouliDOtqeuFAsi/6LOznjxnMWv7EMTrEMVmfj5nH16mt7IDGmAD5sfw==&quot;</span>
+}</pre>
+    
+  
+
+  
+
+  
+
+  
+
+  
+</section>
+
+      </div>
+    </div>
+  
+    <div class='border-bottom' id='aggregated_credentials'>
+      <div class="clearfix small pointer toggle-sibling">
+        <div class="py1 contain">
+            <a class='icon pin-right py1 dark-link caret-right'>▸</a>
+            <span class='code strong strong truncate'>aggregated_credentials</span>
+        </div>
+      </div>
+      <div class="clearfix display-none toggle-target">
+        <section class='p2 mb2 clearfix bg-white minishadow'>
+
+  
+  <div class='clearfix'>
+    
+    
+      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://gitlab.com/infinite-labs/moncon-framework/blob/ddac8902f61caa9710de6060a67a4b218a60664d/packages/api/services/credentials/contract/contracts.js#L61-L70'>
+      <span>packages/api/services/credentials/contract/contracts.js</span>
+      </a>
+    
+  </div>
+  
+
+  
+    <div class='pre p1 fill-light mt0'>aggregated_credentials</div>
+  
+    <p>
+      Type:
+      <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a>&#x3C;<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>, <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>>
+    </p>
+  
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+
+  
+    <div class='py1 quiet mt1 prose-big'>Properties</div>
+    <div>
+      
+        <div class='space-bottom0'>
+          <span class='code bold'>h</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>)</code>
+          
+          
+        </div>
+      
+        <div class='space-bottom0'>
+          <span class='code bold'>s</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>)</code>
+          
+          
+        </div>
+      
+    </div>
+  
+
+  
+
+  
+
+  
+
+  
+    <div class='py1 quiet mt1 prose-big'>Example</div>
+    
+      
+      <pre class='p1 overflow-auto round fill-light'><span class="hljs-string">&quot;credentials&quot;</span>: {
+<span class="hljs-string">&quot;h&quot;</span>: <span class="hljs-string">&quot;AhPY7CWI4FraIkfdVSFryiqmmhsrMAUQZ2cU9gx8NagElM6EVmvwkquyGvvmNVfPvw==&quot;</span>,
+<span class="hljs-string">&quot;s&quot;</span>: <span class="hljs-string">&quot;AhBAe/odrb36r/vxQrY5cosIdDyTTRdTw7AnNK7WdBq/HANKkGZUd+fuIMnCHal2FQ==&quot;</span>
+}</pre>
+    
+  
+
+  
+
+  
+
+  
+
+  
+</section>
+
+      </div>
+    </div>
+  
+    <div class='border-bottom' id='proof'>
+      <div class="clearfix small pointer toggle-sibling">
+        <div class="py1 contain">
+            <a class='icon pin-right py1 dark-link caret-right'>▸</a>
+            <span class='code strong strong truncate'>proof</span>
+        </div>
+      </div>
+      <div class="clearfix display-none toggle-target">
+        <section class='p2 mb2 clearfix bg-white minishadow'>
+
+  
+  <div class='clearfix'>
+    
+    
+      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://gitlab.com/infinite-labs/moncon-framework/blob/ddac8902f61caa9710de6060a67a4b218a60664d/packages/api/services/credentials/contract/contracts.js#L72-L93'>
+      <span>packages/api/services/credentials/contract/contracts.js</span>
+      </a>
+    
+  </div>
+  
+
+  
+    <div class='pre p1 fill-light mt0'>proof</div>
+  
+    <p>
+      Type:
+      <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a>&#x3C;<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>, (<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a> | <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a>)>
+    </p>
+  
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+
+  
+    <div class='py1 quiet mt1 prose-big'>Properties</div>
+    <div>
+      
+        <div class='space-bottom0'>
+          <span class='code bold'>pi_v</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a>)</code>
+          
+          
+        </div>
+      
+        <div class='space-bottom0'>
+          <span class='code bold'>sigma_prime</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a>)</code>
+          
+          
+        </div>
+      
+        <div class='space-bottom0'>
+          <span class='code bold'>kappa</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>)</code>
+          
+          
+        </div>
+      
+        <div class='space-bottom0'>
+          <span class='code bold'>nu</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>)</code>
+          
+          
+        </div>
+      
+    </div>
+  
+
+  
+
+  
+
+  
+
+  
+    <div class='py1 quiet mt1 prose-big'>Example</div>
+    
+      
+      <pre class='p1 overflow-auto round fill-light'><span class="hljs-string">&quot;credential_proof&quot;</span>: {
+<span class="hljs-string">&quot;kappa&quot;</span>: <span class="hljs-string">&quot;GTdiS3buEUkjPyqGNPMc9Mr3kE5bolT0lRgF+S23nS/aplA9XQRQD2mwK6nhYXtDB7CTFkUjQ8OAWdM3qOeH6aoO4cSKIuppZbdgIXy5srn6Rs2QrtGva8JXh8YgovAhD1HUoTCyqaz3L/FkGaPfWJdBW2/gaCYyGQGTJnCM4K4G77tJbStPMF/rhqK6t0EmFUiEjy2kfCR+WUjhjqTXSuELHM5JRn1Gr5VJQsvyRAlJtjNlnDZQru3M87rMyZ3E&quot;</span>,
+<span class="hljs-string">&quot;nu&quot;</span>: <span class="hljs-string">&quot;AwmLe0WONv25ih82UmST1u8Lcjm3+rXjP+uQHlAcxRNyK/37hZA6VEFH6nFZgLFP5w==&quot;</span>,
+<span class="hljs-string">&quot;pi_v&quot;</span>: {
+<span class="hljs-string">&quot;c&quot;</span>: <span class="hljs-string">&quot;SCvUZDi260JkRcuVuHcG4wn/UwUQZIWynDJ+BSHM0fw=&quot;</span>,
+<span class="hljs-string">&quot;rm&quot;</span>: <span class="hljs-string">&quot;BxPP2u3sfu9HOeEwIR2Aj19sx2IJPT1Lm26fwTV2gcY=&quot;</span>,
+<span class="hljs-string">&quot;rr&quot;</span>: <span class="hljs-string">&quot;KpH1KBfSP83DFFfKI4lGhVXjMDifarf4wq7ZTNc4d3Y=&quot;</span>
+},
+<span class="hljs-string">&quot;sigma_prime&quot;</span>: {
+<span class="hljs-string">&quot;h_prime&quot;</span>: <span class="hljs-string">&quot;AgMKaz9wJB6Xapwnluk/My/GBWKZPw10TxU0fKlShP0dtgjpm5s59W0csaALzZXKwA==&quot;</span>,
+<span class="hljs-string">&quot;s_prime&quot;</span>: <span class="hljs-string">&quot;AxMW1P/lxg+aHtyyRepv6ImNMMZLpLsA0/tc3C4w589PRkVz/b0tHRohQaZuLOZ/Dw==&quot;</span>
+}
+}</pre>
+    
+  
+
+  
+
+  
+
+  
+
+  
+</section>
+
+      </div>
+    </div>
+  
+</div>
+
+  
+
+  
+
+  
+
+  
+</section>
+
+          
+        
+      </div>
+    </div>
+  <script src='assets/anchor.js'></script>
+  <script src='assets/split.js'></script>
+  <script src='assets/site.js'></script>
+</body>
+</html>

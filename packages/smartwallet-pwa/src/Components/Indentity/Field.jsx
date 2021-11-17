@@ -10,7 +10,7 @@ import IconEdit from "../../Assets/svg/IconEdit";
 import Check from "../../Assets/svg/Check";
 import PendingDocument from "../../Assets/svg/PendingDocument";
 import LoadingButton from "../Utils/LoadingButton";
-import { LS_DID_KEY } from "../../Const";
+import { LS_DID_KEY , BYTES_TO_MB, MAX_IMAGE_SIZE} from "../../Const";
 
 export default function Field({ to, path, title, field }) {
   const { addToast } = useToasts();
@@ -31,6 +31,16 @@ export default function Field({ to, path, title, field }) {
       const credential_type = `${id}`
 
       try{
+        if(file.size > MAX_IMAGE_SIZE){
+          return addToast(
+            `The image should not be bigger than ${BYTES_TO_MB(MAX_IMAGE_SIZE)-1} mb`,
+            {
+              appearance: "error",
+              autoDismiss: true,
+              autoDismissTimeout: 4000,
+            }
+          )
+        }
         const formData = new FormData();
         
         formData.append("image", file);

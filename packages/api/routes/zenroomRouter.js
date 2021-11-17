@@ -56,7 +56,7 @@ router.post("/zkp-verify", async (req, res) => {
   console.log("req.body", req.body);
 
   const { did } = req.query;
-  const { claim, credential_proof } = req.body 
+  const { claim, credential_proof, condition } = req.body 
 
   const issuer = await IssuerModel.findOne({did})
 
@@ -67,7 +67,7 @@ router.post("/zkp-verify", async (req, res) => {
   const public_key = JSON.stringify(
     {
       [did]:{
-        issuer_public_key: JSON.parse(issuer.issuer_public_keys)?.zkp[claim]?.issuer_public_key
+        issuer_public_key: JSON.parse(issuer.issuer_public_keys)?.zkp[condition][claim]?.issuer_public_key
       }
     }
   );
@@ -114,7 +114,7 @@ router.get("/credentials/v1", async (req, res) => {
 router.post("/create-credential-request", async (req, res) => {
   console.log("/create-credential-request in zenroomRouter");
 
-  const {credential, userId, data, claim} = req.body;
+  const {credential, userId, data, claim, credential_request} = req.body;
 
   if(!credential || !userId || !data || !claim){
     return res.status(400).json(
@@ -125,15 +125,16 @@ router.post("/create-credential-request", async (req, res) => {
   }
 
   try {
-    const credential_request = await CredentialRequestModel.create({
+    const credentialRequest = await CredentialRequestModel.create({
       credential,
       userId,
       data,
       claim,
+      signedCredential: credential_request? {credential_request}: {},
       createdAt: Date.now()
     });
 
-    res.status(200).json({credential_request});
+    res.status(200).json({credentialRequest});
   } catch (error) {
     console.log(error);
     res.status(500).json({error:'error creating credential request'});

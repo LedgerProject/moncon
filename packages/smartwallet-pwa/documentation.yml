@@ -1,0 +1,25 @@
+toc:
+  - name: Services/zkpService
+    description: |
+      Zkp related zenroom contracts.
+    children:
+      - createZkpRequest
+      - aggregatesSignature
+      - createProof
+  - name: Services/backupService
+    description: |
+      encryption zenroom contracts
+    children:
+      - encrypt
+      - decrypt
+  - name: Types
+    description: |
+      custom data types
+    children:
+      - keypair
+      - keys
+      - derived_key
+      - credential_request
+      - credential_signature
+      - aggregated_credentials
+      - proof

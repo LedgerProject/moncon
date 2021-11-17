@@ -102,7 +102,7 @@ const EditMobile = () => {
             type="submit"
             data-cy="create-user"
           >
-            ADD CLAIM
+            ADD DATA
           </Button>
         </Container>
       </div>

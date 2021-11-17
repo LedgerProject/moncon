@@ -149,7 +149,7 @@ socket.on("webCredentialResponse", (data) => {
 
 function handleZkpProof(data) {
   
-  if (content.age === NO_CREDENTIAL) {
+  if (content.condition === NO_CREDENTIAL) {
     return;
   }
 
@@ -161,7 +161,8 @@ function handleZkpProof(data) {
 
   const body = JSON.stringify({
     credential_proof: data.credential.credential_proof,
-    claim: content.age.toLowerCase()
+    claim: content[content.condition],
+    condition: content.condition
   });
 
   const state = fetch(apiUrl, {
@@ -239,7 +240,7 @@ function handleZkpProof(data) {
 
 function handleW3cCredential(data){
 
-  if (content.age === NO_CREDENTIAL) {
+  if (content.condition === NO_CREDENTIAL) {
     return;
   }
 
@@ -277,32 +278,39 @@ function handleW3cCredential(data){
         userId = localUserId;
         localStorage.setItem(LS_KEY_ID, userId);
 
-        const birthDate =
-          data?.credential["my-vc"].credentialSubject.credential?.birthday;
-        if (!birthDate) {
-          return alert("Invalid credential");
+        let localCondition = false;
+
+        if(content.condition == "age"){
+          const birthDate =
+            data?.credential["my-vc"].credentialSubject.credential?.birthday;
+          if (!birthDate) {
+            return alert("Invalid credential");
+          }
+
+          const now = DateTime.now();
+          const birthD = DateTime.fromISO(birthDate.split("-").reverse().join("-"));
+          const interval = Interval.fromDateTimes(birthD, now);
+          console.log(interval.length("years"));
+
+
+          if (!interval.isValid) {
+            responseData.validated = false;
+            alert(interval.invalidExplanation);
+            console.log(interval.invalidExplanation);
+            return socket.emit("validatedCredential", responseData);
+          }
+
+          console.log("legal_age", interval.length("years") >= 18);
+          console.log("underage", interval.length("years") < 18);
+
+          localCondition =
+            content.age === LEGAL_AGE
+              ? interval.length("years") >= 18
+              : interval.length("years") < 18;
+        }else if (content.condition == "nationality") {
+          const nationality = data?.credential["my-vc"].credentialSubject.credential?.country;
+          localCondition = nationality == content.nationality;
         }
-
-        const now = DateTime.now();
-        const birthD = DateTime.fromISO(birthDate.split("-").reverse().join("-"));
-        const interval = Interval.fromDateTimes(birthD, now);
-        console.log(interval.length("years"));
-
-
-        if (!interval.isValid) {
-          responseData.validated = false;
-          alert(interval.invalidExplanation);
-          console.log(interval.invalidExplanation);
-          return socket.emit("validatedCredential", responseData);
-        }
-
-        console.log("legal_age", interval.length("years") >= 18);
-        console.log("underage", interval.length("years") < 18);
-
-        const localCondition =
-          content.age === LEGAL_AGE
-            ? interval.length("years") >= 18
-            : interval.length("years") < 18;
 
         console.log("localCondition", localCondition);
 
@@ -396,25 +404,25 @@ function sendPageView(userId_, justPurchased, onlyCredential) {
       const { contentIdType, contentIdValue } = response;
       if (isPremium && !isPurchased) {
         content = response.content;
-
+        const credential_request = content.condition == "age"? "credential_birthday" : "credential_country"
         stripeAccountId = response.stripeAccountId;
         console.log(content);
         if(!qr){
           showMonconLayer(contentIdType, contentIdValue);
-          if (content.age === NO_CREDENTIAL) {
+          if (content.condition === NO_CREDENTIAL) {
             showQrCode("payment",null,contentIdType);
           } else if (
-            content.age !== NO_CREDENTIAL &&
+            content.condition !== NO_CREDENTIAL &&
             !condition &&
             content.amount > 0
           ) {
-            showQrCode("request_and_pay", "credential_birthday",contentIdType);
+            showQrCode("request_and_pay", credential_request,contentIdType);
           } else if (
-            content.age !== NO_CREDENTIAL &&
+            content.condition !== NO_CREDENTIAL &&
             !condition &&
             content.amount === 0
           ) {
-            showQrCode("request_credential", "credential_birthday",contentIdType);
+            showQrCode("request_credential", credential_request,contentIdType);
           }
         }
       } else {
@@ -505,7 +513,7 @@ function getContentPrice() {
   return new Intl.NumberFormat('de-DE', {
       style: 'currency',
       currency: 'EUR'
-    }).format(content.amount || 0);
+    }).format(AMOUNT_TO_DISPLAY(content.amount) || 0);
 }
 
 
@@ -527,7 +535,7 @@ function showQrCode(_type, _request, contentIdType) {
     data: JSON.stringify(data),
     image:
       "https://pbs.twimg.com/profile_images/1356260647642796035/qPlwhss9_400x400.jpg",
-    dotsOptions: { type: "dots", color: "#6a1a4c" },
+    dotsOptions: { type: "classy", color: "#6a1a4c" },
     cornersSquareOptions: { type: "extra-rounded", color: "#000000" },
     backgroundOptions: {
       color: "#e9ebee",
@@ -539,12 +547,17 @@ function showQrCode(_type, _request, contentIdType) {
   });
 
   const title = {
-    request_and_pay: `If you meet the ${
-      content.age === LEGAL_AGE ? "legal age" : "underage"
-    } scan the QR code to unlock this content for ${getContentPrice()} .`,
-    request_credential: `If you meet the ${
-      content.age === LEGAL_AGE ? "legal age" : "underage"
-    } scan the QR code to unlock this content.`,
+    request_and_pay: content.condition == "age"? 
+      `If you meet the ${
+        content.age === LEGAL_AGE ? "legal age" : "underage"
+      } scan the QR code to unlock this content for ${getContentPrice()} .`
+    : `If you live in ${content.nationality} scan the QR code to unlock this content for ${getContentPrice()} .`,
+    request_credential: content.condition == "age"? 
+      `If you meet the ${
+        content.age === LEGAL_AGE ? "legal age" : "underage"
+      } scan the QR code to unlock this content.`
+    :
+      `If you live in ${content.nationality} scan the QR code to unlock this content.`,
     payment: `Scan the QR code to unlock this content for ${getContentPrice()} .`,
   };
   const htmlStep1 = `  
