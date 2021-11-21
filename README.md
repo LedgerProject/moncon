@@ -81,12 +81,10 @@
     </li>
     <li><a href="#the-team">The Team</a></li>
     <li><a href="#use-case-demo">Use Case Demo</a></li>
-    <li><a href="#roadmap">Roadmap</a></li>
     <li><a href="#contributing">Contributing</a></li>
     <li><a href="#terms-and-license">Terms and License</a></li>
     <li><a href="#about-us">About Us</a></li>
     <li><a href="#contact">Contact</a></li>
-    <li><a href="#acknowledgements">Acknowledgements</a></li>
   </ol>
 </details>
 
@@ -123,7 +121,6 @@ This section should list any major frameworks that you built your project using.
 * [NodeJS](https://nodejs.org/en/)
 * [React](https://reactjs.org/)
 * [Zenroom](https://zenroom.org/)
-* [Cordova](https://cordova.apache.org/)
 * [MongoDB](https://www.mongodb.com/)
 * [Material UI](https://material-ui.com/)
 
@@ -172,13 +169,11 @@ variable and how to fix it here for [windows](https://www.howtogeek.com/118594/h
 > If you want to commit and push your work as you go, you'll want to
 > [fork](https://docs.github.com/en/free-pro-team@latest/github/getting-started-with-github/fork-a-repo)
 > first and then clone your fork rather than this repo directly.
-
 After you've made sure to have the correct things (and versions) installed, you
 should be able to just run a few commands to get set up:
 
 ```
 git clone https://github.com/LedgerProject/moncon.git
-
 ```
 If you want to run moncon, you should wake up the API, then run the Dashboard, install Publisher JS in the site you want to sell content and finally use the PWA to generate credentials and payments.
 
@@ -234,17 +229,6 @@ You can try our solution following these steps:
 15- Now, you can play more with our demo blocking more content and adding more conditions.
 
 
-<!-- ROADMAP -->
-## Roadmap
-Coming features we will add:
-- Encrypted backup moncon wallet.
-- ZKP for credential validation.
-- Add +10 different types of credentials.
-- Payments and billing from moncon dashboard to publisher.
-- Issuer dashboard for validating the credentials.
-- Mobile App (iOS and Android).
-- ...any idea? Ask us here for new features: hello@moncon.co.
-
 If you get any errors, please read through them and see if you can find out what
 the problem is. If you can't work it out on your own then please [file an issue](https://github.com/LedgerProject/moncon/issues) and provide _all_ the output from the commands you ran (even if it's a lot).
 
@@ -275,18 +259,3 @@ As a team, we have developing digital products since 2012. In the last 5 years, 
 
 Infinite Labs - [@LabsInfinite](https://twitter.com/LabsInfinite) - hello@infinitelabs.co
 Visit us [moncon](https://moncon.co) or join our [Telegram group](https://t.me/monconcommunity).
-
-
-<!-- ACKNOWLEDGEMENTS -->
-## Acknowledgements
-* [GitHub Emoji Cheat Sheet](https://www.webpagefx.com/tools/emoji-cheat-sheet)
-* [Img Shields](https://shields.io)
-* [Choose an Open Source License](https://choosealicense.com)
-* [GitHub Pages](https://pages.github.com)
-* [Animate.css](https://daneden.github.io/animate.css)
-* [Loaders.css](https://connoratherton.com/loaders)
-* [Slick Carousel](https://kenwheeler.github.io/slick)
-* [Smooth Scroll](https://github.com/cferdinandi/smooth-scroll)
-* [Sticky Kit](http://leafo.net/sticky-kit)
-* [JVectorMap](http://jvectormap.com)
-* [Font Awesome](https://fontawesome.com)
