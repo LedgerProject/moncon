@@ -220,13 +220,16 @@ You can try our solution following these steps:
 6- Now, as user that wants to access the content you've already blocked, visit this URL.
 7- The user, have to access to his [moncon wallet](https://github.com/LedgerProject/moncon/tree/main/packages/moncon-wallet).
 8- Add your datebirth and Ask for Credential.
-9- You will receive the credential signed by moncon acting as issuer.
-10- Now, you can scan the QR code from the URL.
-11- You have to accept sharing your credential.
-12- If you met the credential conditions, add the payment method and purchase that content.
-13- The content will be unlocked inmediately.
-14- As user, you will have the content purchased in your Articles tab, accessible forever you want without asking again for your credential.
-15- Now, you can play more with our demo blocking more content and adding more conditions.
+9- Now go to issuer platform to validate that credential [Dashboard](https://app.dashboard.moncon.co) 
+10- Access with our demo issuer: username "issuer@moncon.co" and password "4a8X8Vphu9vpQH"
+11- Check the credential and Validate it.
+12- The user will receive the credential in youre wallet signed by moncon, the ZKP and the W3C credential.
+13- Now, you can scan the QR code from the URL.
+14- You have to accept sharing your credential.
+15- If you met the credential conditions, add the payment method and purchase that content.
+16- The content will be unlocked inmediately.
+17- As user, you will have the content purchased in your Articles tab, accessible forever you want without asking again for your credential.
+18- Now, you can play more with our demo blocking more content and adding more conditions.
 
 
 If you get any errors, please read through them and see if you can find out what
